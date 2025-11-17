@@ -1,0 +1,110 @@
+﻿.home-hero {
+    background: linear-gradient(135deg, #f5f7fb 0%, #eef6ff 50%, #fdfbff 100%);
+}
+
+.feature-card,
+.category-card {
+    transition: transform 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease;
+    background-color: #ffffff;
+}
+
+    .feature-card:hover,
+    .category-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 14px 30px rgba(15, 23, 42, 0.12);
+        background-color: #f8fafc;
+    }
+
+.feature-icon {
+    max-height: 120px;
+    object-fit: cover;
+    filter: drop-shadow(0 10px 18px rgba(15, 23, 42, 0.12));
+    transition: transform 0.25s ease, filter 0.25s ease;
+}
+
+/* Icon hơi nhô lên + phóng to nhẹ khi hover card chế độ chơi */
+.feature-card:hover .feature-icon {
+    transform: translateY(-4px) scale(1.03);
+    filter: drop-shadow(0 14px 28px rgba(37, 99, 235, 0.25));
+}
+
+.category-badge {
+    background: rgba(248, 250, 252, 0.85);
+    backdrop-filter: blur(6px);
+    border-radius: 999px;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.category-image-wrapper {
+    width: 96px;
+    height: 96px;
+    border-radius: 999px;
+    background: radial-gradient(circle at 30% 20%, #fef9c3 0, #e0f2fe 40%, #f5f3ff 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.16);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+/* Ảnh chủ đề cũng có hiệu ứng nhô lên, zoom nhẹ */
+.category-card:hover .category-image-wrapper {
+    transform: translateY(-4px) scale(1.05);
+    box-shadow: 0 16px 36px rgba(37, 99, 235, 0.25);
+}
+
+.category-image {
+    max-width: 72px;
+    max-height: 72px;
+    object-fit: cover;
+    transition: transform 0.25s ease;
+}
+
+.category-card:hover .category-image {
+    transform: scale(1.03);
+}
+
+.soft-pill {
+    border-radius: 999px;
+    padding: 0.35rem 0.9rem;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    background: rgba(148, 163, 184, 0.08);
+    color: #64748b;
+}
+
+.fade-in-up {
+    opacity: 0;
+    transform: translateY(12px);
+    animation: fadeInUp 0.6s ease forwards;
+}
+
+.fade-in-delay-1 {
+    animation-delay: 0.15s;
+}
+
+.fade-in-delay-2 {
+    animation-delay: 0.3s;
+}
+
+.fade-in-delay-3 {
+    animation-delay: 0.45s;
+}
+
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(16px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+

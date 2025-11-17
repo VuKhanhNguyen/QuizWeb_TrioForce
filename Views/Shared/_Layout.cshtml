@@ -48,9 +48,50 @@
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2025 - quizweb - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+    <footer class="app-footer text-light mt-5">
+        <div class="container py-5 position-relative">
+            <div class="row gy-4">
+                <div class="col-lg-4">
+                    <div class="d-flex align-items-center gap-2 mb-3">
+                        <img src="~/assets/quiztime_logo.png" alt="QuizWeb Logo" style="height:42px;">
+                        <span class="fw-semibold text-uppercase small letter-spacing-1">QuizWeb TrioForce</span>
+                    </div>
+                    <p class="text-white-50 mb-3">
+                        Khám phá kho câu hỏi đa chủ đề, luyện tập mỗi ngày và giữ vững phong độ trong mọi thử thách.
+                    </p>
+                    <div class="d-flex gap-3">
+                        <a class="social-pill" href="https://facebook.com" target="_blank" rel="noopener">
+                            <i class="fa-brands fa-facebook-f"></i>
+                        </a>
+                        <a class="social-pill" href="https://t.me" target="_blank" rel="noopener">
+                            <i class="fa-brands fa-telegram"></i>
+                        </a>
+                        <a class="social-pill" href="mailto:nguyenvukhanh392@gmail.com">
+                            <i class="fa-solid fa-envelope"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-6 col-lg-4">
+                    <h6 class="text-uppercase text-white-50 small mb-3">Điều hướng</h6>
+                    <ul class="list-unstyled d-flex flex-column gap-2">
+                        <li><a class="footer-link" asp-area="" asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+                        <li><a class="footer-link" asp-area="" asp-controller="Quiz" asp-action="Play">Chơi ngay</a></li>
+                        <li><a class="footer-link" href="#categories">Chủ đề nổi bật</a></li>
+                        <li><a class="footer-link" asp-area="" asp-controller="Home" asp-action="Privacy">Chính sách bảo mật</a></li>
+                    </ul>
+                </div>
+                <div class="col-6 col-lg-4">
+                    <h6 class="text-uppercase text-white-50 small mb-3">Liên hệ</h6>
+                    <ul class="list-unstyled d-flex flex-column gap-2 text-white-50 mb-0">
+                        <li><i class="fa-solid fa-location-dot me-2 text-primary"></i>Đà Nẵng, Việt Nam</li>
+                        <li><i class="fa-solid fa-phone me-2 text-primary"></i>+84 795 605 214</li>
+                        <li><i class="fa-solid fa-envelope me-2 text-primary"></i>nguyenvukhanh392@gmail.com</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom text-center text-white-50 py-3">
+            &copy; @DateTime.Now.Year QuizWeb TrioForce · Học mà chơi, chơi mà học
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

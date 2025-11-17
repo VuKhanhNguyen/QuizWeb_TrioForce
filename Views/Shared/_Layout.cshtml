@@ -12,33 +12,54 @@
 
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a asp-area="" asp-controller="Home" asp-action="Index">
-                    <img src="~/assets/quiztime_logo.png" alt="QuizWeb Logo" style="height:40px;">
+    <header class="site-header">
+        <nav class="navbar navbar-expand-lg app-navbar shadow-sm">
+            <div class="container-fluid px-4">
+                <a class="navbar-brand d-flex align-items-center gap-2" asp-area="" asp-controller="Home" asp-action="Index">
+                    <img src="~/assets/quiztime_logo.png" alt="QuizWeb Logo" class="brand-logo">
+                    <div class="d-flex flex-column lh-1">
+                        <span class="brand-title">QuizWeb TrioForce</span>
+                        <small class="brand-tagline text-muted">Học mà chơi · Chơi mà học</small>
+                    </div>
                 </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
+                <div class="collapse navbar-collapse" id="mainNav">
+                    <ul class="navbar-nav mx-lg-auto gap-lg-2 align-items-lg-center">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index"><i class="fa-solid fa-house" style="color: #000000;"></i> Home</a>
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">
+                                <i class="fa-solid fa-house nav-icon"></i>
+                                Trang chủ
+                            </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="" asp-action="Index"><i class="fa-solid fa-ranking-star" style="color: #000000;"></i> Ranking</a>
+                            <a class="nav-link" asp-area="" asp-controller="" asp-action="Index">
+                                <i class="fa-solid fa-ranking-star nav-icon"></i>
+                                Bảng xếp hạng
+                            </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="" asp-action="Index"><i class="fa-solid fa-bookmark" style="color: #000000;"></i> Bookmark</a>
+                            <a class="nav-link" asp-area="" asp-controller="" asp-action="Index">
+                                <i class="fa-solid fa-bookmark nav-icon"></i>
+                                Đánh dấu
+                            </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="" asp-action="Index"><i class="fa-solid fa-user" style="color: #000000;"></i> Profile</a>
+                            <a class="nav-link" asp-area="" asp-controller="" asp-action="Index">
+                                <i class="fa-solid fa-user nav-icon"></i>
+                                Hồ sơ
+                            </a>
                         </li>
                     </ul>
+                    <div class="d-flex align-items-center gap-3 mt-3 mt-lg-0">
+                        <a class="btn btn-gradient" asp-area="" asp-controller="Quiz" asp-action="Play">
+                            <i class="fa-solid fa-play me-1"></i> Chơi ngay
+                        </a>
+                        @await Html.PartialAsync("_LoginPartial.cshtml")
+                    </div>
                 </div>
-                @await Html.PartialAsync("_LoginPartial.cshtml")
             </div>
         </nav>
     </header>

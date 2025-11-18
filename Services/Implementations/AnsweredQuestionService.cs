@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc.RazorPages;
-using quizweb.DTOs;
-using quizweb.Models;
-using quizweb.Repositories.Interfaces;
-using quizweb.Services.Interfaces;
-using quizweb.ViewModels.User;
+using QuizWeb_TrioForce.DTOs;
+using QuizWeb_TrioForce.Models;
+using QuizWeb_TrioForce.Repositories.Interfaces;
+using QuizWeb_TrioForce.Services.Interfaces;
+using QuizWeb_TrioForce.ViewModels.User;
 
-namespace quizweb.Services.Implementations
+namespace QuizWeb_TrioForce.Services.Implementations
 {
     public class AnsweredQuestionService : IAnsweredQuestionService
     {

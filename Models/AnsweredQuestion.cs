@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace quizweb.Models
+namespace QuizWeb_TrioForce.Models
 {
     public class AnsweredQuestion
     {

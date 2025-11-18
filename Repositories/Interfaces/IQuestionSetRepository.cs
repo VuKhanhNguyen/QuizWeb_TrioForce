@@ -1,7 +1,7 @@
-﻿using quizweb.DTOs;
-using quizweb.Models;
+﻿using QuizWeb_TrioForce.DTOs;
+using QuizWeb_TrioForce.Models;
 
-namespace quizweb.Repositories.Interfaces
+namespace QuizWeb_TrioForce.Repositories.Interfaces
 {
     public interface IQuestionSetRepository
     {

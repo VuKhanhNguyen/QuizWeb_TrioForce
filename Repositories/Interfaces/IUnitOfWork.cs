@@ -1,4 +1,4 @@
-﻿namespace quizweb.Repositories.Interfaces
+﻿namespace QuizWeb_TrioForce.Repositories.Interfaces
 {
     public interface IUnitOfWork : IAsyncDisposable
     {

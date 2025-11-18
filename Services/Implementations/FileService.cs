@@ -1,6 +1,6 @@
-﻿using quizweb.Services.Interfaces;
+﻿using QuizWeb_TrioForce.Services.Interfaces;
 
-namespace quizweb.Services.Implementations
+namespace QuizWeb_TrioForce.Services.Implementations
 {
     public class FileService : IFileService
     {

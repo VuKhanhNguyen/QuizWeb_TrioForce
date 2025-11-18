@@ -1,6 +1,6 @@
-﻿using quizweb.Models;
+﻿using QuizWeb_TrioForce.Models;
 
-namespace quizweb.Services.Interfaces
+namespace QuizWeb_TrioForce.Services.Interfaces
 {
     public interface IQuestionService
     {

@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using quizweb.Models;
-namespace quizweb.Data
+using QuizWeb_TrioForce.Models;
+namespace QuizWeb_TrioForce.Data
 {
     public class AppDbContext : IdentityDbContext<ApplicationUser>
     {

@@ -1,6 +1,6 @@
-﻿using quizweb.Models;
-using quizweb.ViewModels.BookMark;
-namespace quizweb.Services.Interfaces
+﻿using QuizWeb_TrioForce.Models;
+using QuizWeb_TrioForce.ViewModels.BookMark;
+namespace QuizWeb_TrioForce.Services.Interfaces
 {
     public interface IMarkedQuestionService
     {

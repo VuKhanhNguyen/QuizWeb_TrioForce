@@ -1,6 +1,6 @@
-﻿using quizweb.Models;
+﻿using QuizWeb_TrioForce.Models;
 
-namespace quizweb.Repositories.Interfaces
+namespace QuizWeb_TrioForce.Repositories.Interfaces
 {
     public interface IProgressQuestionSetRepository
     {

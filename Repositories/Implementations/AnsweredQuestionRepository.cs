@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using quizweb.Data;
-using quizweb.Models;
-using quizweb.Repositories.Interfaces;
+using QuizWeb_TrioForce.Data;
+using QuizWeb_TrioForce.Models;
+using QuizWeb_TrioForce.Repositories.Interfaces;
 
-namespace quizweb.Repositories.Implementations
+namespace QuizWeb_TrioForce.Repositories.Implementations
 {
     public class AnsweredQuestionRepository : IAnsweredQuestionRepository
     {

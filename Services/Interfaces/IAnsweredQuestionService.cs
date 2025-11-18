@@ -1,8 +1,8 @@
-﻿using quizweb.DTOs;
-using quizweb.Models;
-using quizweb.ViewModels.User;
+﻿using QuizWeb_TrioForce.DTOs;
+using QuizWeb_TrioForce.Models;
+using QuizWeb_TrioForce.ViewModels.User;
 
-namespace quizweb.Services.Interfaces
+namespace QuizWeb_TrioForce.Services.Interfaces
 {
     public interface IAnsweredQuestionService
     {

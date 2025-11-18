@@ -1,4 +1,4 @@
-﻿namespace quizweb.Services.Interfaces
+﻿namespace QuizWeb_TrioForce.Services.Interfaces
 {
     public interface IFileService
     {

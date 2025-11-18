@@ -1,7 +1,7 @@
-﻿using quizweb.Models;
-using quizweb.ViewModels.Category;
+﻿using QuizWeb_TrioForce.Models;
+using QuizWeb_TrioForce.ViewModels.Category;
 
-namespace quizweb.Services.Interfaces
+namespace QuizWeb_TrioForce.Services.Interfaces
 {
     public interface ICategoryService
     {

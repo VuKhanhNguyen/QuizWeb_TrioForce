@@ -1,8 +1,8 @@
-﻿using quizweb.Models;
-using quizweb.ViewModels.BookMark;
-using quizweb.ViewModels.ProgressQuestionSet;
+﻿using QuizWeb_TrioForce.Models;
+using QuizWeb_TrioForce.ViewModels.BookMark;
+using QuizWeb_TrioForce.ViewModels.ProgressQuestionSet;
 
-namespace quizweb.Services.Interfaces
+namespace QuizWeb_TrioForce.Services.Interfaces
 {
     public interface IProgressQuestionSetService
     {

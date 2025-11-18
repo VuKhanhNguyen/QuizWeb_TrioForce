@@ -31,10 +31,7 @@ namespace QuizWeb_TrioForce
             builder.Services.AddScoped<ICategoryService, CategoryService>();
             builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<IRankingService, RankingService>();
-
             builder.Services.AddScoped<IFileService, FileService>();
-
-
             builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false).AddEntityFrameworkStores<AppDbContext>();
 
             //DI for repositories

@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using System;
 using quizweb.Data;
+using Microsoft.AspNetCore.Identity;
+using quizweb.Models;
 
 namespace QuizWeb_TrioForce
 {
@@ -17,6 +19,8 @@ namespace QuizWeb_TrioForce
                 options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"), ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("DefaultConnection")));
             });
 
+            builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false).AddEntityFrameworkStores<AppDbContext>();
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -31,12 +35,13 @@ namespace QuizWeb_TrioForce
             app.UseStaticFiles();
 
             app.UseRouting();
-
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
+            app.MapRazorPages();
 
             app.Run();
         }

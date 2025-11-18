@@ -19,6 +19,7 @@ namespace QuizWeb_TrioForce.Services.Implementations
             }
 
             var allowedExtensions = new[] { ".png" };
+
             var ext = Path.GetExtension(file.FileName).ToLowerInvariant();
 
             if (!allowedExtensions.Contains(ext))
@@ -27,6 +28,7 @@ namespace QuizWeb_TrioForce.Services.Implementations
             }
 
             var uploadPath = Path.Combine(_webHostEnvironment.WebRootPath, folder);
+
             if (!Directory.Exists(uploadPath))
             {
                 Directory.CreateDirectory(uploadPath);

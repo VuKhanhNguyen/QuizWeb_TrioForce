@@ -154,7 +154,7 @@ namespace QuizWeb_TrioForce.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("quizweb.Models.Answer", b =>
+            modelBuilder.Entity("QuizWeb_TrioForce.Models.Answer", b =>
                 {
                     b.Property<int>("AnswerId")
                         .ValueGeneratedOnAdd()
@@ -180,7 +180,7 @@ namespace QuizWeb_TrioForce.Migrations
                     b.ToTable("Answers");
                 });
 
-            modelBuilder.Entity("quizweb.Models.AnsweredQuestion", b =>
+            modelBuilder.Entity("QuizWeb_TrioForce.Models.AnsweredQuestion", b =>
                 {
                     b.Property<string>("UserName")
                         .HasColumnType("varchar(100)");
@@ -205,7 +205,7 @@ namespace QuizWeb_TrioForce.Migrations
                     b.ToTable("AnsweredQuestions");
                 });
 
-            modelBuilder.Entity("quizweb.Models.ApplicationUser", b =>
+            modelBuilder.Entity("QuizWeb_TrioForce.Models.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("varchar(255)");
@@ -281,7 +281,7 @@ namespace QuizWeb_TrioForce.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("quizweb.Models.Category", b =>
+            modelBuilder.Entity("QuizWeb_TrioForce.Models.Category", b =>
                 {
                     b.Property<int>("CategoryId")
                         .ValueGeneratedOnAdd()
@@ -304,7 +304,7 @@ namespace QuizWeb_TrioForce.Migrations
                     b.ToTable("Categories");
                 });
 
-            modelBuilder.Entity("quizweb.Models.Level", b =>
+            modelBuilder.Entity("QuizWeb_TrioForce.Models.Level", b =>
                 {
                     b.Property<int>("LevelId")
                         .ValueGeneratedOnAdd()
@@ -322,7 +322,7 @@ namespace QuizWeb_TrioForce.Migrations
                     b.ToTable("Levels");
                 });
 
-            modelBuilder.Entity("quizweb.Models.MarkedQuestion", b =>
+            modelBuilder.Entity("QuizWeb_TrioForce.Models.MarkedQuestion", b =>
                 {
                     b.Property<string>("UserName")
                         .HasColumnType("varchar(100)");
@@ -340,7 +340,7 @@ namespace QuizWeb_TrioForce.Migrations
                     b.ToTable("MarkedQuestions");
                 });
 
-            modelBuilder.Entity("quizweb.Models.ProgressQuestionSet", b =>
+            modelBuilder.Entity("QuizWeb_TrioForce.Models.ProgressQuestionSet", b =>
                 {
                     b.Property<string>("UserName")
                         .HasColumnType("varchar(100)");
@@ -366,7 +366,7 @@ namespace QuizWeb_TrioForce.Migrations
                     b.ToTable("ProgressQuestionSets");
                 });
 
-            modelBuilder.Entity("quizweb.Models.Question", b =>
+            modelBuilder.Entity("QuizWeb_TrioForce.Models.Question", b =>
                 {
                     b.Property<int>("QuestionId")
                         .ValueGeneratedOnAdd()
@@ -389,7 +389,7 @@ namespace QuizWeb_TrioForce.Migrations
                     b.ToTable("Questions");
                 });
 
-            modelBuilder.Entity("quizweb.Models.QuestionSet", b =>
+            modelBuilder.Entity("QuizWeb_TrioForce.Models.QuestionSet", b =>
                 {
                     b.Property<int>("QSetId")
                         .ValueGeneratedOnAdd()
@@ -432,7 +432,7 @@ namespace QuizWeb_TrioForce.Migrations
                     b.ToTable("QuestionSets");
                 });
 
-            modelBuilder.Entity("quizweb.Models.Ranking", b =>
+            modelBuilder.Entity("QuizWeb_TrioForce.Models.Ranking", b =>
                 {
                     b.Property<string>("UserName")
                         .HasColumnType("varchar(100)");
@@ -456,7 +456,7 @@ namespace QuizWeb_TrioForce.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("quizweb.Models.ApplicationUser", null)
+                    b.HasOne("QuizWeb_TrioForce.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -465,7 +465,7 @@ namespace QuizWeb_TrioForce.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("quizweb.Models.ApplicationUser", null)
+                    b.HasOne("QuizWeb_TrioForce.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -480,7 +480,7 @@ namespace QuizWeb_TrioForce.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("quizweb.Models.ApplicationUser", null)
+                    b.HasOne("QuizWeb_TrioForce.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -489,16 +489,16 @@ namespace QuizWeb_TrioForce.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("quizweb.Models.ApplicationUser", null)
+                    b.HasOne("QuizWeb_TrioForce.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("quizweb.Models.Answer", b =>
+            modelBuilder.Entity("QuizWeb_TrioForce.Models.Answer", b =>
                 {
-                    b.HasOne("quizweb.Models.Question", "Question")
+                    b.HasOne("QuizWeb_TrioForce.Models.Question", "Question")
                         .WithMany("Answers")
                         .HasForeignKey("QuestionId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -507,27 +507,27 @@ namespace QuizWeb_TrioForce.Migrations
                     b.Navigation("Question");
                 });
 
-            modelBuilder.Entity("quizweb.Models.AnsweredQuestion", b =>
+            modelBuilder.Entity("QuizWeb_TrioForce.Models.AnsweredQuestion", b =>
                 {
-                    b.HasOne("quizweb.Models.QuestionSet", "QuestionSet")
+                    b.HasOne("QuizWeb_TrioForce.Models.QuestionSet", "QuestionSet")
                         .WithMany("AnsweredQuestions")
                         .HasForeignKey("QSetId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("quizweb.Models.Question", "Question")
+                    b.HasOne("QuizWeb_TrioForce.Models.Question", "Question")
                         .WithMany()
                         .HasForeignKey("QuestionId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("quizweb.Models.Answer", "Answer")
+                    b.HasOne("QuizWeb_TrioForce.Models.Answer", "Answer")
                         .WithMany()
                         .HasForeignKey("SelectedAnswerId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("quizweb.Models.ApplicationUser", "User")
+                    b.HasOne("QuizWeb_TrioForce.Models.ApplicationUser", "User")
                         .WithMany("AnsweredQuestions")
                         .HasForeignKey("UserName")
                         .HasPrincipalKey("UserName")
@@ -543,15 +543,15 @@ namespace QuizWeb_TrioForce.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("quizweb.Models.MarkedQuestion", b =>
+            modelBuilder.Entity("QuizWeb_TrioForce.Models.MarkedQuestion", b =>
                 {
-                    b.HasOne("quizweb.Models.Question", "Question")
+                    b.HasOne("QuizWeb_TrioForce.Models.Question", "Question")
                         .WithMany()
                         .HasForeignKey("QuestionId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("quizweb.Models.ApplicationUser", "User")
+                    b.HasOne("QuizWeb_TrioForce.Models.ApplicationUser", "User")
                         .WithMany("MarkedQuestions")
                         .HasForeignKey("UserName")
                         .HasPrincipalKey("UserName")
@@ -563,21 +563,21 @@ namespace QuizWeb_TrioForce.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("quizweb.Models.ProgressQuestionSet", b =>
+            modelBuilder.Entity("QuizWeb_TrioForce.Models.ProgressQuestionSet", b =>
                 {
-                    b.HasOne("quizweb.Models.QuestionSet", "QuestionSet")
+                    b.HasOne("QuizWeb_TrioForce.Models.QuestionSet", "QuestionSet")
                         .WithMany("ProgressQuestionSets")
                         .HasForeignKey("QSetId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("quizweb.Models.Question", "Question")
+                    b.HasOne("QuizWeb_TrioForce.Models.Question", "Question")
                         .WithMany()
                         .HasForeignKey("QuestionLastId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("quizweb.Models.ApplicationUser", "User")
+                    b.HasOne("QuizWeb_TrioForce.Models.ApplicationUser", "User")
                         .WithMany("ProgressQuestionSets")
                         .HasForeignKey("UserName")
                         .HasPrincipalKey("UserName")
@@ -591,9 +591,9 @@ namespace QuizWeb_TrioForce.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("quizweb.Models.Question", b =>
+            modelBuilder.Entity("QuizWeb_TrioForce.Models.Question", b =>
                 {
-                    b.HasOne("quizweb.Models.QuestionSet", "QuestionSet")
+                    b.HasOne("QuizWeb_TrioForce.Models.QuestionSet", "QuestionSet")
                         .WithMany("Questions")
                         .HasForeignKey("QSetId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -602,22 +602,22 @@ namespace QuizWeb_TrioForce.Migrations
                     b.Navigation("QuestionSet");
                 });
 
-            modelBuilder.Entity("quizweb.Models.QuestionSet", b =>
+            modelBuilder.Entity("QuizWeb_TrioForce.Models.QuestionSet", b =>
                 {
-                    b.HasOne("quizweb.Models.ApplicationUser", "Author")
+                    b.HasOne("QuizWeb_TrioForce.Models.ApplicationUser", "Author")
                         .WithMany("QuestionSets")
                         .HasForeignKey("AuthorName")
                         .HasPrincipalKey("UserName")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("quizweb.Models.Category", "Category")
+                    b.HasOne("QuizWeb_TrioForce.Models.Category", "Category")
                         .WithMany("QuestionSets")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("quizweb.Models.Level", "Level")
+                    b.HasOne("QuizWeb_TrioForce.Models.Level", "Level")
                         .WithMany("QuestionSets")
                         .HasForeignKey("LevelId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -630,19 +630,19 @@ namespace QuizWeb_TrioForce.Migrations
                     b.Navigation("Level");
                 });
 
-            modelBuilder.Entity("quizweb.Models.Ranking", b =>
+            modelBuilder.Entity("QuizWeb_TrioForce.Models.Ranking", b =>
                 {
-                    b.HasOne("quizweb.Models.ApplicationUser", "User")
+                    b.HasOne("QuizWeb_TrioForce.Models.ApplicationUser", "User")
                         .WithOne("Ranking")
-                        .HasForeignKey("quizweb.Models.Ranking", "UserName")
-                        .HasPrincipalKey("quizweb.Models.ApplicationUser", "UserName")
+                        .HasForeignKey("QuizWeb_TrioForce.Models.Ranking", "UserName")
+                        .HasPrincipalKey("QuizWeb_TrioForce.Models.ApplicationUser", "UserName")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("quizweb.Models.ApplicationUser", b =>
+            modelBuilder.Entity("QuizWeb_TrioForce.Models.ApplicationUser", b =>
                 {
                     b.Navigation("AnsweredQuestions");
 
@@ -656,22 +656,22 @@ namespace QuizWeb_TrioForce.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("quizweb.Models.Category", b =>
+            modelBuilder.Entity("QuizWeb_TrioForce.Models.Category", b =>
                 {
                     b.Navigation("QuestionSets");
                 });
 
-            modelBuilder.Entity("quizweb.Models.Level", b =>
+            modelBuilder.Entity("QuizWeb_TrioForce.Models.Level", b =>
                 {
                     b.Navigation("QuestionSets");
                 });
 
-            modelBuilder.Entity("quizweb.Models.Question", b =>
+            modelBuilder.Entity("QuizWeb_TrioForce.Models.Question", b =>
                 {
                     b.Navigation("Answers");
                 });
 
-            modelBuilder.Entity("quizweb.Models.QuestionSet", b =>
+            modelBuilder.Entity("QuizWeb_TrioForce.Models.QuestionSet", b =>
                 {
                     b.Navigation("AnsweredQuestions");
 

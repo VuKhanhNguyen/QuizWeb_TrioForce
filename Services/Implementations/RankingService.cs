@@ -8,11 +8,12 @@ namespace QuizWeb_TrioForce.Services.Implementations
     public class RankingService : IRankingService
     {
         private readonly IRankingRepository _rankingRepository;
+
         public RankingService(IRankingRepository rankingRepository)
         {
             _rankingRepository = rankingRepository;
         }
-        
+
         public async Task CreateInitialRankingAsync(string username)
         {
             try
@@ -26,6 +27,7 @@ namespace QuizWeb_TrioForce.Services.Implementations
             }
             await _rankingRepository.CreateInitialRankingAsync(username);
         }
+
         public async Task<List<Ranking>> GetTopRankingsAsync(int topN)
         {
             return await _rankingRepository.GetTopRankingsAsync(topN);

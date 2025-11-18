@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] -  QuizWeb_TrioForce</title>
+    <title>@ViewData["Title"] - Quizweb</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/category.css" asp-append-version="true" />
@@ -35,19 +35,20 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="" asp-action="Index">
+
+                            <a class="nav-link" asp-area="" asp-controller="Ranking" asp-action="Index">
                                 <i class="fa-solid fa-ranking-star nav-icon"></i>
                                 Bảng xếp hạng
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="" asp-action="Index">
+                            <a class="nav-link" asp-area="" asp-controller="" asp-action="">
                                 <i class="fa-solid fa-bookmark nav-icon"></i>
                                 Đánh dấu
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="" asp-action="Index">
+                            <a class="nav-link" asp-area="" asp-controller="Profile" asp-action="Index">
                                 <i class="fa-solid fa-user nav-icon"></i>
                                 Hồ sơ
                             </a>
@@ -60,6 +61,7 @@
                 </div>
             </div>
         </nav>
+
     </header>
     <div class="container">
         <main role="main" class="pb-3">

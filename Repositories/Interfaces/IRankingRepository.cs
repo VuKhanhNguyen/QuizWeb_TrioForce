@@ -1,6 +1,5 @@
 ﻿using QuizWeb_TrioForce.Models;
 
-
 namespace QuizWeb_TrioForce.Repositories.Interfaces
 {
     public interface IRankingRepository
@@ -10,4 +9,6 @@ namespace QuizWeb_TrioForce.Repositories.Interfaces
         Task CreateInitialRankingAsync(string username);
         Task UpdateUserScoreAsync(string username, int score);
     }
+
 }
+

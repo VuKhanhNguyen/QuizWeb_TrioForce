@@ -6,40 +6,59 @@
     <title>@ViewData["Title"] - Quizweb</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/ QuizWeb_TrioForce.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/category.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
     @await RenderSectionAsync("Styles", required: false)
 
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">QuizWeb</a>
-                <a asp-area="" asp-controller="Home" asp-action="Index">
-                    <img src="~/assets/quiztime_logo.png" alt="QuizWeb Logo" style="height:40px;">
+    <header class="site-header">
+        <nav class="navbar navbar-expand-lg app-navbar shadow-sm">
+            <div class="container-fluid px-4">
+                <a class="navbar-brand d-flex align-items-center gap-2" asp-area="" asp-controller="Home" asp-action="Index">
+                    <img src="~/assets/quiztime_logo.png" alt="QuizWeb Logo" class="brand-logo">
+                    <div class="d-flex flex-column lh-1">
+                        <span class="brand-title">QuizWeb TrioForce</span>
+                        <small class="brand-tagline text-muted">Học mà chơi · Chơi mà học</small>
+                    </div>
                 </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
+                <div class="collapse navbar-collapse" id="mainNav">
+                    <ul class="navbar-nav mx-lg-auto gap-lg-2 align-items-lg-center">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index"><i class="fa-solid fa-house" style="color: #000000;"></i> Home</a>
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">
+                                <i class="fa-solid fa-house nav-icon"></i>
+                                Trang chủ
+                            </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Ranking" asp-action="Index"><i class="fa-solid fa-ranking-star" style="color: #000000;"></i> Ranking</a>
+
+                            <a class="nav-link" asp-area="" asp-controller="Ranking" asp-action="Index">
+                                <i class="fa-solid fa-ranking-star nav-icon"></i>
+                                Bảng xếp hạng
+                            </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="" asp-action="Index"><i class="fa-solid fa-bookmark" style="color: #000000;"></i> Bookmark</a>
+                            <a class="nav-link" asp-area="" asp-controller="" asp-action="">
+                                <i class="fa-solid fa-bookmark nav-icon"></i>
+                                Đánh dấu
+                            </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Profile" asp-action="Index"><i class="fa-solid fa-user" style="color: #000000;"></i> Profile</a>
+                            <a class="nav-link" asp-area="" asp-controller="Profile" asp-action="Index">
+                                <i class="fa-solid fa-user nav-icon"></i>
+                                Hồ sơ
+                            </a>
                         </li>
                     </ul>
+                    <div class="d-flex align-items-center gap-3 mt-3 mt-lg-0">
+                        
+                        @await Html.PartialAsync("_LoginPartial.cshtml")
+                    </div>
                 </div>
-                @await Html.PartialAsync("_LoginPartial.cshtml")
             </div>
         </nav>
 
@@ -50,9 +69,50 @@
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2025 - QuizWeb - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+    <footer class="app-footer text-light mt-5">
+        <div class="container py-5 position-relative">
+            <div class="row gy-4">
+                <div class="col-lg-4">
+                    <div class="d-flex align-items-center gap-2 mb-3">
+                        <img src="~/assets/quiztime_logo.png" alt="QuizWeb Logo" style="height:42px;">
+                        <span class="fw-semibold text-uppercase small letter-spacing-1">QuizWeb TrioForce</span>
+                    </div>
+                    <p class="text-white-50 mb-3">
+                        Khám phá kho câu hỏi đa chủ đề, luyện tập mỗi ngày và giữ vững phong độ trong mọi thử thách.
+                    </p>
+                    <div class="d-flex gap-3">
+                        <a class="social-pill" href="https://facebook.com" target="_blank" rel="noopener">
+                            <i class="fa-brands fa-facebook-f"></i>
+                        </a>
+                        <a class="social-pill" href="https://t.me" target="_blank" rel="noopener">
+                            <i class="fa-brands fa-telegram"></i>
+                        </a>
+                        <a class="social-pill" href="mailto:nguyenvukhanh392@gmail.com">
+                            <i class="fa-solid fa-envelope"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-6 col-lg-4">
+                    <h6 class="text-uppercase text-white-50 small mb-3">Điều hướng</h6>
+                    <ul class="list-unstyled d-flex flex-column gap-2">
+                        <li><a class="footer-link" asp-area="" asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+                        <li><a class="footer-link" asp-area="" asp-controller="Quiz" asp-action="Play">Chơi ngay</a></li>
+                        <li><a class="footer-link" href="#categories">Chủ đề nổi bật</a></li>
+                        <li><a class="footer-link" asp-area="" asp-controller="Home" asp-action="Privacy">Chính sách bảo mật</a></li>
+                    </ul>
+                </div>
+                <div class="col-6 col-lg-4">
+                    <h6 class="text-uppercase text-white-50 small mb-3">Liên hệ</h6>
+                    <ul class="list-unstyled d-flex flex-column gap-2 text-white-50 mb-0">
+                        <li><i class="fa-solid fa-location-dot me-2 text-primary"></i>Đà Nẵng, Việt Nam</li>
+                        <li><i class="fa-solid fa-phone me-2 text-primary"></i>+84 795 605 214</li>
+                        <li><i class="fa-solid fa-envelope me-2 text-primary"></i>nguyenvukhanh392@gmail.com</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom text-center text-white-50 py-3">
+            &copy; @DateTime.Now.Year QuizWeb TrioForce · Học mà chơi, chơi mà học
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

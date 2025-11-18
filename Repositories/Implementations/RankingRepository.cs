@@ -11,7 +11,7 @@ namespace QuizWeb_TrioForce.Repositories.Implementations
 
         public RankingRepository(AppDbContext context)
         {
-             _context = context;
+            _context = context;
         }
 
         public async Task CreateInitialRankingAsync(string username)

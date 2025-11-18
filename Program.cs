@@ -1,8 +1,10 @@
-using Microsoft.EntityFrameworkCore;
-using System;
-using quizweb.Data;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using quizweb.Data;
 using quizweb.Models;
+using quizweb.Repositories.Implementations;
+using quizweb.Repositories.Interfaces;
+using System;
 
 namespace QuizWeb_TrioForce
 {
@@ -20,6 +22,16 @@ namespace QuizWeb_TrioForce
             });
 
             builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false).AddEntityFrameworkStores<AppDbContext>();
+
+            //DI for repositories
+            builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+            builder.Services.AddScoped<ILevelRepository, LevelRepository>();
+            builder.Services.AddScoped<IMarkedQuestionRepository, MarkedQuestionRepository>();
+            builder.Services.AddScoped<IProgressQuestionSetRepository, ProgressQuestionSetRepository>();
+            builder.Services.AddScoped<IQuestionRepository, QuestionRepository>();
+            builder.Services.AddScoped<IQuestionSetRepository, QuestionSetRepository>();
+            builder.Services.AddScoped<IAnswerRepository, AnswerRepository>();
+            builder.Services.AddScoped<IAnsweredQuestionRepository, AnsweredQuestionRepository>();
 
             var app = builder.Build();
 

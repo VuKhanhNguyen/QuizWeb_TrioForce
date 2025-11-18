@@ -26,9 +26,13 @@ namespace QuizWeb_TrioForce
 
             //DI for repositories
             builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+            builder.Services.AddScoped<IUserRepository, UserRepository>();
+            builder.Services.AddScoped<IRankingRepository, RankingRepository>();
            
             //DI for services
             builder.Services.AddScoped<ICategoryService, CategoryService>();
+            builder.Services.AddScoped<IUserService, UserService>();
+            builder.Services.AddScoped<IRankingService, RankingService>();
             
             builder.Services.AddScoped<IFileService, FileService>();
             

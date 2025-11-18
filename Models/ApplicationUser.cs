@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
 
-
 namespace QuizWeb_TrioForce.Models
 {
     public class ApplicationUser : IdentityUser

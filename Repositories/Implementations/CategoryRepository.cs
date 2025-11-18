@@ -42,6 +42,5 @@ namespace QuizWeb_TrioForce.Repositories.Implementations
         {
             return await _context.Categories.FindAsync(categoryId);
         }
-
     }
 }

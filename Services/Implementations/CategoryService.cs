@@ -24,6 +24,7 @@ namespace QuizWeb_TrioForce.Services.Implementations
                 CategoryName = viewModel.CategoryName,
                 ImgUrl = path!
             };
+
             await _categoryRepository.AddCategoryAsync(cate);
         }
         public async Task UpdateCategoryAsync(Category category)
@@ -47,7 +48,7 @@ namespace QuizWeb_TrioForce.Services.Implementations
 
         public async Task<Category> GetCategoryByIdAsync(int categoryId)
         {
-            var  cate = await _categoryRepository.GetCategoryByIdAsync(categoryId);
+            var cate = await _categoryRepository.GetCategoryByIdAsync(categoryId);
             if (cate == null)
             {
                 throw new Exception("Category not found");

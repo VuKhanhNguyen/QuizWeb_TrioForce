@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using QuizWeb_TrioForce.Models;
 
 namespace QuizWeb_TrioForce.Models
 {

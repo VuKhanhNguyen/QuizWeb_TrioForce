@@ -10,7 +10,5 @@ namespace QuizWeb_TrioForce.Services.Interfaces
          Task DeleteCategoryAsync(int categoryId);
          Task<List<Category>> GetAllCategoryAsync();
          Task<Category> GetCategoryByIdAsync(int categoryId);
-
-
     }
 }

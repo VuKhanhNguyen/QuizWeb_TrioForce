@@ -1,8 +1,66 @@
-﻿@{
+﻿﻿@using QuizWeb_TrioForce.ViewModels
+@using QuizWeb_TrioForce.ViewModels.Category
+@model List<CategoryListViewModel>
+@{
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div>
+    <div class="container my-4">
+        
+        <div class="row row-cols-1 row-cols-sm-2 g-4 mb-4">
+            <div class="col mb-5">
+                <div class="card text-center shadow rounded-4 border-0">
+                    <div class="card-body py-4">
+                        <img src="/assets/question.png"
+                             class="img-fluid mb-3"
+                             style="max-height: 120px; object-fit: cover;"
+                             alt="Play Now" />
+                        <h6 class="fw-bold mb-0">
+                            <a asp-action="Play"
+                               asp-controller="Quiz"
+                               class="stretched-link text-decoration-none text-dark">
+                                Play Now
+                            </a>
+                        </h6>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col mb-5">
+                <div class="card text-center shadow rounded-4 border-0">
+                    <div class="card-body py-4">
+                        <img src="/assets/competition.png"
+                             class="img-fluid mb-3"
+                             style="max-height: 120px; object-fit: cover;"
+                             alt="1v1" />
+                        <h6 class="fw-bold mb-0">
+                            <a href="#"
+                               class="stretched-link text-decoration-none text-dark">
+                                1v1
+                            </a>
+                        </h6>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+            @{
+                foreach (var cate in Model)
+                {
+                    <div class="col mb-5">
+                        <div class="card text-center shadow rounded-4 border-0">
+                            <div class="position-absolute top-0 start-50 translate-middle">
+                                <img src="@cate.Url" class="img-fluid w-75" style="object-fit:cover;" alt="Alternate Text"/>
+                            </div>
+                            <div class="card-body mt-5">
+                                <h6 class="fw-bold">@cate.Name</h6>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
 </div>

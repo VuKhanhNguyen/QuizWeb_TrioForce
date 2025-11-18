@@ -5,15 +5,15 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using quizweb.Data;
+using QuizWeb_TrioForce.Data;
 
 #nullable disable
 
 namespace QuizWeb_TrioForce.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251116124758_InitDb")]
-    partial class InitDb
+    [Migration("20251116155006_InitialCreateDB")]
+    partial class InitialCreateDB
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

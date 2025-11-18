@@ -1,8 +1,14 @@
 using Microsoft.EntityFrameworkCore;
-using System;
-using quizweb.Data;
+
 using Microsoft.AspNetCore.Identity;
-using quizweb.Models;
+using QuizWeb_TrioForce.Data;
+using QuizWeb_TrioForce.Models;
+using QuizWeb_TrioForce.Repositories.Implementations;
+using QuizWeb_TrioForce.Repositories.Interfaces;
+
+using QuizWeb_TrioForce.Services.Interfaces;
+using QuizWeb_TrioForce.Services.Implementations;
+
 
 namespace QuizWeb_TrioForce
 {
@@ -18,6 +24,20 @@ namespace QuizWeb_TrioForce
             {
                 options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"), ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("DefaultConnection")));
             });
+            builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false).AddEntityFrameworkStores<AppDbContext>();
+
+            //DI for repositories
+            builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+            builder.Services.AddScoped<IUserRepository, UserRepository>();
+            builder.Services.AddScoped<IRankingRepository, RankingRepository>();
+           
+            //DI for services
+            builder.Services.AddScoped<ICategoryService, CategoryService>();
+            builder.Services.AddScoped<IUserService, UserService>();
+            builder.Services.AddScoped<IRankingService, RankingService>();
+            
+            builder.Services.AddScoped<IFileService, FileService>();
+            
 
             builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false).AddEntityFrameworkStores<AppDbContext>();
 
@@ -43,6 +63,7 @@ namespace QuizWeb_TrioForce
                 pattern: "{controller=Home}/{action=Index}/{id?}");
             app.MapRazorPages();
 
+            app.MapRazorPages();
             app.Run();
         }
     }

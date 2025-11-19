@@ -136,6 +136,18 @@ html {
   font-size: 1rem;
 }
 
+.site-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1030;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+body {
+    padding-top: 100px;
+}
+3
 /*.btn-gradient {
   background: linear-gradient(120deg, #2563eb, #7c3aed);
   border: none;

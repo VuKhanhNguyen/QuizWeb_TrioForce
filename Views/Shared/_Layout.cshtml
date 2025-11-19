@@ -73,6 +73,23 @@
             @RenderBody()
         </main>
     </div>
+    <div class="modal fade" id="logoutConfirmModal" tabindex="-1" aria-labelledby="logoutConfirmLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="logoutConfirmLabel">Xác nhận đăng xuất</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Bạn có chắc chắn muốn đăng xuất không?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Không</button>
+                    <button type="button" class="btn btn-danger" id="confirmLogoutBtn">Có</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <footer class="app-footer text-light mt-5">
         <div class="container py-5 position-relative">
@@ -129,6 +146,26 @@
             if (overlay) {
                 overlay.classList.add('hidden');
             }
+        });
+        document.addEventListener('DOMContentLoaded', function () {
+            var logoutForm = document.getElementById('logoutForm');
+            var confirmBtn = document.getElementById('confirmLogoutBtn');
+            var modalElement = document.getElementById('logoutConfirmModal');
+            if (!logoutForm || !confirmBtn || !modalElement || typeof bootstrap === 'undefined') {
+                return;
+            }
+
+            var logoutModal = new bootstrap.Modal(modalElement);
+
+            logoutForm.addEventListener('submit', function (event) {
+                event.preventDefault();
+                logoutModal.show();
+            });
+
+            confirmBtn.addEventListener('click', function () {
+                logoutModal.hide();
+                logoutForm.submit();
+            });
         });
     </script>
     @await RenderSectionAsync("Scripts", required: false)

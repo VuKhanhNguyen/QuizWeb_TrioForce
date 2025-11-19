@@ -1,83 +1,299 @@
-﻿@page
+﻿
+@page
 @model LoginModel
-
 @{
-    ViewData["Title"] = "Log in";
+    ViewData["Title"] = "Đăng nhập";
 }
 
-<h1>@ViewData["Title"]</h1>
-<div class="row">
-    <div class="col-md-4">
-        <section>
-            <form id="account" method="post">
-                <h2>Use a local account to log in.</h2>
-                <hr />
-                <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
-                <div class="form-floating mb-3">
-                    <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
-                    <label asp-for="Input.Email" class="form-label">Email</label>
-                    <span asp-validation-for="Input.Email" class="text-danger"></span>
-                </div>
-                <div class="form-floating mb-3">
-                    <input asp-for="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" placeholder="password" />
-                    <label asp-for="Input.Password" class="form-label">Password</label>
-                    <span asp-validation-for="Input.Password" class="text-danger"></span>
-                </div>
-                <div class="checkbox mb-3">
-                    <label asp-for="Input.RememberMe" class="form-label">
-                        <input class="form-check-input" asp-for="Input.RememberMe" />
-                        @Html.DisplayNameFor(m => m.Input.RememberMe)
-                    </label>
-                </div>
-                <div>
-                    <button id="login-submit" type="submit" class="w-100 btn btn-lg btn-primary">Log in</button>
-                </div>
-                <div>
-                    <p>
-                        <a id="forgot-password" asp-page="./ForgotPassword">Forgot your password?</a>
-                    </p>
-                    <p>
-                        <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">Register as a new user</a>
-                    </p>
-                    <p>
-                        <a id="resend-confirmation" asp-page="./ResendEmailConfirmation">Resend email confirmation</a>
-                    </p>
-                </div>
-            </form>
-        </section>
-    </div>
-    <div class="col-md-6 col-md-offset-2">
-        <section>
-            <h3>Use another service to log in.</h3>
-            <hr />
-            @{
-                if ((Model.ExternalLogins?.Count ?? 0) == 0)
-                {
-                    <div>
-                        <p>
-                            There are no external authentication services configured. See this <a href="https://go.microsoft.com/fwlink/?LinkID=532715">article
-                            about setting up this ASP.NET application to support logging in via external services</a>.
-                        </p>
+<div class="register-container">
+    <div class="register-card">
+        <div class="register-header">
+            <h1><i class="fa-regular fa-right-to-bracket"></i> Đăng nhập</h1>
+            <p>Chào mừng bạn trở lại QuizWeb TrioForce</p>
+        </div>
+        <div class="register-body">
+            <div class="row">
+                <div class="col-lg-7">
+                    <div class="form-section">
+                        <h2>Đăng nhập bằng tài khoản</h2>
+                        <form id="account" method="post">
+                            <div asp-validation-summary="ModelOnly" class="validation-summary" role="alert"></div>
+                            
+                            <div class="form-floating">
+                                <input asp-for="Input.UserName" class="form-control" autocomplete="username" aria-required="true" placeholder="nguyenvana" />
+                                <label asp-for="Input.UserName">Tên đăng nhập</label>
+                                <span asp-validation-for="Input.UserName" class="text-danger"></span>
+                            </div>
+                            
+                            <div class="form-floating">
+                                <input asp-for="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" placeholder="password" />
+                                <label asp-for="Input.Password">Mật khẩu</label>
+                                <span asp-validation-for="Input.Password" class="text-danger"></span>
+                            </div>
+                            
+                            <div class="checkbox mb-3">
+                                <label asp-for="Input.RememberMe" class="form-label">
+                                    <input class="form-check-input" asp-for="Input.RememberMe" />
+                                    @Html.DisplayNameFor(m => m.Input.RememberMe)
+                                </label>
+                            </div>
+                            
+                            <button id="login-submit" type="submit" class="btn btn-register">Đăng nhập</button>
+                            
+                            <div class="login-links">
+                                <p>
+                                    <a id="forgot-password" asp-page="./ForgotPassword">Quên mật khẩu?</a>
+                                </p>
+                                <p>
+                                    <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">Đăng ký tài khoản mới</a>
+                                </p>
+                                <p>
+                                    <a id="resend-confirmation" asp-page="./ResendEmailConfirmation">Gửi lại email xác nhận</a>
+                                </p>
+                            </div>
+                        </form>
                     </div>
-                }
-                else
-                {
-                    <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal">
-                        <div>
-                            <p>
-                                @foreach (var provider in Model.ExternalLogins!)
-                                {
-                                    <button type="submit" class="btn btn-primary" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">@provider.DisplayName</button>
-                                }
-                            </p>
-                        </div>
-                    </form>
-                }
-            }
-        </section>
+                </div>
+                
+                <div class="col-lg-5">
+                    <div class="external-login-section">
+                        <h3>Đăng nhập bằng tài khoản khác</h3>
+                        @{
+                            if ((Model.ExternalLogins?.Count ?? 0) == 0)
+                            {
+                                <div class="social-login-buttons">
+                                    <a href="#" class="social-btn facebook" title="Đăng nhập bằng Facebook">
+                                        <img src="~/assets/facebook.png" />
+                                    </a>
+                                    <a href="#" class="social-btn google" title="Đăng nhập bằng Google">
+                                        <img src="~/assets/google.png" />
+                                    </a>
+                                    <a href="#" class="social-btn github" title="Đăng nhập bằng GitHub">
+                                        <img src="~/assets/github.png" />
+                                    </a>
+                                </div>
+                            }
+                            else
+                            {
+                                <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal">
+                                    <div>
+                                        @foreach (var provider in Model.ExternalLogins!)
+                                        {
+                                            <button type="submit" class="btn btn-external" name="provider" value="@provider.Name" title="Đăng nhập bằng tài khoản @provider.DisplayName của bạn">
+                                                @provider.DisplayName
+                                            </button>
+                                        }
+                                    </div>
+                                </form>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
+@section Styles {
+    <style>
+        .login-success-popup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @@keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .popup-content {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            min-width: 350px;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @@keyframes slideUp {
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .popup-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: scaleIn 0.4s ease-out;
+        }
+
+        @@keyframes scaleIn {
+            from {
+                transform: scale(0);
+            }
+            to {
+                transform: scale(1);
+            }
+        }
+
+        .popup-icon i {
+            font-size: 40px;
+            color: white;
+        }
+
+        .popup-content h3 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .popup-content p {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 4px;
+            background: #e0e0e0;
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 20px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            width: 0%;
+            border-radius: 2px;
+            transition: width 0.1s linear;
+            animation: progressAnimation 3s linear forwards;
+        }
+
+        @@keyframes progressAnimation {
+            from {
+                width: 100%;
+            }
+            to {
+                width: 0%;
+            }
+        }
+
+        .login-success-popup.fade-out {
+            animation: fadeOut 0.3s ease-in-out forwards;
+        }
+
+        @@keyframes fadeOut {
+            from {
+                opacity: 1;
+            }
+            to {
+                opacity: 0;
+            }
+        }
+    </style>
+}
+
 @section Scripts {
-    <partial name="_ValidationScriptsPartial" />
+    <script>
+        $(document).ready(function() {
+            // Kiểm tra nếu đăng nhập thành công
+            var loginSuccess = '@TempData["LoginSuccess"]';
+            var returnUrl = '@TempData["ReturnUrl"]' || '@Model.ReturnUrl' || '/';
+
+            if (loginSuccess === 'true') {
+                // Hiển thị popup
+                $('#loginSuccessPopup').fadeIn(300);
+
+                // Bắt đầu animation progress bar
+                var progressBar = $('#loginProgressBar');
+                progressBar.css('width', '100%');
+
+                // Sau 3 giây, ẩn popup và redirect
+                setTimeout(function() {
+                    $('#loginSuccessPopup').addClass('fade-out');
+                    setTimeout(function() {
+                        window.location.href = returnUrl;
+                    }, 300);
+                }, 3000);
+            }
+
+            // Xử lý form submit để hiển thị popup trước khi redirect
+            $('#account').on('submit', function(e) {
+                var form = $(this);
+                var formData = form.serialize();
+                var actionUrl = form.attr('action') || window.location.pathname;
+                var method = form.attr('method') || 'POST';
+
+                // Nếu có anti-forgery token
+                var token = $('input[name="__RequestVerificationToken"]').val();
+                if (token) {
+                    formData += '&__RequestVerificationToken=' + encodeURIComponent(token);
+                }
+
+                $.ajax({
+                    url: actionUrl,
+                    type: method,
+                    data: formData,
+                    success: function(response) {
+                        // Kiểm tra nếu có lỗi validation
+                        var html = $(response);
+                        var hasErrors = html.find('.validation-summary-errors, .text-danger').length > 0;
+
+                        if (!hasErrors && !html.find('input[name="Input.UserName"]').length) {
+                            // Đăng nhập thành công - hiển thị popup
+                            $('#loginSuccessPopup').fadeIn(300);
+                            var progressBar = $('#loginProgressBar');
+                            progressBar.css('width', '100%');
+
+                            setTimeout(function() {
+                                $('#loginSuccessPopup').addClass('fade-out');
+                                setTimeout(function() {
+                                    // Lấy returnUrl từ form hoặc mặc định
+                                    var returnUrl = '@Model.ReturnUrl' || '/';
+                                    window.location.href = returnUrl;
+                                }, 300);
+                            }, 3000);
+                        } else {
+                            // Có lỗi - cập nhật form với response
+                            $('body').html(response);
+                        }
+                    },
+                    error: function() {
+                        // Xử lý lỗi nếu cần
+                        console.error('Login error');
+                    }
+                });
+
+                return false; // Ngăn form submit mặc định
+            });
+        });
+    </script>
 }

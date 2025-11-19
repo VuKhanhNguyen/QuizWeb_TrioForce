@@ -1,5 +1,5 @@
-﻿using QuizWeb_TrioForce.Repositories.Interfaces;
-using QuizWeb_TrioForce.Models;
+﻿using QuizWeb_TrioForce.Models;
+using QuizWeb_TrioForce.Repositories.Interfaces;
 using QuizWeb_TrioForce.Services.Interfaces;
 using QuizWeb_TrioForce.ViewModels.Category;
 
@@ -23,7 +23,8 @@ namespace QuizWeb_TrioForce.Services.Implementations
             {
                 CategoryName = viewModel.CategoryName,
                 ImgUrl = path!
-            };  
+            };
+
             await _categoryRepository.AddCategoryAsync(cate);
         }
         public async Task UpdateCategoryAsync(Category category)

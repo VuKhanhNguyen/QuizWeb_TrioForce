@@ -9,7 +9,7 @@ html {
 }
 
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+  box-shadow: 0 0 0 1.6px white, 0 0 0 4px #258cfb;
 }
 
 html {
@@ -82,7 +82,7 @@ html {
 }
 
 .letter-spacing-1 {
-  letter-spacing: 0.08em;
+  letter-spacing: 1.28px;
 }
 
 .site-header {
@@ -91,8 +91,8 @@ html {
 
 .app-navbar {
   background: transparent;
-  padding-top: 1rem;
-  padding-bottom: 1rem;
+  padding-top: 16px;
+  padding-bottom: 16px;
 }
 
 .app-navbar .navbar-toggler {
@@ -105,22 +105,22 @@ html {
 
 .brand-title {
   font-weight: 600;
-  font-size: 1rem;
+  font-size: 16px;
   color: #0f172a;
 }
 
 .brand-tagline {
-  font-size: 0.75rem;
+  font-size: 12px;
 }
 
 .app-navbar .nav-link {
   font-weight: 500;
   color: #1e293b;
   border-radius: 999px;
-  padding: 0.55rem 1rem;
+  padding: 8.8px 16px;
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
+  gap: 5.6px;
   transition: color 0.2s ease, background 0.2s ease, transform 0.2s ease;
 }
 
@@ -133,7 +133,7 @@ html {
 
 .nav-icon {
   color: #3b82f6;
-  font-size: 1rem;
+  font-size: 16px;
 }
 
 .site-header {

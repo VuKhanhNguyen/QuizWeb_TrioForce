@@ -1,6 +1,5 @@
 ﻿using QuizWeb_TrioForce.Models;
 using QuizWeb_TrioForce.Repositories.Interfaces;
-using QuizWeb_TrioForce.Services.Implementations;
 using QuizWeb_TrioForce.Services.Interfaces;
 
 namespace QuizWeb_TrioForce.Services.Implementations
@@ -36,7 +35,7 @@ namespace QuizWeb_TrioForce.Services.Implementations
         public async Task<Ranking> GetUserRankingAsync(string username)
         {
             var ranking = await _rankingRepository.GetUserRankingAsync(username);
-
+            
             return ranking ?? throw new Exception("UserRanking is not found");
         }
 

@@ -3,12 +3,11 @@
     ViewData["Title"] = "Hồ sơ cá nhân";
 }
 
-@section Styles {
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
-}
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 
 <div class="profile-container">
-    <div class="profile-header fade-in-up">
+    <div class="profile-header">
         <div class="profile-banner">
             <div class="banner-decoration"></div>
             <div class="banner-decoration"></div>
@@ -23,11 +22,11 @@
     </div>
 
     <div class="profile-body">
-        <div class="section-header fade-in-up fade-in-delay-1">
+        <div class="section-header">
             <h2>📝 Thông tin cá nhân</h2>
         </div>
         
-        <div class="form-row fade-in-up fade-in-delay-2">
+        <div class="form-row">
             <div class="form-group">
                 <label><span class="label-icon">👤</span> Họ và tên</label>
                 <input type="text" id="fullname" value="@Model.Fullname" class="form-control" />
@@ -39,7 +38,7 @@
             </div>
         </div>
 
-        <div class="form-row fade-in-up fade-in-delay-3">
+        <div class="form-row">
             <div class="form-group">
                 <label><span class="label-icon">🎂</span> Ngày sinh</label>
                 <input type="text" id="birthday" value="@Model.Birthday" class="form-control" placeholder="dd/MM/yyyy" />
@@ -64,10 +63,5 @@
 </div>
 
 @Html.AntiForgeryToken()
-
-@section Scripts {
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
-    <script src="~/js/profile.js" asp-append-version="true"></script>
-}
 
 

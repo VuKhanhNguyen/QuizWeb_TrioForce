@@ -25,24 +25,28 @@ namespace QuizWeb_TrioForce
 
             //DI for repositories
             builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
-            builder.Services.AddScoped<IUserRepository, UserRepository>();
-            builder.Services.AddScoped<IRankingRepository, RankingRepository>();
-
-            //DI for services
-            builder.Services.AddScoped<ICategoryService, CategoryService>();
-            builder.Services.AddScoped<IUserService, UserService>();
-            builder.Services.AddScoped<IRankingService, RankingService>();
-            builder.Services.AddScoped<IFileService, FileService>();
-
-            //DI for repositories
-            builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
             builder.Services.AddScoped<ILevelRepository, LevelRepository>();
             builder.Services.AddScoped<IMarkedQuestionRepository, MarkedQuestionRepository>();
             builder.Services.AddScoped<IProgressQuestionSetRepository, ProgressQuestionSetRepository>();
             builder.Services.AddScoped<IQuestionRepository, QuestionRepository>();
             builder.Services.AddScoped<IQuestionSetRepository, QuestionSetRepository>();
+            builder.Services.AddScoped<IUserRepository, UserRepository>();
+            builder.Services.AddScoped<IRankingRepository, RankingRepository>();
+            builder.Services.AddScoped<IUnitOfWork, EfUnitOfWork>();
             builder.Services.AddScoped<IAnswerRepository, AnswerRepository>();
             builder.Services.AddScoped<IAnsweredQuestionRepository, AnsweredQuestionRepository>();
+            //DI for services
+            builder.Services.AddScoped<ICategoryService, CategoryService>();
+            builder.Services.AddScoped<ILevelService, LevelService>();
+            builder.Services.AddScoped<IMarkedQuestionService, MarkedQuestionService>();
+            builder.Services.AddScoped<IProgressQuestionSetService, ProgressQuestionSetService>();
+            builder.Services.AddScoped<IQuestionService, QuestionService>();
+            builder.Services.AddScoped<IQuestionSetService, QuestionSetService>();
+            builder.Services.AddScoped<IUserService, UserService>();
+            builder.Services.AddScoped<IRankingService, RankingService>();
+            builder.Services.AddScoped<IFileService, FileService>();
+            builder.Services.AddScoped<IQuizService, QuizService>();
+            builder.Services.AddScoped<IAnsweredQuestionService, AnsweredQuestionService>();
 
             var app = builder.Build();
 

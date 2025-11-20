@@ -49,6 +49,10 @@
     transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 8c0b6f91d399f899e554d45332c0f703ae9dd677
 .category-card:hover .category-image-wrapper {
     transform: translateY(-4px) scale(1.05);
     box-shadow: 0 16px 36px rgba(37, 99, 235, 0.25);

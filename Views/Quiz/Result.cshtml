@@ -1,0 +1,40 @@
+﻿@model QuizWeb_TrioForce.ViewModels.QuestionSet.QuizResultViewModel;
+@{
+    ViewBag.Title = "Quiz Result";
+}
+
+<div>
+    <h1>Quiz Result</h1>
+    <div>
+        <p>Quiz Name: @Model.QSetName</p>
+        <p>Score: @Model.Score</p>
+        <p>Correct Answers / Total Questions: @Model.QuestionResults.Where(qr => qr.IsCorrect == true).Count() / @Model.TotalQuestions</p>
+    </div>
+    <div>
+        <h2>Question Details</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Question ID</th>
+                    <th>Your Answer ID</th>
+                    <th>Is Correct?</th>
+                    <th>Correct Answer ID</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var result in Model.QuestionResults)
+                {
+                    <tr>
+                        <td>@result.QuestionId</td>
+                        <td>@result.UserSelecteAnswerId</td>
+                        <td>@(result.IsCorrect ? "Yes" : "No")</td>
+                        <td>@result.CorrectAnswerId</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div><a asp-action="Play" asp-controller="Quiz">Play Again</a></div>
+
+</div>

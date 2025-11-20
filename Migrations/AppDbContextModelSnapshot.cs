@@ -177,7 +177,7 @@ namespace QuizWeb_TrioForce.Migrations
 
                     b.HasIndex("QuestionId");
 
-                    b.ToTable("Answers");
+                    b.ToTable("Answers", (string)null);
                 });
 
             modelBuilder.Entity("QuizWeb_TrioForce.Models.AnsweredQuestion", b =>
@@ -202,7 +202,7 @@ namespace QuizWeb_TrioForce.Migrations
 
                     b.HasIndex("SelectedAnswerId");
 
-                    b.ToTable("AnsweredQuestions");
+                    b.ToTable("AnsweredQuestions", (string)null);
                 });
 
             modelBuilder.Entity("QuizWeb_TrioForce.Models.ApplicationUser", b =>
@@ -301,7 +301,7 @@ namespace QuizWeb_TrioForce.Migrations
 
                     b.HasKey("CategoryId");
 
-                    b.ToTable("Categories");
+                    b.ToTable("Categories", (string)null);
                 });
 
             modelBuilder.Entity("QuizWeb_TrioForce.Models.Level", b =>
@@ -319,7 +319,7 @@ namespace QuizWeb_TrioForce.Migrations
 
                     b.HasKey("LevelId");
 
-                    b.ToTable("Levels");
+                    b.ToTable("Levels", (string)null);
                 });
 
             modelBuilder.Entity("QuizWeb_TrioForce.Models.MarkedQuestion", b =>
@@ -337,7 +337,7 @@ namespace QuizWeb_TrioForce.Migrations
 
                     b.HasIndex("QuestionId");
 
-                    b.ToTable("MarkedQuestions");
+                    b.ToTable("MarkedQuestions", (string)null);
                 });
 
             modelBuilder.Entity("QuizWeb_TrioForce.Models.ProgressQuestionSet", b =>
@@ -363,7 +363,7 @@ namespace QuizWeb_TrioForce.Migrations
 
                     b.HasIndex("QuestionLastId");
 
-                    b.ToTable("ProgressQuestionSets");
+                    b.ToTable("ProgressQuestionSets", (string)null);
                 });
 
             modelBuilder.Entity("QuizWeb_TrioForce.Models.Question", b =>
@@ -386,7 +386,7 @@ namespace QuizWeb_TrioForce.Migrations
 
                     b.HasIndex("QSetId");
 
-                    b.ToTable("Questions");
+                    b.ToTable("Questions", (string)null);
                 });
 
             modelBuilder.Entity("QuizWeb_TrioForce.Models.QuestionSet", b =>
@@ -429,7 +429,7 @@ namespace QuizWeb_TrioForce.Migrations
 
                     b.HasIndex("LevelId");
 
-                    b.ToTable("QuestionSets");
+                    b.ToTable("QuestionSets", (string)null);
                 });
 
             modelBuilder.Entity("QuizWeb_TrioForce.Models.Ranking", b =>
@@ -442,7 +442,7 @@ namespace QuizWeb_TrioForce.Migrations
 
                     b.HasKey("UserName");
 
-                    b.ToTable("Rankings");
+                    b.ToTable("Rankings", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

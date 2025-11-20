@@ -8,7 +8,7 @@
 <div class="register-container">
     <div class="register-card">
         <div class="register-header">
-            <h1><i class="fa-regular fa-right-to-bracket"></i> Đăng nhập</h1>
+            <h1><i class="fa-solid fa-right-to-bracket"></i> Đăng nhập</h1>
             <p>Chào mừng bạn trở lại QuizWeb TrioForce</p>
         </div>
         <div class="register-body">
@@ -40,16 +40,14 @@
                             
                             <button id="login-submit" type="submit" class="btn btn-register">Đăng nhập</button>
                             
-                            <div class="login-links">
+                            <div class="login-links mt-3">
                                 <p>
                                     <a id="forgot-password" asp-page="./ForgotPassword">Quên mật khẩu?</a>
                                 </p>
                                 <p>
-                                    <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">Đăng ký tài khoản mới</a>
+                                    <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">Bạn chưa có tài khoản? Hãy đăng ký nào!!</a>
                                 </p>
-                                <p>
-                                    <a id="resend-confirmation" asp-page="./ResendEmailConfirmation">Gửi lại email xác nhận</a>
-                                </p>
+                               
                             </div>
                         </form>
                     </div>

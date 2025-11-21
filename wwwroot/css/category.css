@@ -22,7 +22,6 @@
     transition: transform 0.25s ease, filter 0.25s ease;
 }
 
-
 .feature-card:hover .feature-icon {
     transform: translateY(-4px) scale(1.03);
     filter: drop-shadow(0 14px 28px rgba(37, 99, 235, 0.25));
@@ -49,7 +48,6 @@
     box-shadow: 0 12px 30px rgba(15, 23, 42, 0.16);
     transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
-
 
 .category-card:hover .category-image-wrapper {
     transform: translateY(-4px) scale(1.05);

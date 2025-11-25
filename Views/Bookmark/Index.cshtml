@@ -1,0 +1,88 @@
+﻿@model QuizWeb_TrioForce.ViewModels.BookMark.BookMarkViewModel
+@{
+    ViewData["Title"] = "Bookmarks";
+}
+
+<div class="container mt-4">
+
+    <h2 class="mb-3">Marked Questions</h2>
+    @if (Model.MarkedQuestionList != null && Model.MarkedQuestionList.Any())
+    {
+        <div class="list-group mb-5">
+            @foreach (var bm in Model.MarkedQuestionList)
+            {
+                <div class="list-group-item list-group-item-action flex-column align-items-start">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h5 class="mb-1">Question ID: @bm.QuestionId</h5>
+                        <small>@bm.MarkedTime.ToString("g")</small>
+                    </div>
+                    <a href="#" class="btn btn-sm btn-outline-primary mt-2">Go to Question</a>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <p>You have no marked questions.</p>
+    }
+
+    <h2 class="mb-3">In Progress Question Sets</h2>
+    @if (Model.ProgressQuestionSetList != null && Model.ProgressQuestionSetList.Any())
+    {
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mb-5">
+            @foreach (var pgs in Model.ProgressQuestionSetList)
+            {
+                <div class="col">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">@pgs.QSetName</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">by @pgs.AuthorName</h6>
+                            <p class="card-text">
+                                Progress: @pgs.QuestionCount / @pgs.TotalQuestions
+                            </p>
+                            <div class="progress mb-2">
+                                <div class="progress-bar" role="progressbar" style="width: @((double)pgs.QuestionCount / pgs.TotalQuestions * 100)%;" aria-valuenow="@pgs.QuestionCount" aria-valuemin="0" aria-valuemax="@pgs.TotalQuestions"></div>
+                            </div>
+                             <a href="#" class="btn btn-primary">Continue</a>
+                        </div>
+                        <div class="card-footer">
+                            <small class="text-muted">Last updated: @pgs.LastUpdated.ToString("g")</small>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <p>You have no question sets in progress.</p>
+    }
+
+
+    <h2 class="mb-3">Created Question Sets</h2>
+    @if (Model.CreatedQuestionList != null && Model.CreatedQuestionList.Any())
+    {
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            @foreach (var cqs in Model.CreatedQuestionList)
+            {
+                <div class="col">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">@cqs.QSetName</h5>
+                            <p class="card-text">@cqs.Description</p>
+                            <span class="badge bg-info me-1">Category: @cqs.CategoryId</span>
+                            <span class="badge bg-secondary">Level: @cqs.LevelId</span>
+                        </div>
+                        <div class="card-footer">
+                            <small class="text-muted">Created: @cqs.CreatedTime.ToString("g")</small>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <p>You have not created any question sets.</p>
+    }
+</div>

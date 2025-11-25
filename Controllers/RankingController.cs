@@ -18,7 +18,7 @@ namespace QuizWeb_TrioForce.Controllers
         // GET: RankingController
         public async Task<IActionResult> Index()
         {
-            var rankings = await _rankingService.GetTopRankingsAsync(10);
+            var rankings = await _rankingService.GetTopRankingsAsync(int.MaxValue);
             var viewModels = rankings.Select(r => new RankingListViewModel
             {
                 Username = r.UserName,

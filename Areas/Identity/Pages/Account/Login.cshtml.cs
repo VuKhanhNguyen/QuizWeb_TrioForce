@@ -115,6 +115,9 @@ namespace QuizWeb_TrioForce.Areas.Identity.Pages.Account
                 var result = await _signInManager.PasswordSignInAsync(Input.UserName, Input.Password, Input.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
+                    TempData["ToastMessage"] = "✅Đăng nhập thành công!";
+                    TempData["ToastType"] = "success";
+                    TempData["ToastDuration"] = 3000;
                     _logger.LogInformation("User logged in.");
                     return LocalRedirect(returnUrl);
                 }

@@ -154,10 +154,16 @@ namespace QuizWeb_TrioForce.Areas.Identity.Pages.Account
 
                     if (_userManager.Options.SignIn.RequireConfirmedAccount)
                     {
+                        TempData["ToastMessage"] = "✅Đăng ký thành công! Vui lòng kiểm tra email để xác nhận.";
+                        TempData["ToastType"] = "success";
+                        TempData["ToastDuration"] = 4000;
                         return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
                     }
                     else
                     {
+                        TempData["ToastMessage"] = "✅Đăng ký thành công! Chào mừng bạn đến QuizWeb TrioForce.";
+                        TempData["ToastType"] = "success";
+                        TempData["ToastDuration"] = 3500;
                         await _signInManager.SignInAsync(user, isPersistent: false);
                         return LocalRedirect(returnUrl);
                     }

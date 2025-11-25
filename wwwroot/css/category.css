@@ -8,12 +8,12 @@
     background-color: #ffffff;
 }
 
-    .feature-card:hover,
-    .category-card:hover {
-        transform: translateY(-6px);
-        box-shadow: 0 14px 30px rgba(15, 23, 42, 0.12);
-        background-color: #f8fafc;
-    }
+.feature-card:hover,
+.category-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 14px 30px rgba(15, 23, 42, 0.12);
+    background-color: #f8fafc;
+}
 
 .feature-icon {
     max-height: 120px;
@@ -22,7 +22,6 @@
     transition: transform 0.25s ease, filter 0.25s ease;
 }
 
-/* Icon hơi nhô lên + phóng to nhẹ khi hover card chế độ chơi */
 .feature-card:hover .feature-icon {
     transform: translateY(-4px) scale(1.03);
     filter: drop-shadow(0 14px 28px rgba(37, 99, 235, 0.25));
@@ -50,7 +49,6 @@
     transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
-/* Ảnh chủ đề cũng có hiệu ứng nhô lên, zoom nhẹ */
 .category-card:hover .category-image-wrapper {
     transform: translateY(-4px) scale(1.05);
     box-shadow: 0 16px 36px rgba(37, 99, 235, 0.25);

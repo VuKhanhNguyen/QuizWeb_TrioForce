@@ -1,1 +1,26 @@
-﻿
+﻿@using System.Text.Encodings.Web
+@{
+    var message = TempData["ToastMessage"] as string;
+    var type = TempData["ToastType"] as string ?? "info";
+    var durationObj = TempData["ToastDuration"];
+    var duration = durationObj is int d ? d : 3500;
+}
+
+@if (!string.IsNullOrWhiteSpace(message))
+{
+    var safeMessage = JavaScriptEncoder.Default.Encode(message);
+<text>
+    <script>
+        window.__toastMessage = {
+            message: "@safeMessage",
+            type: "@type",
+            duration: @duration
+        };
+        if (window.showToastMessage) {
+            window.showToastMessage(window.__toastMessage);
+            window.__toastMessage = null;
+        }
+    </script>
+</text>
+}
+

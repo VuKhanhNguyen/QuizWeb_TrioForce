@@ -48,7 +48,7 @@ namespace QuizWeb_TrioForce.Services.Implementations
                 QuestionCount = p.QuestionCount,
                 TotalQuestions = p.QuestionSet.Questions.Count(),
                 QuestionLastId = p.QuestionLastId,
-                LastUpdated = p.LastUpdated,
+                LastUpdated = p.LastUpdated.ToLocalTime(),
                 AuthorName = p.UserName
             }).ToList();
         }

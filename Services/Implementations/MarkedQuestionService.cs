@@ -20,7 +20,7 @@ namespace QuizWeb_TrioForce.Services.Implementations
             return allMarkedQuestions.Select(mq => new MarkedQuestionListViewModel()
             {
                 QuestionId = mq.QuestionId,
-                MarkedTime = mq.MarkedTime
+                MarkedTime = mq.MarkedTime.ToLocalTime()
             }).ToList();
 
         }

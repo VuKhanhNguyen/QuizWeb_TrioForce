@@ -50,7 +50,7 @@ namespace QuizWeb_TrioForce.Repositories.Implementations
                 .Include(qs => qs.Level)
                 .Include(qs => qs.Questions)
                     .ThenInclude(q => q.Answers)
-                .OrderBy(q => Guid.NewGuid()).FirstOrDefaultAsync();
+                .OrderBy(q => EF.Functions.Random()).FirstOrDefaultAsync();
         }
 
         public async Task<QuestionSet?> GetQuestionSetRandomByIdCateAndIdLevel(int idCate, int idLevel)

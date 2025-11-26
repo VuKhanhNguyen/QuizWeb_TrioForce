@@ -37,15 +37,15 @@ namespace QuizWeb_TrioForce.Controllers
                 string imageUrl = "";
                 if (l.LevelName.ToLower() == "dễ")
                 {
-                    imageUrl = "/assets/easyyy.png";
+                    imageUrl = "/assets/level/easyyy.png";
                 }
                 else if (l.LevelName.ToLower() == "trung bình")
                 {
-                    imageUrl = "/assets/mediummm.png";
+                    imageUrl = "/assets/level/mediummm.png";
                 }
                 else if (l.LevelName.ToLower() == "khó")
                 {
-                    imageUrl = "/assets/harddd.png";
+                    imageUrl = "/assets/level/harddd.png";
                 }
                 return new LevelViewModel
                 {

@@ -37,7 +37,14 @@ namespace QuizWeb_TrioForce.Repositories.Implementations
         public async Task<ApplicationUser?> GetProfileAsync(string username)
 
         {
-            return await _context.Users.AsNoTracking().Where(u => u.UserName == username).FirstOrDefaultAsync();
+            return await _context.Users
+                .AsNoTracking()
+                .Include(u => u.AnsweredQuestions)
+                    .ThenInclude(aq => aq.Answer)
+                .Include(u => u.ProgressQuestionSets)
+                .Include(u => u.QuestionSets)
+                .Where(u => u.UserName == username)
+                .FirstOrDefaultAsync();
         }
 
         public async Task UpdateProfileAsync(ApplicationUser user)

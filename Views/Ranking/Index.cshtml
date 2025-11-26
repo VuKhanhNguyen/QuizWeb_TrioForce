@@ -1,32 +1,159 @@
 ﻿@model List<QuizWeb_TrioForce.ViewModels.RankingListViewModel>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Bảng xếp hạng";
+    var currentUsername = User?.Identity?.Name; 
 }
 
-<h1>Ranking</h1>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.First().Username)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.First().TotalScore)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var user in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => user.Username)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => user.TotalScore)
-            </td>
-        </tr>
+
+<div class="ranking-container fade-in-up">
+    <h1 class="fade-in-up fade-in-delay-1">🏆 Bảng Xếp Hạng</h1>
+    
+    @if (Model != null && Model.Any())
+    {
+        <div class="ranking-table-wrapper fade-in-up fade-in-delay-2">
+            <table class="ranking-table">
+                <thead>
+                    <tr>
+                        <th>Hạng</th>
+                        <th>Tên người chơi</th>
+                        <th>Điểm số</th>
+                    </tr>
+                </thead>
+            </table>
+            
+            <div class="ranking-tbody-wrapper">
+                <table class="ranking-table">
+                    <tbody>
+                        @for (int i = 0; i < Model.Count; i++)
+                        {
+                            var isCurrentUser = Model[i].Username == currentUsername;
+                            var rowClass = i < 3 ? "top-" + (i + 1) : "";
+                            if (isCurrentUser) rowClass += " current-user";
+                            
+                            <tr class="@rowClass" data-username="@Model[i].Username" id="rank-@i">
+                                <td class="rank-col">
+                                    @if (i == 0) { <span>🥇</span> }
+                                    else if (i == 1) { <span>🥈</span> }
+                                    else if (i == 2) { <span>🥉</span> }
+                                    else { <span>@(i + 1)</span> }
+                                </td>
+                                <td class="username-col">
+                                    @Model[i].Username
+                                    @if (isCurrentUser) { <span class="you-badge">Bạn</span> }
+                                </td>
+                                <td class="score-col">@Model[i].TotalScore</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        @if (!string.IsNullOrEmpty(currentUsername))
+        {
+            var userRank = Model.FindIndex(u => u.Username == currentUsername);
+            if (userRank >= 0)
+            {
+                <div class="current-user-info-bottom fade-in-up fade-in-delay-3" onclick="scrollToCurrentUser()">
+                    <span class="info-icon">👤</span>
+                    <span>Hạng của bạn: <strong>#@(userRank + 1)</strong></span>
+                    <span class="click-hint"> Nhấn để xem</span>
+                </div>
+            }
+        }
+    }
+    else
+    {
+        <div class="empty-message fade-in-up fade-in-delay-2">
+            <p>Chưa có dữ liệu xếp hạng</p>
+        </div>
+    }
+</div>
+
+<!-- Player Stats Modal -->
+<div id="playerStatsModal" class="modal-overlay" onclick="closeModal()">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <div class="modal-header">
+            <h2>📊 Thông tin người chơi</h2>
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="player-info-section">
+                <div class="player-avatar">👤</div>
+                <h3 id="modal-fullname"></h3>
+                <p class="player-username" id="modal-username"></p>
+            </div>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">🏆</div>
+                    <div class="stat-info">
+                        <div class="stat-label">Hạng</div>
+                        <div class="stat-value" id="modal-rank">--</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">⭐</div>
+                    <div class="stat-info">
+                        <div class="stat-label">Tổng điểm</div>
+                        <div class="stat-value" id="modal-score">--</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">🎮</div>
+                    <div class="stat-info">
+                        <div class="stat-label">Lượt chơi</div>
+                        <div class="stat-value" id="modal-games">--</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">📝</div>
+                    <div class="stat-info">
+                        <div class="stat-label">Câu hỏi đã trả lời</div>
+                        <div class="stat-value" id="modal-questions">--</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">✅</div>
+                    <div class="stat-info">
+                        <div class="stat-label">Trả lời đúng</div>
+                        <div class="stat-value" id="modal-correct">--</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">🎯</div>
+                    <div class="stat-info">
+                        <div class="stat-label">Tỉ lệ đúng</div>
+                        <div class="stat-value" id="modal-accuracy">--</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">📧</div>
+                    <div class="stat-info">
+                        <div class="stat-label">Email</div>
+                        <div class="stat-value small-text" id="modal-email">--</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">📚</div>
+                    <div class="stat-info">
+                        <div class="stat-label">Bộ câu hỏi đã tạo</div>
+                        <div class="stat-value" id="modal-created">--</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/ranking.js" asp-append-version="true"></script>
 }
-    </tbody>
-</table>

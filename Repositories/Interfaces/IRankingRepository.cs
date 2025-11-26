@@ -9,4 +9,6 @@ namespace QuizWeb_TrioForce.Repositories.Interfaces
         Task CreateInitialRankingAsync(string username);
         Task UpdateUserScoreAsync(string username, int score);
     }
+
 }
+

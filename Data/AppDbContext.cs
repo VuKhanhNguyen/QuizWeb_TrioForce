@@ -19,6 +19,7 @@ namespace QuizWeb_TrioForce.Data
         public DbSet<Question> Questions { get; set; } = null!;
         public DbSet<QuestionSet> QuestionSets { get; set; } = null!;
         public DbSet<Ranking> Rankings { get; set; } = null!;
+       
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

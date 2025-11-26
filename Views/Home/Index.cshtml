@@ -5,62 +5,170 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div>
-    <div class="container my-4">
-        
-        <div class="row row-cols-1 row-cols-sm-2 g-4 mb-4">
-            <div class="col mb-5">
-                <div class="card text-center shadow rounded-4 border-0">
-                    <div class="card-body py-4">
-                        <img src="/assets/question.png"
-                             class="img-fluid mb-3"
-                             style="max-height: 120px; object-fit: cover;"
-                             alt="Play Now" />
-                        <h6 class="fw-bold mb-0">
-                            <a asp-action="Play"
-                               asp-controller="Quiz"
-                               class="stretched-link text-decoration-none text-dark">
-                                Play Now
-                            </a>
-                        </h6>
-                    </div>
+<div class="home-hero py-5 py-md-5">
+    <div class="container">
+
+        <!-- Hero section -->
+        <div class="row align-items-center mb-5">
+            <div class="col-lg-7 mb-4 mb-lg-0 fade-in-up">
+                <span class="soft-pill d-inline-flex align-items-center gap-2 mb-3">
+                    <span class="rounded-circle bg-success-subtle d-inline-block" style="width: 6px; height: 6px;"></span>
+                    QuizWeb TrioForce
+                </span>
+                <h1 class="fw-semibold mb-3" style="color: #0f172a;">
+                    Khám phá thế giới câu hỏi<br class="d-none d-md-block" />
+                    <span class="fw-bold" style="color: #2563eb;">học mà chơi, chơi mà học</span>
+                </h1>
+                <p class="text-secondary mb-4">
+                    Chọn chế độ chơi yêu thích, tham gia thử thách và nâng cao kiến thức mỗi ngày với hệ thống câu hỏi đa dạng.
+                </p>
+
+                <div class="d-flex flex-wrap gap-3">
+                    <a asp-action="Play"
+                       asp-controller="Quiz"
+                       class="btn btn-primary px-4 py-2 rounded-pill d-flex align-items-center gap-2">
+                        Bắt đầu chơi ngay
+                        <i class="bi bi-play-fill"></i>
+                    </a>
+                    <a href="#categories" class="btn btn-outline-secondary px-4 py-2 rounded-pill">
+                        Xem các chủ đề
+                    </a>
                 </div>
             </div>
 
-            <div class="col mb-5">
-                <div class="card text-center shadow rounded-4 border-0">
-                    <div class="card-body py-4">
-                        <img src="/assets/competition.png"
-                             class="img-fluid mb-3"
-                             style="max-height: 120px; object-fit: cover;"
-                             alt="1v1" />
-                        <h6 class="fw-bold mb-0">
-                            <a href="#"
-                               class="stretched-link text-decoration-none text-dark">
-                                1v1
-                            </a>
-                        </h6>
+            <div class="col-lg-5 fade-in-up fade-in-delay-1">
+                <div class="row row-cols-1 row-cols-sm-2 g-3">
+                    <div class="col">
+                        <div class="card feature-card text-center shadow-sm rounded-4 border-0 h-100">
+                            <div class="card-body py-4 px-3">
+                                <img src="/assets/question.png"
+                                     class="img-fluid mb-3 feature-icon"
+                                     alt="Play Now" />
+                                <h6 class="fw-bold mb-1">Chế độ ngẫu nhiên</h6>
+                                <p class="text-muted small mb-0">
+                                    Trả lời câu hỏi chủ đề ngẫu nhiên .
+                                </p>
+                                <a asp-action="Play"
+                                   asp-controller="Quiz"
+                                   class="stretched-link"></a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col">
+                        <div class="card feature-card text-center shadow-sm rounded-4 border-0 h-100">
+                            <div class="card-body py-4 px-3">
+                                <img src="/assets/competition.png"
+                                     class="img-fluid mb-3 feature-icon"
+                                     alt="1v1" />
+                                <h6 class="fw-bold mb-1">Đấu 1v1</h6>
+                                <p class="text-muted small mb-0">
+                                    So tài trực tiếp với bạn bè, xem ai là người nhanh và chính xác hơn.
+                                </p>
+                                <a href="#"
+                                   class="stretched-link"></a>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
-            @{
-                foreach (var cate in Model)
-                {
-                    <div class="col mb-5">
-                        <div class="card text-center shadow rounded-4 border-0">
-                            <div class="position-absolute top-0 start-50 translate-middle">
-                                <img src="@cate.Url" class="img-fluid w-75" style="object-fit:cover;" alt="Alternate Text"/>
-                            </div>
-                            <div class="card-body mt-5">
-                                <h6 class="fw-bold">@cate.Name</h6>
+        <!-- Categories section -->
+        <div id="categories" class="fade-in-up fade-in-delay-2">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div>
+                    <h5 class="fw-semibold mb-1" style="color: #0f172a;">Chọn chủ đề yêu thích</h5>
+                    <p class="text-secondary small mb-0">Danh sách các chủ đề được thiết kế với nhiều mức độ và lĩnh vực khác nhau.</p>
+                </div>
+            </div>
+
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 mt-2">
+                @{
+                    var index = 0;
+                    foreach (var cate in Model)
+                    {
+                        var delayClass = index % 3 == 0 ? "fade-in-up"
+                            : index % 3 == 1 ? "fade-in-up fade-in-delay-1"
+                            : "fade-in-up fade-in-delay-2";
+                        index++;
+                        <div class="col">
+                            <div class="card category-card text-center shadow-sm rounded-4 border-0 h-100 @delayClass">
+                                <div class="card-body pt-4 pb-4 px-3 d-flex flex-column justify-content-between">
+                                    <div class="mb-3">
+                                        <div class="category-image-wrapper mx-auto mb-3">
+                                            <img src="@cate.Url"
+                                                 class="img-fluid category-image"
+                                                 alt="@cate.Name" />
+                                        </div>
+                                        <span class="category-badge fw-bold">@cate.Name</span>
+                                    </div>
+
+                                    @{
+                                        string description;
+                                        if (cate.Name == "Thể thao")
+                                        {
+                                            description = "Thể thao là không ngừng bỏ cuộc.";
+                                        }
+                                        else if (cate.Name == "Khoa học")
+                                        {
+                                            description = "Nơi bạn đội mũ bảo hiểm cho não vì ý tưởng bùng nổ từng phút.";
+                                        }
+                                        else if (cate.Name == "Văn học")
+                                        {
+                                            description = "Đắm mình trong biển chữ và thỉnh thoảng vớt được vài câu thả thính.";
+                                        }
+                                        else if (cate.Name == "Toán học")
+                                        {
+                                            description = "Phép tính khó nhất là tính xem mình đã hết sợ toán chưa.";
+                                        }
+                                        else if (cate.Name == "Lịch sử")
+                                        {
+                                            description = "Khám phá các sự kiện, nhân vật và cột mốc lịch sử.";
+                                        }
+
+                                        else if (cate.Name == "Ngữ pháp")
+                                        {
+                                            description = "Trau dồi ngữ pháp để nói tiếng Anh không ‘phèn’ nữa!";
+                                        }
+                                        else if (cate.Name == "Ẩm thực")
+                                        {
+                                            description = "Chủ đề khiến bạn vừa học vừa ôm bụng réo ùng ục.";
+                                        }
+                                        else if (cate.Name == "Công nghệ")
+                                        {
+                                            description = "Nơi dân tech dùng bug để kể chuyện cười với nhau.";
+                                        }
+                                        else if (cate.Name == "Địa lý")
+                                        {
+                                            description = "Xem bạn lạc đường trên bản đồ hay vẫn nhớ nhà ở đâu.";
+                                        }
+                                        else if (cate.Name == "Âm nhạc")
+                                        {
+                                            description = "Giai điệu trong đầu bạn đôi khi chính là đáp án.";
+                                        }
+                                        else if (cate.Name == "Phim ảnh")
+                                        {
+                                            description = "Nhấn play cho trí nhớ, tua lại mọi plot twist từng làm bạn há hốc.";
+                                        }
+                                        else if (cate.Name == "Đố vui")
+                                        {
+                                            description = "Nơi trí não được tập yoga: khó nhằn nhưng rất vui.";
+                                        }
+                                        else
+                                        {
+                                            // Mặc định cho các chủ đề còn lại
+                                            description = "Bộ câu hỏi đa dạng, phù hợp để ôn luyện kiến thức.";
+                                        }
+                                    }
+
+                                    <h6 class="mb-1 text-secondary">@description</h6>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    }
                 }
-            }
+            </div>
         </div>
     </div>
 </div>

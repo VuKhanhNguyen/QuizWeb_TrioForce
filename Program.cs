@@ -4,8 +4,9 @@ using QuizWeb_TrioForce.Data;
 using QuizWeb_TrioForce.Models;
 using QuizWeb_TrioForce.Repositories.Implementations;
 using QuizWeb_TrioForce.Repositories.Interfaces;
-using QuizWeb_TrioForce.Services.Implementations;
+
 using QuizWeb_TrioForce.Services.Interfaces;
+using QuizWeb_TrioForce.Services.Implementations;
 
 namespace QuizWeb_TrioForce
 {
@@ -66,6 +67,7 @@ namespace QuizWeb_TrioForce
             builder.Services.AddScoped<IQuizService, QuizService>();
             builder.Services.AddScoped<IAnsweredQuestionService, AnsweredQuestionService>();
 
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -80,7 +82,7 @@ namespace QuizWeb_TrioForce
             app.UseStaticFiles();
 
             app.UseRouting();
-            app.UseAuthentication();
+
             app.UseAuthorization();
 
             app.UseSession();

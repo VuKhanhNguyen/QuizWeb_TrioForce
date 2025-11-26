@@ -71,6 +71,89 @@
     }
 </div>
 
+<!-- Player Stats Modal -->
+<div id="playerStatsModal" class="modal-overlay" onclick="closeModal()">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <div class="modal-header">
+            <h2>📊 Thông tin người chơi</h2>
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="player-info-section">
+                <div class="player-avatar">👤</div>
+                <h3 id="modal-fullname"></h3>
+                <p class="player-username" id="modal-username"></p>
+            </div>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">🏆</div>
+                    <div class="stat-info">
+                        <div class="stat-label">Hạng</div>
+                        <div class="stat-value" id="modal-rank">--</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">⭐</div>
+                    <div class="stat-info">
+                        <div class="stat-label">Tổng điểm</div>
+                        <div class="stat-value" id="modal-score">--</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">🎮</div>
+                    <div class="stat-info">
+                        <div class="stat-label">Lượt chơi</div>
+                        <div class="stat-value" id="modal-games">--</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">📝</div>
+                    <div class="stat-info">
+                        <div class="stat-label">Câu hỏi đã trả lời</div>
+                        <div class="stat-value" id="modal-questions">--</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">✅</div>
+                    <div class="stat-info">
+                        <div class="stat-label">Trả lời đúng</div>
+                        <div class="stat-value" id="modal-correct">--</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">🎯</div>
+                    <div class="stat-info">
+                        <div class="stat-label">Tỉ lệ đúng</div>
+                        <div class="stat-value" id="modal-accuracy">--</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">📧</div>
+                    <div class="stat-info">
+                        <div class="stat-label">Email</div>
+                        <div class="stat-value small-text" id="modal-email">--</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">📚</div>
+                    <div class="stat-info">
+                        <div class="stat-label">Bộ câu hỏi đã tạo</div>
+                        <div class="stat-value" id="modal-created">--</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
     <script src="~/js/ranking.js" asp-append-version="true"></script>
 }

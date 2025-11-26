@@ -8,11 +8,13 @@ namespace QuizWeb_TrioForce.Controllers
     {
         private readonly ILogger<RankingController> _logger;
         private readonly IRankingService _rankingService;
+        private readonly IUserService _userService;
 
-        public RankingController(ILogger<RankingController> logger, IRankingService rankingService)
+        public RankingController(ILogger<RankingController> logger, IRankingService rankingService, IUserService userService)
         {
             _logger = logger;
             _rankingService = rankingService;
+            _userService = userService;
         }
 
         // GET: RankingController
@@ -95,5 +97,54 @@ namespace QuizWeb_TrioForce.Controllers
         //        return View();
         //    }
         //}
+
+        // GET: API endpoint to get player stats
+        [HttpGet]
+        public async Task<IActionResult> GetPlayerStats(string username)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(username))
+                {
+                    return Json(new { success = false, message = "Username is required" });
+                }
+
+                var user = await _userService.GetProfileAsync(username);
+                if (user == null)
+                {
+                    return Json(new { success = false, message = "User not found" });
+                }
+
+                var rankings = await _rankingService.GetTopRankingsAsync(int.MaxValue);
+                var userRanking = rankings.FirstOrDefault(r => r.UserName == username);
+                var rank = rankings.ToList().FindIndex(r => r.UserName == username) + 1;
+
+                var totalGames = await _userService.GetTotalGamesPlayedAsync(username);
+                var (totalAnswered, correctAnswers) = await _userService.GetAnswerStatsAsync(username);
+                var accuracyRate = totalAnswered > 0 ? Math.Round((double)correctAnswers / totalAnswered * 100, 2) : 0;
+                var questionSetsCreated = (await _userService.GetCreatedQuestionSetsAsync(username)).Count;
+
+                var stats = new PlayerStatsViewModel
+                {
+                    Username = user.UserName ?? "",
+                    FullName = user.FullName,
+                    Email = user.Email ?? "",
+                    TotalScore = userRanking?.TotalScore ?? 0,
+                    Rank = rank,
+                    TotalGamesPlayed = totalGames,
+                    TotalQuestionsAnswered = totalAnswered,
+                    CorrectAnswers = correctAnswers,
+                    AccuracyRate = accuracyRate,
+                    QuestionSetsCreated = questionSetsCreated
+                };
+
+                return Json(new { success = true, data = stats });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting player stats for {Username}", username);
+                return Json(new { success = false, message = "An error occurred" });
+            }
+        }
     }
 }

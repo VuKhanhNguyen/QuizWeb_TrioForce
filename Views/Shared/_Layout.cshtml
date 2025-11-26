@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+﻿﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -63,6 +63,11 @@
                         </li>
                     </ul>
                     <div class="d-flex align-items-center gap-3 mt-3 mt-lg-0">
+                        <!-- Search Box -->
+                        <div class="search-box">
+                            <input type="text" id="globalSearch" class="search-input" placeholder="Tìm kiếm..." title="Nhấn Alt+S để tìm kiếm nhanh, ESC để xóa">
+                            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                        </div>
                         
                         @await Html.PartialAsync("_LoginPartial.cshtml")
                     </div>
@@ -143,6 +148,7 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/search.js" asp-append-version="true"></script>
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <script src="~/js/toastMessage.js" asp-append-version="true"></script>
     <script src="~/js/loading.js" asp-append-version="true"></script>

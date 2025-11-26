@@ -40,7 +40,30 @@ namespace QuizWeb_TrioForce.Services.Implementations
             await _userRepository.UpdateProfileAsync(user);
         }
 
+        public async Task<int> GetTotalGamesPlayedAsync(string username)
+        {
+            var user = await _userRepository.GetProfileAsync(username);
+            if (user == null) return 0;
+            
+            // Đếm số bộ câu hỏi unique mà user đã trả lời ít nhất 1 câu
+            var uniqueQuestionSets = user.AnsweredQuestions
+                .Select(aq => aq.QSetId)
+                .Distinct()
+                .Count();
+            
+            return uniqueQuestionSets;
+        }
 
+        public async Task<(int total, int correct)> GetAnswerStatsAsync(string username)
+        {
+            var user = await _userRepository.GetProfileAsync(username);
+            if (user == null) return (0, 0);
+            
+            var totalAnswered = user.AnsweredQuestions.Count;
+            var correctAnswers = user.AnsweredQuestions.Count(aq => aq.Answer.IsCorrect);
+            
+            return (totalAnswered, correctAnswers);
+        }
     }
 
 }

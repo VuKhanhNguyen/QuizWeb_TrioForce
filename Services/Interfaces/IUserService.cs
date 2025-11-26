@@ -9,6 +9,7 @@ namespace QuizWeb_TrioForce.Services.Interfaces
         public Task<List<ProgressQuestionSet>> GetProgressQuestionSetsAsync(string username);
         public Task<ApplicationUser> GetProfileAsync(string username);
         public Task UpdateProfileAsync(ApplicationUser user);
-
+        public Task<int> GetTotalGamesPlayedAsync(string username);
+        public Task<(int total, int correct)> GetAnswerStatsAsync(string username);
     }
 }

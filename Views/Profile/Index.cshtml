@@ -6,62 +6,60 @@
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 
-<div class="profile-container">
-    <div class="profile-header fade-in-up">
-        <div class="profile-banner">
-            <div class="banner-decoration"></div>
-            <div class="banner-decoration"></div>
-        </div>
-        <div class="avatar-wrapper">
-            <div class="avatar">
-                <span class="avatar-icon">👤</span>
-            </div>
-        </div>
-        <h1 class="username">@Model.Username</h1>
-        <span class="user-badge">⭐ Thành viên</span>
-    </div>
 
-    <div class="profile-body">
-        <div class="section-header fade-in-up fade-in-delay-1">
-            <h2>📝 Thông tin cá nhân</h2>
+
+
+
+<div class="profile-horizontal-container">
+    <div class="profile-horizontal-card">
+        <div class="profile-horizontal-left">
+            <div class="profile-horizontal-avatar"><span class="avatar-icon">👤</span></div>
+            <div class="profile-horizontal-namebadge">
+                <span class="profile-horizontal-username">@Model.Username</span>
+                <span class="profile-horizontal-badge">⭐ Thành viên</span>
+            </div>
+            <form id="profileEditForm" autocomplete="off" class="profile-horizontal-form">
+                <div class="profile-horizontal-fields">
+                    <div class="form-group">
+                        <label for="fullname">Họ và tên</label>
+                        <input type="text" id="fullname" value="@Model.Fullname" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" value="@Model.Email" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label for="birthday">Ngày sinh</label>
+                        <input type="text" id="birthday" value="@Model.Birthday" class="form-control" placeholder="dd/MM/yyyy" />
+                    </div>
+                    <div class="form-group">
+                        <label for="sex">Giới tính</label>
+                        @Html.DropDownListFor(m => m.Sex, new List<SelectListItem>
+                        {
+                            new SelectListItem { Text = "Nam", Value = "True", Selected = Model.Sex },
+                            new SelectListItem { Text = "Nữ", Value = "False", Selected = !Model.Sex }
+                        }, new { @class = "form-control", id = "sex" })
+                    </div>
+                </div>
+                <div class="profile-horizontal-actions">
+                    <button type="button" class="btn btn-primary" onclick="saveProfile()"><span class="btn-icon">💾</span> Lưu thay đổi</button>
+                </div>
+            </form>
         </div>
-        
-        <div class="form-row fade-in-up fade-in-delay-2">
-            <div class="form-group">
-                <label><span class="label-icon">👤</span> Họ và tên</label>
-                <input type="text" id="fullname" value="@Model.Fullname" class="form-control" />
+        <div class="profile-horizontal-right">
+            <div class="profile-horizontal-stats-title">📊 Thống kê cá nhân</div>
+            <div class="profile-horizontal-stats-grid">
+                <div class="profile-horizontal-stat"><div class="stat-icon">🏆</div><div class="stat-label">Hạng</div><div class="stat-value">#@Model.Rank</div></div>
+                <div class="profile-horizontal-stat"><div class="stat-icon">⭐</div><div class="stat-label">Tổng điểm</div><div class="stat-value">@Model.TotalScore.ToString("N0")</div></div>
+                <div class="profile-horizontal-stat"><div class="stat-icon">🎮</div><div class="stat-label">Lượt chơi</div><div class="stat-value">@Model.TotalGamesPlayed.ToString("N0")</div></div>
+                <div class="profile-horizontal-stat"><div class="stat-icon">📝</div><div class="stat-label">Câu hỏi đã trả lời</div><div class="stat-value">@Model.TotalQuestionsAnswered.ToString("N0")</div></div>
+                <div class="profile-horizontal-stat"><div class="stat-icon">✅</div><div class="stat-label">Trả lời đúng</div><div class="stat-value">@Model.CorrectAnswers.ToString("N0")</div></div>
+                <div class="profile-horizontal-stat"><div class="stat-icon">🎯</div><div class="stat-label">Tỉ lệ đúng</div><div class="stat-value">@Model.AccuracyRate.ToString("N2")%</div></div>
+                <div class="profile-horizontal-stat"><div class="stat-icon">📚</div><div class="stat-label">Bộ câu hỏi đã tạo</div><div class="stat-value">@Model.QuestionSetsCreated.ToString("N0")</div></div>
             </div>
-
-            <div class="form-group">
-                <label><span class="label-icon">📧</span> Email</label>
-                <input type="email" id="email" value="@Model.Email" class="form-control" />
-            </div>
-        </div>
-
-        <div class="form-row fade-in-up fade-in-delay-3">
-            <div class="form-group">
-                <label><span class="label-icon">🎂</span> Ngày sinh</label>
-                <input type="text" id="birthday" value="@Model.Birthday" class="form-control" placeholder="dd/MM/yyyy" />
-            </div>
-
-            <div class="form-group">
-                <label><span class="label-icon"></span> Giới tính</label>
-                @Html.DropDownListFor(m => m.Sex, new List<SelectListItem>
-                {
-                    new SelectListItem { Text = "Nam", Value = "True" },
-                    new SelectListItem { Text = "Nữ", Value = "False" }
-                }, new { @class = "form-control", id = "sex" })
-            </div>
-        </div>
-
-        <div class="button-group fade-in-up fade-in-delay-3">
-            <button type="button" class="btn btn-primary" onclick="saveProfile()">
-                <span class="btn-icon">💾</span> Lưu thay đổi
-            </button>
         </div>
     </div>
 </div>
-
 @Html.AntiForgeryToken()
 
 @section Scripts {

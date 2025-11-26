@@ -13,5 +13,6 @@ namespace QuizWeb_TrioForce.Services.Interfaces
         Task<QuizResultViewModel> SubmitQuizAsync(SubmitQuizViewModel submitModel, string username);
         Task SaveProgressAsync(SaveProgressViewModel saveModel, string username);
         Task<PlayQuestionSetViewModel> GetRandomQuizAsync();
+        Task<PlayQuestionSetViewModel> GetQuizByCategoryAndLevelAsync(int categoryId, int levelId);
     }
 }

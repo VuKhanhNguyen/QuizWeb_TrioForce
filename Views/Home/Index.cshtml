@@ -1,6 +1,5 @@
 ﻿﻿@using QuizWeb_TrioForce.ViewModels
-@using QuizWeb_TrioForce.ViewModels.Category
-@model List<CategoryListViewModel>
+@model HomeViewModel
 @{
     ViewData["Title"] = "Home Page";
 }
@@ -86,14 +85,14 @@
             <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 mt-2">
                 @{
                     var index = 0;
-                    foreach (var cate in Model)
+                    foreach (var cate in Model.Categories)
                     {
                         var delayClass = index % 3 == 0 ? "fade-in-up"
                             : index % 3 == 1 ? "fade-in-up fade-in-delay-1"
                             : "fade-in-up fade-in-delay-2";
                         index++;
                         <div class="col">
-                            <div class="card category-card text-center shadow-sm rounded-4 border-0 h-100 @delayClass">
+                            <div class="card category-card text-center shadow-sm rounded-4 border-0 h-100 @delayClass" data-bs-toggle="modal" data-bs-target="#levelModal" data-category-id="@cate.CategoryId" data-category-name="@cate.Name" style="cursor:pointer">
                                 <div class="card-body pt-4 pb-4 px-3 d-flex flex-column justify-content-between">
                                     <div class="mb-3">
                                         <div class="category-image-wrapper mx-auto mb-3">
@@ -172,3 +171,54 @@
         </div>
     </div>
 </div>
+
+<!-- Level Selection Modal -->
+<div class="modal fade" id="levelModal" tabindex="-1" aria-labelledby="levelModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="levelModalLabel">Chọn độ khó cho chủ đề: <span id="categoryName"></span></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    @foreach (var level in Model.Levels)
+                    {
+                        <div class="col-md-4">
+                            <a asp-controller="Quiz" asp-action="Play" asp-route-levelId="@level.LevelId" class="card level-card text-center text-decoration-none" data-level-id="@level.LevelId">
+                                <img src="@level.ImageUrl" class="card-img-top" alt="@level.LevelName">
+                                <div class="card-body">
+                                    <h5 class="card-title">@level.LevelName</h5>
+                                </div>
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var levelModal = document.getElementById('levelModal');
+            var categoryNameSpan = document.getElementById('categoryName');
+            var levelLinks = levelModal.querySelectorAll('.level-card');
+
+            levelModal.addEventListener('show.bs.modal', function (event) {
+                var button = event.relatedTarget;
+                var categoryId = button.getAttribute('data-category-id');
+                var categoryName = button.getAttribute('data-category-name');
+
+                categoryNameSpan.textContent = categoryName;
+
+                levelLinks.forEach(function (link) {
+                    var baseUrl = link.href.split('?')[0];
+                    var levelId = link.getAttribute('data-level-id');
+                    link.href = baseUrl + '?categoryId=' + categoryId + '&levelId=' + levelId;
+                });
+            });
+        });
+    </script>
+}

@@ -201,6 +201,36 @@ namespace QuizWeb_TrioForce.Services.Implementations
             return viewModel;
         }
 
+        public async Task<PlayQuestionSetViewModel> GetQuizByCategoryAndLevelAsync(int categoryId, int levelId)
+        {
+            var qs = await _unitOfWork.QuestionSetRepository.GetQuestionSetRandomByIdCateAndIdLevel(categoryId, levelId);
+            if (qs == null)
+            {
+                throw new Exception("GetQuestionSetRandomByIdCateAndIdLevel is not found");
+            }
+            var viewModel = new PlayQuestionSetViewModel
+            {
+                QSetId = qs.QSetId,
+                QSetName = qs.QSetName,
+                Description = qs.Description,
+                AuthorName = qs.AuthorName,
+                CategoryName = qs.Category.CategoryName,
+                LevelName = qs.Level.LevelName,
+                Questions = qs.Questions.Select(q => new PlayQuestionViewModel
+                {
+                    QuestionId = q.QuestionId,
+                    QuestionText = q.QuestionText,
+                    Answers = q.Answers.Select(a => new PlayAnswerViewModel
+                    {
+                        AnswerId = a.AnswerId,
+                        AnswerText = a.AnswerText,
+                    }).ToList()
+                }).ToList()
+
+            };
+            return viewModel;
+        }
+
         public async Task SaveProgressAsync(SaveProgressViewModel saveModel, string username)
         {
 

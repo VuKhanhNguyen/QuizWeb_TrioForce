@@ -159,5 +159,23 @@ namespace QuizWeb_TrioForce.Controllers
 
             return NoContent();
         }
+
+        // [HttpGet]
+        // public async Task<IActionResult> Play(int categoryId, int levelId)
+        // {
+        //     try
+        //     {
+        //         var viewModel = await _quizService.GetQuizByCategoryAndLevelAsync(categoryId, levelId);
+        //         return View(viewModel);
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         // Log the exception
+        //         _logger.LogError(ex, "Could not get quiz for category {categoryId} and level {levelId}", categoryId, levelId);
+        //         // Maybe show a friendly error page or redirect with an error message
+        //         TempData["ErrorMessage"] = "Không tìm thấy bộ câu hỏi phù hợp. Vui lòng thử lại sau.";
+        //         return RedirectToAction("Index", "Home");
+        //     }
+        // }
     }
 }

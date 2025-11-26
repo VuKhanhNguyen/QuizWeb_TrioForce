@@ -20,6 +20,8 @@ namespace QuizWeb_TrioForce.Services.Implementations
             return allMarkedQuestions.Select(mq => new MarkedQuestionListViewModel()
             {
                 QuestionId = mq.QuestionId,
+                QuestionText = mq.Question.QuestionText,
+                AnswerTrue = mq.Question.Answers.FirstOrDefault(a => a.IsCorrect)?.AnswerText ?? string.Empty,
                 MarkedTime = mq.MarkedTime.ToLocalTime()
             }).ToList();
 

@@ -12,17 +12,23 @@
             @foreach (var bm in Model.MarkedQuestionList)
             {
                 <div class="list-group-item list-group-item-action flex-column align-items-start">
+
                     <div class="d-flex w-100 justify-content-between">
+                        <div class="custom-checkbox-container">
+                        <input type="checkbox" class="save-question-checkbox" id="save-@bm.QuestionId" data-question-id="@bm.QuestionId" checked />
+                            <label for="save-@bm.QuestionId" class="bookmark-image-label"></label>
+                        </div>
                         <h5 class="mb-1">Question: @bm.QuestionText</h5>
                         <small>@bm.MarkedTime.ToString("g")</small>
                     </div>
-                    <a href="#" 
+                    <a href="#"
                        class="btn btn-sm btn-outline-primary mt-2 view-detail"
                        data-question="@bm.QuestionText"
                        data-time="@bm.MarkedTime.ToString("g")"
                        data-answer="@bm.AnswerTrue">
                         View Detail
-                    </a>                </div>
+                    </a>
+                </div>
             }
         </div>
     }
@@ -92,7 +98,7 @@
     }
 </div>
 
-                            
+
 <div class="modal fade" id="questionModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog" style="margin-top: 200px;">
         <div class="modal-content">
@@ -111,33 +117,7 @@
         </div>
     </div>
 </div>
-
-@section Scripts{
-            
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const buttons = document.querySelectorAll(".view-detail");
-
-        buttons.forEach(btn => {
-            btn.addEventListener("click", function (e) {
-                e.preventDefault();
-
-                // Lấy dữ liệu từ data-attributes
-                const q = this.getAttribute("data-question");
-                const t = this.getAttribute("data-time");
-                const a = this.getAttribute("data-answer");
-
-                // Gắn vào modal
-                document.getElementById("modalQuestionText").innerText = q;
-                document.getElementById("modalMarkedTime").innerText = t;
-                document.getElementById("modalAnswerTrue").innerText = a;
-
-                // Mở modal (Bootstrap 5)
-                const modal = new bootstrap.Modal(document.getElementById("questionModal"));
-                modal.show();
-            });
-        });
-    });
-</script>
-
+@Html.AntiForgeryToken()
+@section Scripts {
+    <script src="js/bookmark.js" asp-append-version="true"></script>
 }

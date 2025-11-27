@@ -1,0 +1,17 @@
+﻿.save-question-checkbox {
+    display: none;
+}
+
+.bookmark-image-label {
+    width: 56px;
+    height: 56px;
+    display: inline-block;
+    cursor: pointer;
+    background-image: url('../assets/bookmark/unsave.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+.save-question-checkbox:checked + .bookmark-image-label {
+    background-image: url('../assets/bookmark/saved.png');
+}

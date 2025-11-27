@@ -6,17 +6,28 @@
 <div class="container mt-4">
 
     <h2 class="mb-3">Marked Questions</h2>
-    @if (Model.MarkedQuestionList != null && Model.MarkedQuestionList.Any())
+    @if (Model.MarkedQuestionList.Any())
     {
         <div class="list-group mb-5">
             @foreach (var bm in Model.MarkedQuestionList)
             {
                 <div class="list-group-item list-group-item-action flex-column align-items-start">
+
                     <div class="d-flex w-100 justify-content-between">
-                        <h5 class="mb-1">Question ID: @bm.QuestionId</h5>
+                        <div class="custom-checkbox-container">
+                        <input type="checkbox" class="save-question-checkbox" id="save-@bm.QuestionId" data-question-id="@bm.QuestionId" checked />
+                            <label for="save-@bm.QuestionId" class="bookmark-image-label"></label>
+                        </div>
+                        <h5 class="mb-1">Question: @bm.QuestionText</h5>
                         <small>@bm.MarkedTime.ToString("g")</small>
                     </div>
-                    <a href="#" class="btn btn-sm btn-outline-primary mt-2">Go to Question</a>
+                    <a href="#"
+                       class="btn btn-sm btn-outline-primary mt-2 view-detail"
+                       data-question="@bm.QuestionText"
+                       data-time="@bm.MarkedTime.ToString("g")"
+                       data-answer="@bm.AnswerTrue">
+                        View Detail
+                    </a>
                 </div>
             }
         </div>
@@ -27,7 +38,7 @@
     }
 
     <h2 class="mb-3">In Progress Question Sets</h2>
-    @if (Model.ProgressQuestionSetList != null && Model.ProgressQuestionSetList.Any())
+    @if (Model.ProgressQuestionSetList.Any())
     {
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mb-5">
             @foreach (var pgs in Model.ProgressQuestionSetList)
@@ -43,7 +54,7 @@
                             <div class="progress mb-2">
                                 <div class="progress-bar" role="progressbar" style="width: @((double)pgs.QuestionCount / pgs.TotalQuestions * 100)%;" aria-valuenow="@pgs.QuestionCount" aria-valuemin="0" aria-valuemax="@pgs.TotalQuestions"></div>
                             </div>
-                             <a href="#" class="btn btn-primary">Continue</a>
+                            <a href="#" class="btn btn-primary">Continue</a>
                         </div>
                         <div class="card-footer">
                             <small class="text-muted">Last updated: @pgs.LastUpdated.ToString("g")</small>
@@ -60,7 +71,7 @@
 
 
     <h2 class="mb-3">Created Question Sets</h2>
-    @if (Model.CreatedQuestionList != null && Model.CreatedQuestionList.Any())
+    @if (Model.CreatedQuestionList.Any())
     {
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
             @foreach (var cqs in Model.CreatedQuestionList)
@@ -86,3 +97,27 @@
         <p>You have not created any question sets.</p>
     }
 </div>
+
+
+<div class="modal fade" id="questionModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog" style="margin-top: 200px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Question Detail</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Question:</strong> <span id="modalQuestionText"></span></p>
+                <p><strong>Marked Time:</strong> <span id="modalMarkedTime"></span></p>
+                <p><strong>Correct Answer:</strong> <span id="modalAnswerTrue"></span></p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+@Html.AntiForgeryToken()
+@section Scripts {
+    <script src="js/bookmark.js" asp-append-version="true"></script>
+}

@@ -58,7 +58,7 @@ namespace QuizWeb_TrioForce.Services.Implementations
             var pqs = await _progressQuestionSetRepository.GetProgressQuestionSetByUsernameAndQSetId(username, QSetId);
             if (pqs == null)
             {
-                throw new Exception("ProgressQuestionSet not found");
+                return null;
             }
             return pqs;
         }

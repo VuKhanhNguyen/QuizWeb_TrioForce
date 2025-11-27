@@ -221,6 +221,32 @@ body {
     font-size: 16px;
 }
 
+/* Level select */
+.level-modal .modal-dialog {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.level-card {
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.level-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+.level-card {
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.level-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
 @keyframes slideDown {
     from {
         opacity: 0;

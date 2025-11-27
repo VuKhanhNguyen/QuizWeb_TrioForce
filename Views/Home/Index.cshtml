@@ -1,5 +1,6 @@
 ﻿﻿@using QuizWeb_TrioForce.ViewModels
-@model HomeViewModel
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model QuizWeb_TrioForce.ViewModels.HomeViewModel
 @{
     ViewData["Title"] = "Home Page";
 }
@@ -40,7 +41,7 @@
                     <div class="col">
                         <div class="card feature-card text-center shadow-sm rounded-4 border-0 h-100">
                             <div class="card-body py-4 px-3">
-                                <img src="/assets/question.png"
+                                <img src="/assets/others/question.png"
                                      class="img-fluid mb-3 feature-icon"
                                      alt="Play Now" />
                                 <h6 class="fw-bold mb-1">Chế độ ngẫu nhiên</h6>
@@ -57,7 +58,7 @@
                     <div class="col">
                         <div class="card feature-card text-center shadow-sm rounded-4 border-0 h-100">
                             <div class="card-body py-4 px-3">
-                                <img src="/assets/competition.png"
+                                <img src="/assets/others/competition.png"
                                      class="img-fluid mb-3 feature-icon"
                                      alt="1v1" />
                                 <h6 class="fw-bold mb-1">Đấu 1v1</h6>
@@ -148,7 +149,7 @@
                                         }
                                         else if (cate.Name == "Phim ảnh")
                                         {
-                                            description = "Nhấn play cho trí nhớ, tua lại mọi plot twist từng làm bạn há hốc.";
+                                            description = "Nhấn play cho trí nhớ tua lại mọi plot twist từng làm bạn há hốc.";
                                         }
                                         else if (cate.Name == "Đố vui")
                                         {
@@ -173,7 +174,7 @@
 </div>
 
 <!-- Level Selection Modal -->
-<div class="modal fade" id="levelModal" tabindex="-1" aria-labelledby="levelModalLabel" aria-hidden="true">
+<div class="modal fade level-modal" id="levelModal" tabindex="-1" aria-labelledby="levelModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
             <div class="modal-header">
@@ -185,7 +186,7 @@
                     @foreach (var level in Model.Levels)
                     {
                         <div class="col-md-4">
-                            <a asp-controller="Quiz" asp-action="Play" asp-route-levelId="@level.LevelId" class="card level-card text-center text-decoration-none" data-level-id="@level.LevelId">
+                            <a asp-controller="Quiz" asp-action="Play" asp-route-levelId="@level.LevelId" class="card border-0 level-card text-center text-decoration-none" data-level-id="@level.LevelId">
                                 <img src="@level.ImageUrl" class="card-img-top" alt="@level.LevelName">
                                 <div class="card-body">
                                     <h5 class="card-title">@level.LevelName</h5>
@@ -199,26 +200,3 @@
     </div>
 </div>
 
-@section Scripts {
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            var levelModal = document.getElementById('levelModal');
-            var categoryNameSpan = document.getElementById('categoryName');
-            var levelLinks = levelModal.querySelectorAll('.level-card');
-
-            levelModal.addEventListener('show.bs.modal', function (event) {
-                var button = event.relatedTarget;
-                var categoryId = button.getAttribute('data-category-id');
-                var categoryName = button.getAttribute('data-category-name');
-
-                categoryNameSpan.textContent = categoryName;
-
-                levelLinks.forEach(function (link) {
-                    var baseUrl = link.href.split('?')[0];
-                    var levelId = link.getAttribute('data-level-id');
-                    link.href = baseUrl + '?categoryId=' + categoryId + '&levelId=' + levelId;
-                });
-            });
-        });
-    </script>
-}

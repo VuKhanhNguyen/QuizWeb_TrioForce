@@ -36,6 +36,8 @@ namespace QuizWeb_TrioForce.Repositories.Implementations
         {
             return await _context.QuestionSets
                 .AsNoTracking()
+                .Include(qs => qs.Category)
+                .Include(qs => qs.Level)
                 .Include(qs => qs.Questions)
                     .ThenInclude(q => q.Answers)
                 .Where(qs => qs.QSetId == id)

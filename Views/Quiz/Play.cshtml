@@ -7,7 +7,7 @@
 
 <div class="quiz-play-area">
     <div class="quiz-details card mb-4">
-        <div class="card-body">
+        <div class="card-body text-center">
             <h2 class="card-title">@Model.QSetName</h2>
             <p class="card-text text-muted">@Model.Description</p>
             <div class="quiz-meta">
@@ -15,6 +15,12 @@
                 <span class="badge bg-info">@Model.LevelName</span>
                 <span class="badge bg-secondary">By: @Model.AuthorName</span>
             </div>
+        </div>
+    </div>
+
+    <div class="progress-container card mb-4">
+        <div class="progress">
+            <div id="quiz-progress-bar" class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
         </div>
     </div>
 
@@ -47,8 +53,9 @@
                             var inputId = $"question_{q.QuestionId}_answer_{a.AnswerId}";
 
                             <label class="option-label" for="@inputId">
-                                <input type="radio" id="@inputId" name="UserAnswers[@i].SelectedAnswerId" value="@a.AnswerId" class="answer-radio" required />
-                                <span class="option-text">@a.AnswerText</span>
+                                <input type="hidden" name="UserAnswers[@i].QuestionId" value="@q.QuestionId" />
+                                <input type="radio" id="@inputId" name="UserAnswers[@i].SelectedAnswerId" value="@a.AnswerId" class="answer-radio" required/>
+                                <span class="option-text">@((char)('A' + j)): @a.AnswerText</span>
                             </label>
                         }
                     </div>
@@ -59,7 +66,7 @@
 
         <div class="navigation-buttons">
             <button type="button" id="prevBtn" class="btn btn-outline-secondary hidden"><i class="fas fa-arrow-left"></i> Previous</button>
-            <a asp-action="Index" class="btn btn-danger cancel-link" id="cancelBtn" data-confirm="true">Cancel</a>
+            <a asp-controller="Home" asp-action="Index" class="btn btn-danger cancel-link" id="cancelBtn" data-confirm="true">Cancel</a>
             <button type="submit" class="btn btn-success hidden" id="submitBtn">Submit <i class="fas fa-check"></i></button>
             <button type="button" id="nextBtn" class="btn btn-primary">Next <i class="fas fa-arrow-right"></i></button>
         </div>

@@ -1,263 +1,68 @@
 ﻿@model QuizWeb_TrioForce.ViewModels.QuestionSet.PlayQuestionSetViewModel;
 @{
     ViewBag.Title = "Play Quiz";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["CustomCss"] = "/css/play.css";
 }
 
-<h2>Play Quiz: @Model.QSetName</h2>
-<h3>Description: @Model.Description</h3>
-<h3>Level: @Model.LevelName</h3>
-<h3>Category: @Model.CategoryName</h3>
-<h3>By: @Model.AuthorName</h3>
-
-<form asp-action="Play" method="post" id="quizForm" data-save-url="@Url.Action("SaveProgress", "Quiz")">
-
-    <input type="hidden" name="QSetId" value="@Model.QSetId" />
-    <input type="hidden" name="QSetName" value="@Model.QSetName" />
-    <input type="hidden" id="QuestionCount" name="QuestionCount" value=0/>
-    <input type="hidden" id="QuestionLastId" name="QuestionLastId" value=0/>
-
-    @for (int i = 0; i < Model.Questions.Count; i++)
-    {
-        var q = Model.Questions[i];
-
-        <div class="question-container" data-question-id="@q.QuestionId">
-            <input type="hidden" name="UserAnswers[@i].QuestionId" value="@q.QuestionId" />
-            <input type="checkbox" class="save-question-checkbox" id="save-@q.QuestionId" data-question-id="@q.QuestionId"/>
-
-            <div class="QuestionText">Question: @q.QuestionText</div>
-            <div class="Options">
-
-                @for (int j = 0; j < q.Answers.Count; j++)
-                {
-                    var a = q.Answers[j];
-                    var inputId = $"question_{q.QuestionId}_answer_{a.AnswerId}";
-
-
-                    <div>
-                        <input type="radio" id="@inputId" name="UserAnswers[@i].SelectedAnswerId" value="@a.AnswerId" class="answer-radio" required />
-                        <label asp-for="@a.AnswerText">
-                            @a.AnswerText
-                        </label>
-                        <br />
-                    </div>
-                }
+<div class="quiz-play-area">
+    <div class="quiz-details card mb-4">
+        <div class="card-body">
+            <h2 class="card-title">@Model.QSetName</h2>
+            <p class="card-text text-muted">@Model.Description</p>
+            <div class="quiz-meta">
+                <span class="badge bg-primary">@Model.CategoryName</span>
+                <span class="badge bg-info">@Model.LevelName</span>
+                <span class="badge bg-secondary">By: @Model.AuthorName</span>
             </div>
         </div>
-    }
-
-    <div>
-        <button type="submit" class="btn btn-primary" id="submitBtn">Submit</button>
-        <a asp-action="Index" class="btn btn-secondary cancel-link" id="cancelBtn" data-confirm="true">Cancel</a>
     </div>
 
-</form>
+    <form asp-action="Play" method="post" id="quizForm" class="quiz-form-container" data-save-url="@Url.Action("SaveProgress", "Quiz")">
 
-@section Scripts {
-    <script>
+        <input type="hidden" name="QSetId" value="@Model.QSetId" />
+        <input type="hidden" name="QSetName" value="@Model.QSetName" />
+        <input type="hidden" id="QuestionCount" name="QuestionCount" value=0 />
+        <input type="hidden" id="QuestionLastId" name="QuestionLastId" value=0 />
 
-        (function() {
-            const form = document.getElementById('quizForm');
-            const saveUrl = form.dataset.saveUrl; // SaveProgress endpoint
-            const tokenInput = form.querySelector('input[name="__RequestVerificationToken"]');
+        <div id="quiz-container">
+            @for (int i = 0; i < Model.Questions.Count; i++)
+            {
+                var q = Model.Questions[i];
+                var questionClass = i == 0 ? "active" : "hidden";
 
-            let dirty = false;
+                <div class="question-container @questionClass" data-question-id="@q.QuestionId" data-question-index="@i">
+                    <div class="question-header">
+                        <div class="QuestionText">Question @(i + 1): @q.QuestionText</div>
+                        <label class="bookmark-label" title="Save this question">
+                            <input type="checkbox" class="save-question-checkbox" id="save-@q.QuestionId" data-question-id="@q.QuestionId" />
+                            <i class="far fa-bookmark"></i>
+                            <i class="fas fa-bookmark"></i>
+                        </label>
+                    </div>
+                    <div class="Options">
+                        @for (int j = 0; j < q.Answers.Count; j++)
+                        {
+                            var a = q.Answers[j];
+                            var inputId = $"question_{q.QuestionId}_answer_{a.AnswerId}";
 
-            const questionLastId = document.getElementById('QuestionLastId');
-            const questionCount = document.getElementById('QuestionCount');
-
-
-            function updateLastAnsweredQuestion() {
-                questionLastId.value = getLastAnsweredQuestionId();
-                questionCount.value = getAnsweredQuestionCount();
-            }
-
-
-            // 1) Mark dirty when any answer selected
-            document.querySelectorAll('.answer-radio').forEach(radio => {
-                radio.addEventListener('change',
-                    (ev) => {
-                        dirty = true;
-
-                        document.querySelectorAll('.last-question').forEach(e => {
-                            e.classList.remove('last-question');
-                        });
-
-                        const questionContainer = ev.target.closest('.question-container');
-                        if (questionContainer) {
-                            questionContainer.classList.add('last-question');
-                            questionContainer.classList.add('answered');
+                            <label class="option-label" for="@inputId">
+                                <input type="radio" id="@inputId" name="UserAnswers[@i].SelectedAnswerId" value="@a.AnswerId" class="answer-radio" required />
+                                <span class="option-text">@a.AnswerText</span>
+                            </label>
                         }
-                    });
-            });
-
-            function getAnsweredQuestionCount() {
-                return document.querySelectorAll('.question-container.answered').length;
+                    </div>
+                </div>
             }
-
-            function getLastAnsweredQuestionId() {
-                const lastQuestionDiv = document.querySelector('.last-question');
-                return lastQuestionDiv ? lastQuestionDiv.dataset.questionId : '0';
-            }
-
-            // 2) On standard submit, clear dirty (server will handle final submission)
-            form.addEventListener('submit',
-                () => {
-                    dirty = false;
-                    updateLastAnsweredQuestion();
-                    // allow normal submit
-                });
-
-            // 3) beforeunload native prompt
-            this.window.addEventListener('beforeunload',
-                function(e) {
-                    if (!dirty) return;
-                    // Standard message not customizable in modern browsers
-                    const confirmationMessage = 'You have unsaved progress. Do you really want to leave?';
-                    (e || this.window.event).returnValue = confirmationMessage;
-                    return confirmationMessage;
-                });
-
-            // Helper: gather current form data into FormData
-            function gatherFormData() {
-                const fd = new FormData();
-
-                fd.set('QSetId', '@Model.QSetId');
-                fd.set('QuestionCount', getAnsweredQuestionCount().toString());
-
-                const lastQuestionId = getLastAnsweredQuestionId();
-                fd.set('QuestionLastId', lastQuestionId === '0' ? '0' : lastQuestionId);
-
-                const questionContainers = document.querySelectorAll('.question-container');
-                let answerIndex = 0;
-
-                questionContainers.forEach(container => {
-                    const questionId = container.dataset.questionId;
-                    const selectedRadio = container.querySelector('.answer-radio:checked');
-
-                    if (selectedRadio) {
-                        fd.append(`UserAnswers[${answerIndex}].QuestionId`, questionId);
-                        fd.append(`UserAnswers[${answerIndex}].SelectedAnswerId`, selectedRadio.value);
-                    }
-                    answerIndex++;
-
-                });
+        </div>
 
 
-                if (tokenInput && !fd.has('__RequestVerificationToken')) {
-                    fd.append('__RequestVerificationToken', tokenInput.value);
-                }
+        <div class="navigation-buttons">
+            <button type="button" id="prevBtn" class="btn btn-outline-secondary hidden"><i class="fas fa-arrow-left"></i> Previous</button>
+            <a asp-action="Index" class="btn btn-danger cancel-link" id="cancelBtn" data-confirm="true">Cancel</a>
+            <button type="submit" class="btn btn-success hidden" id="submitBtn">Submit <i class="fas fa-check"></i></button>
+            <button type="button" id="nextBtn" class="btn btn-primary">Next <i class="fas fa-arrow-right"></i></button>
+        </div>
 
-                return fd;
-            }
-
-
-            // 4) save progress via AJAX POST
-            function saveProgress() {
-                const fd = gatherFormData();
-
-                return fetch(saveUrl,
-                    {
-                        method: 'POST',
-                        body: fd,
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest' // indicates AJAX
-                        },
-                        credentials: 'same-origin'
-                    }).then(response => {
-                    if (!response.ok) throw new Error('Save failed: ' + response.status);
-                    return response;
-                });
-            }
-
-            // 5) Confirm + navigation helper
-            function confirmAndNavigate(targetUrl) {
-                if (!dirty) {
-                    window.location.href = targetUrl;
-                    return;
-                }
-
-                const shouldSave = confirm('You have unsaved progress. Save progress before leaving? Click OK to save, Cancel to leave without saving.');
-                if (shouldSave) {
-                    // optionally show a simple saving indicator
-                    const originalText = document.activeElement && document.activeElement.innerText;
-                    // perform save
-                    saveProgress()
-                        .then(() => {
-                            dirty = false;
-                            window.location.href = targetUrl;
-                        })
-                        .catch(err => {
-                            // if save failed, ask user whether to still navigate
-                            const navigateAnyway = confirm('Saving progress failed. Leave anyway?');
-                            if (navigateAnyway) {
-                                dirty = false;
-                                window.location.href = targetUrl;
-                            }
-                        });
-                } else {
-                    // user chose not to save
-                    dirty = false;
-                    window.location.href = targetUrl;
-                }
-            }
-
-            document.querySelectorAll('a.nav-link, a[data-confirm="true"]').forEach(a => {
-                if (!a.href || a.getAttribute('href').startsWith('#') || a.getAttribute('href').startsWith('javascript:')) return;
-                a.addEventListener('click', function(ev) {
-                    const linkUrl = a.href;
-                    const samePage = (linkUrl.split('#')[0] === window.location.href.split('#')[0]);
-                    if (samePage) return;
-                    ev.preventDefault();
-                    confirmAndNavigate(linkUrl);
-                });
-            });
-
-            // --- ADDITION: Send QuestionId to Quiz/SaveQuestion when checkbox is ticked ---
-            document.querySelectorAll('.save-question-checkbox').forEach(checkbox => {
-                checkbox.addEventListener('change', function(ev) {
-                    const questionId = parseInt(ev.target.dataset.questionId);
-
-                    console.log("Question ID from HTML:", questionId); // Kiểm tra xem ở đây có hiện 4 không?
-                    console.log("Type:", typeof questionId);
-
-                    if (checkbox.checked) {
-                        fetch('/Bookmark/SaveQuestion', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-Requested-With': 'XMLHttpRequest',
-                                'RequestVerificationToken': tokenInput ? tokenInput.value : ''
-                            },
-                            body: questionId,
-                            credentials: 'same-origin'
-                        })
-                        .then(response => {
-                            if (!response.ok) throw new Error('SaveQuestion failed: ' + response.status);
-                        })
-                        .catch(err => {
-                            alert('Could not save question: ' + err.message);
-                        });
-                    } else {
-                        fetch('/Bookmark/UnsaveQuestion', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-Requested-With': 'XMLHttpRequest',
-                                'RequestVerificationToken': tokenInput ? tokenInput.value : ''
-                            },
-                            body: questionId,
-                            credentials: 'same-origin'
-                        })
-                        .then(response => {
-                            if (!response.ok) throw new Error('UnsaveQuestion failed: ' + response.status);
-                        })
-                        .catch(err => {
-                            alert('Could not unsave question: ' + err.message);
-                        });
-                    }
-                });
-            });
-
-        })();
-    </script>
-}
+    </form>
+</div>

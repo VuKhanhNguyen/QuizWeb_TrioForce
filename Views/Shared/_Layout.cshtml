@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="~/css/profile.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/loading.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/toastMessage.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/play.css" asp-append-version="true"/>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
     @await RenderSectionAsync("Styles", required: false)
@@ -104,7 +105,7 @@
             <div class="row gy-4">
                 <div class="col-lg-4">
                     <div class="d-flex align-items-center gap-2 mb-3">
-                        <img src="~/assets/quiztime_logo.png" alt="QuizWeb Logo" style="height:42px;">
+                        <img src="~/assets/others/quiztime_logo.png" alt="QuizWeb Logo" style="height:42px;">
                         <span class="fw-semibold text-uppercase small letter-spacing-1">QuizWeb TrioForce</span>
                     </div>
                     <p class="text-white-50 mb-3">
@@ -152,6 +153,7 @@
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <script src="~/js/toastMessage.js" asp-append-version="true"></script>
     <script src="~/js/loading.js" asp-append-version="true"></script>
+    <script src="~/js/play.js" asp-append-version="true"></script>
     @await Html.PartialAsync("ToastMessage")
     @await RenderSectionAsync("Scripts", required: false)
 </body>

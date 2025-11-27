@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using QuizWeb_TrioForce.Services.Implementations;
 using QuizWeb_TrioForce.Services.Interfaces;
 using QuizWeb_TrioForce.ViewModels.BookMark;
 
 namespace QuizWeb_TrioForce.Controllers
 {
+    [Authorize]
     public class BookmarkController : Controller
     {
         private readonly IMarkedQuestionService _markedQuestionService;

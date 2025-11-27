@@ -2,8 +2,10 @@
 {
     public class MarkedQuestionListViewModel
     {
-        public int QuestionId { get; set; }
-        public DateTime MarkedTime { get; set; } = DateTime.Now;
+        public int QuestionId { get; init; }
+        public string QuestionText { get; init; } = null!;
+        public string AnswerTrue { get; init; } = null!;
+        public DateTime MarkedTime { get; init; }
 
     }
 }

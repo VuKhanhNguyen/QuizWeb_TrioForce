@@ -48,7 +48,7 @@ namespace QuizWeb_TrioForce.Services.Implementations
                 QuestionCount = p.QuestionCount,
                 TotalQuestions = p.QuestionSet.Questions.Count(),
                 QuestionLastId = p.QuestionLastId,
-                LastUpdated = p.LastUpdated,
+                LastUpdated = p.LastUpdated.ToLocalTime(),
                 AuthorName = p.UserName
             }).ToList();
         }
@@ -58,7 +58,7 @@ namespace QuizWeb_TrioForce.Services.Implementations
             var pqs = await _progressQuestionSetRepository.GetProgressQuestionSetByUsernameAndQSetId(username, QSetId);
             if (pqs == null)
             {
-                throw new Exception("ProgressQuestionSet not found");
+                return null;
             }
             return pqs;
         }

@@ -14,6 +14,7 @@
                 <span class="badge bg-primary">@Model.CategoryName</span>
                 <span class="badge bg-info">@Model.LevelName</span>
                 <span class="badge bg-secondary">By: @Model.AuthorName</span>
+
             </div>
         </div>
     </div>
@@ -53,8 +54,7 @@
                             var inputId = $"question_{q.QuestionId}_answer_{a.AnswerId}";
 
                             <label class="option-label" for="@inputId">
-                                <input type="hidden" name="UserAnswers[@i].QuestionId" value="@q.QuestionId" />
-                                <input type="radio" id="@inputId" name="UserAnswers[@i].SelectedAnswerId" value="@a.AnswerId" class="answer-radio" required/>
+                                <input type="hidden" d="@inputId" name="UserAnswers[@i].SelectedAnswerId" value="@a.AnswerId" class="answer-radio" required />
                                 <span class="option-text">@((char)('A' + j)): @a.AnswerText</span>
                             </label>
                         }

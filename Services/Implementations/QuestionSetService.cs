@@ -29,7 +29,7 @@ namespace QuizWeb_TrioForce.Services.Implementations
             {
                 QSetId = cqs.QSetId,
                 QSetName = cqs.QSetName,
-                CreatedTime = cqs.CreatedTime,
+                CreatedTime = cqs.CreatedTime.ToLocalTime(),
                 Description = cqs.Description,
                 CategoryId = cqs.CategoryId,
                 LevelId = cqs.LevelId

@@ -147,26 +147,7 @@ namespace QuizWeb_TrioForce.Services.Implementations
             {
                 throw new Exception($"Quiz with ID {id} not found");
             }
-
-            var viewModel = new PlayQuestionSetViewModel
-            {
-                QSetId = qs.QSetId,
-                QSetName = qs.QSetName,
-                Description = qs.Description,
-                AuthorName = qs.AuthorName,
-                CategoryName = qs.Category.CategoryName,
-                LevelName = qs.Level.LevelName,
-                Questions = qs.Questions.Select(q => new PlayQuestionViewModel
-                {
-                    QuestionId = q.QuestionId,
-                    QuestionText = q.QuestionText,
-                    Answers = q.Answers.Select(a => new PlayAnswerViewModel
-                    {
-                        AnswerId = a.AnswerId,
-                        AnswerText = a.AnswerText,
-                    }).ToList()
-                }).ToList()
-            };
+            var viewModel = MapToPlay(qs);
 
             return viewModel;
         }
@@ -178,26 +159,8 @@ namespace QuizWeb_TrioForce.Services.Implementations
             {
                 throw new Exception("GetQuestionSetRandomByNewGuid is not found");
             }
-            var viewModel = new PlayQuestionSetViewModel
-            {
-                QSetId = qs.QSetId,
-                QSetName = qs.QSetName,
-                Description = qs.Description,
-                AuthorName = qs.AuthorName,
-                CategoryName = qs.Category.CategoryName,
-                LevelName = qs.Level.LevelName,
-                Questions = qs.Questions.Select(q => new PlayQuestionViewModel
-                {
-                    QuestionId = q.QuestionId,
-                    QuestionText = q.QuestionText,
-                    Answers = q.Answers.Select(a => new PlayAnswerViewModel
-                    {
-                        AnswerId = a.AnswerId,
-                        AnswerText = a.AnswerText,
-                    }).ToList()
-                }).ToList()
-
-            };
+            
+            var viewModel = MapToPlay(qs);
             return viewModel;
         }
 
@@ -208,7 +171,15 @@ namespace QuizWeb_TrioForce.Services.Implementations
             {
                 throw new Exception("GetQuestionSetRandomByIdCateAndIdLevel is not found");
             }
-            var viewModel = new PlayQuestionSetViewModel
+
+            var viewModel = MapToPlay(qs);
+            return viewModel;
+        }
+
+
+        private PlayQuestionSetViewModel MapToPlay(QuestionSet qs)
+        {
+            return new PlayQuestionSetViewModel
             {
                 QSetId = qs.QSetId,
                 QSetName = qs.QSetName,
@@ -226,9 +197,7 @@ namespace QuizWeb_TrioForce.Services.Implementations
                         AnswerText = a.AnswerText,
                     }).ToList()
                 }).ToList()
-
             };
-            return viewModel;
         }
 
         public async Task SaveProgressAsync(SaveProgressViewModel saveModel, string username)

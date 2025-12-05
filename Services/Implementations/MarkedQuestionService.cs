@@ -17,14 +17,7 @@ namespace QuizWeb_TrioForce.Services.Implementations
         public async Task<List<MarkedQuestionListViewModel>> GetAllMarkedQuestionsAsync(string username)
         {
             var allMarkedQuestions = await _markedQuestionRepository.GetAllMarkedQuestionsAsync(username);
-            return allMarkedQuestions.Select(mq => new MarkedQuestionListViewModel()
-            {
-                QuestionId = mq.QuestionId,
-                QuestionText = mq.Question.QuestionText,
-                AnswerTrue = mq.Question.Answers.FirstOrDefault(a => a.IsCorrect)?.AnswerText ?? string.Empty,
-                MarkedTime = mq.MarkedTime.ToLocalTime()
-            }).ToList();
-
+            return allMarkedQuestions.Select(MapToViewModel).ToList();
         }
 
         public async Task AddMarkedQuestion(string username, int questionId)
@@ -45,6 +38,23 @@ namespace QuizWeb_TrioForce.Services.Implementations
             {
                 await _markedQuestionRepository.RemoveMarkedQuestion(mq);
             }
+        }
+
+        public async Task<List<MarkedQuestionListViewModel>> GetAllMarkedQuestionsByQSetIdAsync(string username, int QSetId)
+        {
+            var markedQuestions = await _markedQuestionRepository.GetAllMarkedQuestionsByQSetIdAsync(username, QSetId);
+            return markedQuestions.Select(MapToViewModel).ToList();
+        }
+
+        private MarkedQuestionListViewModel MapToViewModel(MarkedQuestion mq)
+        {
+            return new MarkedQuestionListViewModel()
+            {
+                QuestionId = mq.QuestionId,
+                QuestionText = mq.Question.QuestionText,
+                AnswerTrue = mq.Question.Answers.FirstOrDefault(a => a.IsCorrect)?.AnswerText ?? string.Empty,
+                MarkedTime = mq.MarkedTime.ToLocalTime()
+            };
         }
     }
 }

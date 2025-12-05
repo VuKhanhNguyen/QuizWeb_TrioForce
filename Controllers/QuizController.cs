@@ -16,13 +16,15 @@ namespace QuizWeb_TrioForce.Controllers
         private readonly IQuizService _quizService;
         private readonly ILevelService _levelService;
         private readonly ICategoryService _categoryService;
+        private readonly IMarkedQuestionService _markedQuestionService;
 
-        public QuizController(ILogger<QuizController> logger, IQuizService quizService, ILevelService levelService, ICategoryService categoryService)
+        public QuizController(ILogger<QuizController> logger, IQuizService quizService, ILevelService levelService, ICategoryService categoryService, IMarkedQuestionService markedQuestionService)
         {
             _logger = logger;
             _quizService = quizService;
             _levelService = levelService;
             _categoryService = categoryService;
+            _markedQuestionService = markedQuestionService;
         }
 
         public IActionResult Index()
@@ -87,6 +89,12 @@ namespace QuizWeb_TrioForce.Controllers
         [HttpGet]
         public async Task<IActionResult> Play(int? QSetId)
         {
+            var username = User.Identity?.Name;
+            if (username == null)
+            {
+                return NotFound();
+            }
+
             PlayQuestionSetViewModel viewModel;
             if (QSetId.HasValue)
             {
@@ -96,6 +104,9 @@ namespace QuizWeb_TrioForce.Controllers
             {
                 viewModel = await _quizService.GetRandomQuizAsync();
             }
+            var markedQuestions = await _markedQuestionService.GetAllMarkedQuestionsByQSetIdAsync(username, viewModel.QSetId);
+
+            viewModel.Questions.ForEach(q => q.IsMarked = markedQuestions.Any(mq => mq.QuestionId == q.QuestionId));
             return View(viewModel);
         }
 

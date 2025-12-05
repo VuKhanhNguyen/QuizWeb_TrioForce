@@ -23,7 +23,7 @@
         <div class="question-container" data-question-id="@q.QuestionId">
             <input type="hidden" name="UserAnswers[@i].QuestionId" value="@q.QuestionId" />
             <div class="custom-checkbox-container">
-                <input type="checkbox" class="save-question-checkbox" id="save-@q.QuestionId" data-question-id="@q.QuestionId" />
+                <input type="checkbox" class="save-question-checkbox" id="save-@q.QuestionId" data-question-id="@q.QuestionId" checked="@(q.IsMarked)"/>
                 <label for="save-@q.QuestionId" class="bookmark-image-label"></label>
             </div>
             <div class="QuestionText">Question: @q.QuestionText</div>

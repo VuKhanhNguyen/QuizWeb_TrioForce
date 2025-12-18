@@ -32,11 +32,12 @@
                     <a href="#categories" class="btn btn-outline-secondary px-4 py-2 rounded-pill">
                         Xem các chủ đề
                     </a>
+                    
                 </div>
             </div>
 
             <div class="col-lg-5 fade-in-up fade-in-delay-1">
-                <div class="row row-cols-1 row-cols-sm-2 g-3">
+                <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-3">
                     <div class="col">
                         <div class="card feature-card text-center shadow-sm rounded-4 border-0 h-100">
                             <div class="card-body py-4 px-3">
@@ -65,6 +66,23 @@
                                     So tài trực tiếp với bạn bè, xem ai là người nhanh và chính xác hơn.
                                 </p>
                                 <a href="#"
+                                   class="stretched-link"></a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col">
+                        <div class="card feature-card text-center shadow-sm rounded-4 border-0 h-100">
+                            <div class="card-body py-4 px-3">
+                                <img src="/assets/others/create_question1.png"
+                                    class="img-fluid mb-3 feature-icon"
+                                    alt="Tạo bộ câu hỏi" />
+                                <h6 class="fw-bold mb-1">Tạo bộ câu hỏi</h6>
+                                <p class="text-muted small mb-0">
+                                    Tạo và chia sẻ bộ câu hỏi của riêng bạn.
+                                </p>
+                                <a asp-action="Create"
+                                   asp-controller="Quiz"
                                    class="stretched-link"></a>
                             </div>
                         </div>

@@ -44,22 +44,38 @@
             @foreach (var pgs in Model.ProgressQuestionSetList)
             {
                 <div class="col">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <h5 class="card-title">@pgs.QSetName</h5>
-                            <h6 class="card-subtitle mb-2 text-muted">by @pgs.AuthorName</h6>
-                            <p class="card-text">
-                                Progress: @pgs.QuestionCount / @pgs.TotalQuestions
-                            </p>
-                            <div class="progress mb-2">
-                                <div class="progress-bar" role="progressbar" style="width: @((double)pgs.QuestionCount / pgs.TotalQuestions * 100)%;" aria-valuenow="@pgs.QuestionCount" aria-valuemin="0" aria-valuemax="@pgs.TotalQuestions"></div>
+                    <a asp-controller="Quiz"
+                       asp-action="ResumeProgress"
+                       asp-route-QSetId="@pgs.QSetId"
+                       class="text-decoration-none text-dark">
+
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">@pgs.QSetName</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">by @pgs.AuthorName</h6>
+
+                                <p class="card-text">
+                                    Progress: @pgs.QuestionCount / @pgs.TotalQuestions
+                                </p>
+
+                                <div class="progress mb-2">
+                                    <div class="progress-bar"
+                                         role="progressbar"
+                                         style="width: @((double)pgs.QuestionCount / pgs.TotalQuestions * 100)%;">
+                                    </div>
+                                </div>
+
+                                <span class="btn btn-primary">Continue</span>
                             </div>
-                            <a href="#" class="btn btn-primary">Continue</a>
+
+                            <div class="card-footer">
+                                <small class="text-muted">
+                                    Last updated: @pgs.LastUpdated.ToString("g")
+                                </small>
+                            </div>
                         </div>
-                        <div class="card-footer">
-                            <small class="text-muted">Last updated: @pgs.LastUpdated.ToString("g")</small>
-                        </div>
-                    </div>
+                    </a>
+
                 </div>
             }
         </div>

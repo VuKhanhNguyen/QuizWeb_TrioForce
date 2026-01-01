@@ -82,6 +82,7 @@ namespace QuizWeb_TrioForce
             app.UseStaticFiles();
 
             app.UseRouting();
+            app.UseAuthentication();
 
             app.UseAuthorization();
 

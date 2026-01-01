@@ -171,6 +171,28 @@ namespace QuizWeb_TrioForce.Controllers
             return NoContent();
         }
 
+        [HttpGet]
+        public async Task<IActionResult> ResumeProgress(int QSetId)
+        {
+            var username = User.Identity?.Name;
+            if (username == null)
+            {
+                return Unauthorized();
+            }
+            var progress = await _quizService.LoadProgressAsync(username, QSetId);
+            if (progress == null)
+            {
+                return NotFound();
+            }
+
+            var markedQuestions = await _markedQuestionService.GetAllMarkedQuestionsByQSetIdAsync(username, QSetId);
+
+            progress.Questions.ForEach(q => q.IsMarked = markedQuestions.Any(mq => mq.QuestionId == q.QuestionId));
+
+
+            return View("Play", progress);
+        }
+
         // [HttpGet]
         // public async Task<IActionResult> Play(int categoryId, int levelId)
         // {

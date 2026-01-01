@@ -8,5 +8,6 @@ namespace QuizWeb_TrioForce.ViewModels.Question
         public string QuestionText { get; set; } = null!;
         public List<PlayAnswerViewModel> Answers { get; set; } = [];
         public bool IsMarked { get; set; } = false;
+        public int? UserSelectedAnswerId { get; set; }
     }
 }

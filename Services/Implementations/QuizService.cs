@@ -1,4 +1,5 @@
-﻿using QuizWeb_TrioForce.DTOs;
+﻿using Microsoft.AspNetCore.Mvc.RazorPages;
+using QuizWeb_TrioForce.DTOs;
 using QuizWeb_TrioForce.Models;
 using QuizWeb_TrioForce.Repositories.Interfaces;
 using QuizWeb_TrioForce.Services.Interfaces;
@@ -159,7 +160,7 @@ namespace QuizWeb_TrioForce.Services.Implementations
             {
                 throw new Exception("GetQuestionSetRandomByNewGuid is not found");
             }
-            
+
             var viewModel = MapToPlay(qs);
             return viewModel;
         }
@@ -283,18 +284,20 @@ namespace QuizWeb_TrioForce.Services.Implementations
                     CorrectAnswerId = correctAnswerId,
                     IsCorrect = isCorrect
                 });
-
-                answeredQuestions.Add(new AnsweredQuestion
-                {
-                    UserName = username,
-                    QSetId = submitModel.QSetId,
-                    QuestionId = question.QuestionId,
-                    SelectedAnswerId = question.SelectedAnswerId
-                });
             }
 
-            await _progressQuestionSetService.AddProgressQuestionSet(progQuesSet, username);
-            await _answeredQuestionService.AddAnsweredQuestions(answeredQuestions);
+            await _answeredQuestionService.SaveAnsweredQuestions(username, submitModel.QSetId, submitModel.UserAnswers);
+
+            var progressQuestionSetExist = await _progressQuestionSetService.GetProgressQuestionSetByUsernameAndQSetId(username, submitModel.QSetId);
+            if (progressQuestionSetExist != null)
+            {
+                await _progressQuestionSetService.UpdateProgressQuestionSet(progQuesSet, username);
+            }
+            else
+            {
+                await _progressQuestionSetService.AddProgressQuestionSet(progQuesSet, username);
+            }
+
             await _rankingService.UpdateUserScoreAsync(username, score);
 
             return new QuizResultViewModel
@@ -305,7 +308,7 @@ namespace QuizWeb_TrioForce.Services.Implementations
                 Score = score,
                 QuestionResults = questionsResult
             };
-            
+
         }
 
         public Task UpdateQuizAsync(UpdateQuestionSetViewModel viewModel, string authorName)
@@ -313,5 +316,44 @@ namespace QuizWeb_TrioForce.Services.Implementations
             throw new NotImplementedException();
         }
 
+        public async Task<ResumeQuestionSetViewModel> LoadProgressAsync(string username, int qSetId)
+        {
+            var progress = await _progressQuestionSetService.GetProgressQuestionSetByUsernameAndQSetId(username, qSetId) ?? throw new Exception($"Progress for user {username} and quiz {qSetId} not found");
+            var answeredQuestions = await _answeredQuestionService.GetAllAnsweredQuestions(username, qSetId) ?? throw new Exception($"Answered questions for user {username} and quiz {qSetId} not found");
+            var questionSet = await _unitOfWork.QuestionSetRepository.GetQuestionSetByIdAsync(qSetId) ?? throw new Exception($"Quiz with ID {qSetId} not found");
+
+            var answeredDict = answeredQuestions.ToDictionary(aq => aq.QuestionId, aq => aq.SelectedAnswerId);
+
+            var preViewModel = MapToPlay(questionSet);
+
+            ResumeQuestionSetViewModel viewModel = new ResumeQuestionSetViewModel()
+            {
+                QSetId = preViewModel.QSetId,
+                QSetName = preViewModel.QSetName,
+                Description = preViewModel.Description,
+                AuthorName = preViewModel.AuthorName,
+                CategoryName = preViewModel.CategoryName,
+                LevelName = preViewModel.LevelName,
+
+                Questions = preViewModel.Questions,
+
+                QuestionLastId = progress.QuestionLastId,
+                LastUpdated = progress.LastUpdated,
+            };
+
+            viewModel.Questions.ForEach(q =>
+            {
+                if (answeredDict.TryGetValue(q.QuestionId, out int selectedId))
+                {
+                    q.UserSelectedAnswerId = selectedId;
+                }
+                else
+                {
+                    q.UserSelectedAnswerId = null;
+                }
+            });
+
+            return viewModel;
+        }
     }
 }

@@ -30,6 +30,16 @@ namespace QuizWeb_TrioForce.Repositories.Implementations
                 .ToListAsync();
         }
 
+        public async Task<List<MarkedQuestion>> GetAllMarkedQuestionsByQSetIdAsync(string username, int QSetId)
+        {
+            return await _context.MarkedQuestions
+                .AsNoTracking()
+                .Include(mq => mq.Question)
+                .ThenInclude(q => q.Answers)
+                .Where(mq => mq.UserName == username && mq.Question.QSetId == QSetId)
+                .ToListAsync();
+        }
+
         public async Task<MarkedQuestion?> GetMarkedQuestionByIdAsync(string username, int questionId)
         {
             return await _context.MarkedQuestions.AsNoTracking().Where(mq => (mq.QuestionId == questionId && mq.UserName == username)).FirstOrDefaultAsync();

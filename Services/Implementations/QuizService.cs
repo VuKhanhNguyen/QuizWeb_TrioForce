@@ -328,13 +328,10 @@ namespace QuizWeb_TrioForce.Services.Implementations
                     UserSelectedAnswerId = userSelectedAnswerId,
                     UserSelectedAnswerText = userSelectedAnswerText,
                     CorrectAnswerId = correctAnswerId,
-<<<<<<< Updated upstream
-                    IsCorrect = isCorrect
-=======
+
                     CorrectAnswerText = correctAnswerText,
                     IsCorrect = isCorrect,
                     AllAnswers = allAnswers
->>>>>>> Stashed changes
                 });
             }
 
@@ -367,8 +364,6 @@ namespace QuizWeb_TrioForce.Services.Implementations
         {
             throw new NotImplementedException();
         }
-<<<<<<< Updated upstream
-
         public async Task<ResumeQuestionSetViewModel> LoadProgressAsync(string username, int qSetId)
         {
             var progress = await _progressQuestionSetService.GetProgressQuestionSetByUsernameAndQSetId(username, qSetId) ?? throw new Exception($"Progress for user {username} and quiz {qSetId} not found");
@@ -408,7 +403,6 @@ namespace QuizWeb_TrioForce.Services.Implementations
 
             return viewModel;
         }
-=======
->>>>>>> Stashed changes
+
     }
 }

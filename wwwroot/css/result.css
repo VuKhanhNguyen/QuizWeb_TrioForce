@@ -1,0 +1,368 @@
+/* ========== GENERAL ========== */
+body {
+    background-color: #f5f5f5;
+    overflow-x: hidden;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* ========== RESULT CONTAINER ========== */
+.result-container {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+/* ========== RESULT CARD ========== */
+.result-card {
+    background-color: #fff;
+    border-radius: 16px;
+    padding: 50px 40px;
+    text-align: center;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e8e8e8;
+    margin-bottom: 30px;
+}
+
+.result-title {
+    font-size: 48px;
+    font-weight: 700;
+    color: #66bb6a;
+    margin: 0 0 10px;
+}
+
+.result-subtitle {
+    font-size: 16px;
+    color: #666;
+    margin: 0 0 40px;
+}
+
+/* ========== SCORE CIRCLE ========== */
+.score-circle-container {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    margin: 0 auto 40px;
+}
+
+.score-circle-svg {
+    transform: rotate(-90deg);
+}
+
+.circle-bg {
+    stroke: #e0e0e0;
+    stroke-width: 12;
+    fill: none;
+}
+
+.circle-progress {
+    stroke: #ffa726;
+    stroke-width: 12;
+    fill: none;
+    stroke-dasharray: 534;
+    stroke-dashoffset: 534;
+    transition: stroke-dashoffset 2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.score-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+.score-number {
+    font-size: 64px;
+    font-weight: 700;
+    color: #333;
+    line-height: 1;
+}
+
+.score-total {
+    font-size: 24px;
+    color: #999;
+    margin-top: 5px;
+}
+
+/* ========== STATS GRID ========== */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-bottom: 40px;
+}
+
+.stat-card {
+    background-color: #fafafa;
+    border: 3px solid;
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    transition: transform 0.2s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+}
+
+.stat-correct {
+    border-color: #66bb6a;
+}
+
+.stat-wrong {
+    border-color: #ef5350;
+}
+
+.stat-percent {
+    border-color: #29b6f6;
+}
+
+.stat-icon {
+    font-size: 36px;
+    margin-bottom: 12px;
+}
+
+.stat-correct .stat-icon {
+    color: #66bb6a;
+}
+
+.stat-wrong .stat-icon {
+    color: #ef5350;
+}
+
+.stat-percent .stat-icon {
+    color: #29b6f6;
+}
+
+.stat-number {
+    font-size: 32px;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 4px;
+}
+
+.stat-label {
+    font-size: 14px;
+    color: #666;
+}
+
+/* ========== ACTION BUTTONS ========== */
+.action-buttons {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+}
+
+.btn-retry,
+.btn-home {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 32px;
+    border-radius: 50px;
+    font-size: 16px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    border: 2px solid;
+}
+
+.btn-retry {
+    background-color: #29b6f6;
+    border-color: #29b6f6;
+    color: white;
+}
+
+.btn-retry:hover {
+    background-color: #0288d1;
+    border-color: #0288d1;
+}
+
+.btn-home {
+    background-color: white;
+    border-color: #29b6f6;
+    color: #29b6f6;
+}
+
+.btn-home:hover {
+    background-color: #e1f5fe;
+}
+
+.btn-icon {
+    font-size: 18px;
+}
+
+/* ========== DETAILS TOGGLE ========== */
+.details-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 16px;
+    background-color: #29b6f6;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-bottom: 20px;
+}
+
+.details-toggle:hover {
+    background-color: #0288d1;
+}
+
+.details-toggle.active .toggle-icon {
+    transform: rotate(180deg);
+}
+
+.toggle-icon {
+    transition: transform 0.3s ease;
+}
+
+/* ========== DETAILS SECTION ========== */
+.details-section {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.detail-card {
+    background-color: #fff;
+    border-radius: 12px;
+    padding: 24px;
+    border-left: 4px solid;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.detail-correct {
+    border-left-color: #66bb6a;
+}
+
+.detail-wrong {
+    border-left-color: #ef5350;
+}
+
+.detail-question {
+    font-size: 16px;
+    color: #333;
+    margin-bottom: 20px;
+    line-height: 1.5;
+    font-weight: 600;
+}
+
+.detail-options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.detail-option {
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 16px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.2s ease;
+}
+
+.option-default {
+    background-color: #fff;
+    border-color: #ddd;
+}
+
+.option-correct {
+    background-color: #e8f5e9;
+    border-color: #66bb6a;
+    border-width: 2px;
+}
+
+.option-wrong {
+    background-color: #ffebee;
+    border-color: #ef5350;
+    border-width: 2px;
+}
+
+.option-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+}
+
+.option-radio {
+    width: 24px;
+    height: 24px;
+    border: 2px solid #ddd;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.option-correct .option-radio {
+    background-color: #66bb6a;
+    border-color: #66bb6a;
+    color: white;
+}
+
+.option-text {
+    font-size: 15px;
+    color: #333;
+}
+
+.user-badge {
+    background-color: #29b6f6;
+    color: white;
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    flex-shrink: 0;
+}
+
+/* ========== CONFETTI CANVAS ========== */
+#confettiCanvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 9999;
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 768px) {
+    .result-card {
+        padding: 40px 24px;
+    }
+
+    .result-title {
+        font-size: 36px;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+    }
+    
+    .btn-retry,
+    .btn-home {
+        width: 100%;
+        justify-content: center;
+    }
+}

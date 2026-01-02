@@ -8,12 +8,10 @@
     var lastId = resumeModel?.QuestionLastId ?? 0;
 }
 
-<h2>Play Quiz: @Model.QSetName</h2>
-<h3>Description: @Model.Description</h3>
-<h3>Level: @Model.LevelName</h3>
-<h3>Category: @Model.CategoryName</h3>
-<h3>By: @Model.AuthorName</h3>
+<link rel="stylesheet" href="~/css/play.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/save-question.css" asp-append-version="true" />
 
+<<<<<<< Updated upstream
 <form asp-action="Play" method="post" id="quizForm" data-save-url="@Url.Action("SaveProgress", "Quiz")">
 
     <input type="hidden" name="QSetId" value="@Model.QSetId" />
@@ -58,17 +56,85 @@
                     </div>
                 }
             </div>
+=======
+<div class="quiz-play-area">
+    <!-- Quiz Header -->
+    <div class="quiz-header">
+        <div class="quiz-title">@Model.QSetName</div>
+        <div class="quiz-description">@Model.Description</div>
+        <div class="quiz-tags">
+            <span class="tag">📚 Chủ đề: @Model.CategoryName</span>
+            <span class="tag tag-level">Mức độ: @Model.LevelName</span>
+            <span class="tag">🔥 Tác giả: @Model.AuthorName</span>
+            <span class="tag">📝 Số câu hỏi: @Model.Questions.Count</span>
         </div>
-    }
-
-    <div>
-        <button type="submit" class="btn btn-primary" id="submitBtn">Submit</button>
-        <a asp-action="Index" class="btn btn-secondary cancel-link" id="cancelBtn" data-confirm="true">Cancel</a>
+    </div>
+    
+    <!-- Progress Section (outside questions) -->
+    <div class="progress-section">
+        <div class="question-counter" id="question-counter">1 / @Model.Questions.Count</div>
+        <div class="progress-bar-container" id="progress-container">
+            @for (int i = 0; i < Model.Questions.Count; i++)
+            {
+                <div class="progress-segment" data-index="@i"></div>
+            }
+>>>>>>> Stashed changes
+        </div>
     </div>
 
-</form>
+    <form asp-action="Play" method="post" id="quizForm" data-save-url="@Url.Action("SaveProgress", "Quiz")">
+        <input type="hidden" name="QSetId" value="@Model.QSetId" />
+        <input type="hidden" name="QSetName" value="@Model.QSetName" />
+        <input type="hidden" id="QuestionCount" name="QuestionCount" value=0/>
+        <input type="hidden" id="QuestionLastId" name="QuestionLastId" value=0/>
+
+        @for (int i = 0; i < Model.Questions.Count; i++)
+        {
+            var q = Model.Questions[i];
+
+            <div class="question-container" data-question-id="@q.QuestionId">
+                <input type="hidden" name="UserAnswers[@i].QuestionId" value="@q.QuestionId" />
+                
+                <div class="question-header">
+                    <div class="question-number">CÂU @(i + 1)</div>
+                    <div class="custom-checkbox-container">
+                        <input type="checkbox" class="save-question-checkbox" id="save-@q.QuestionId" data-question-id="@q.QuestionId" />
+                        <label for="save-@q.QuestionId" class="bookmark-image-label"></label>
+                    </div>
+                </div>
+                
+                <div class="QuestionText">@q.QuestionText</div>
+                
+                <div class="Options">
+                    @for (int j = 0; j < q.Answers.Count; j++)
+                    {
+                        var a = q.Answers[j];
+                        var inputId = $"question_{q.QuestionId}_answer_{a.AnswerId}";
+
+                        <label class="option-label">
+                            <input type="radio" 
+                                   id="@inputId" 
+                                   name="UserAnswers[@i].SelectedAnswerId" 
+                                   value="@a.AnswerId" 
+                                   class="answer-radio" 
+                                   required />
+                            <span class="option-text">@a.AnswerText</span>
+                        </label>
+                    }
+                </div>
+            </div>
+        }
+
+        <div class="navigation-buttons">
+            <a asp-action="Index" class="btn-skip" id="cancelBtn" data-confirm="true">BỎ QUA</a>
+            <button type="button" class="btn-continue" id="nextBtn">TIẾP TỤC</button>
+            <button type="submit" class="btn-complete hidden" id="submitBtn">HOÀN THÀNH</button>
+        </div>
+    </form>
+</div>
 
 @section Scripts {
+<<<<<<< Updated upstream
     <script>
 
         (function() {
@@ -289,4 +355,8 @@
 
         })();
     </script>
+=======
+    <script src="~/js/play.js" asp-append-version="true"></script>
+    <script src="~/js/bookmark.js" asp-append-version="true"></script>
+>>>>>>> Stashed changes
 }

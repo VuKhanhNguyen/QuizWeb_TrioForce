@@ -1,36 +1,222 @@
 ﻿@model QuizWeb_TrioForce.ViewModels.BookMark.BookMarkViewModel
 @{
-    ViewData["Title"] = "Bookmarks";
+    ViewData["Title"] = "Bộ sưu tập của tôi";
 }
 
-<div class="container mt-4">
+<link rel="stylesheet" href="~/css/bookmark.css" asp-append-version="true" />
 
-    <h2 class="mb-3">Marked Questions</h2>
-    @if (Model.MarkedQuestionList.Any())
-    {
-        <div class="list-group mb-5">
-            @foreach (var bm in Model.MarkedQuestionList)
-            {
-                <div class="list-group-item list-group-item-action flex-column align-items-start">
+<div class="bookmark-hero py-4">
+    <div class="container">
+        <!-- Page Header -->
+        <div class="page-header mb-4">
+            <div class="d-flex align-items-center gap-3">
+                <div class="page-icon">
+                    <i class="fas fa-bookmark"></i>
+                </div>
+                <div>
+                    <h2 class="fw-bold mb-1">Bộ sưu tập của tôi</h2>
+                    <p class="text-muted mb-0">Quản lý câu hỏi đã đánh dấu và bộ câu hỏi của bạn</p>
+                </div>
+            </div>
+        </div>
 
-                    <div class="d-flex w-100 justify-content-between">
-                        <div class="custom-checkbox-container">
-                        <input type="checkbox" class="save-question-checkbox" id="save-@bm.QuestionId" data-question-id="@bm.QuestionId" checked />
-                            <label for="save-@bm.QuestionId" class="bookmark-image-label"></label>
-                        </div>
-                        <h5 class="mb-1">Question: @bm.QuestionText</h5>
-                        <small>@bm.MarkedTime.ToString("g")</small>
+        <!-- Marked Questions Section -->
+        <div class="section-wrapper mb-5">
+            <div class="section-header">
+                <div class="d-flex align-items-center gap-2">
+                    <div class="section-icon bg-warning-soft">
+                        <i class="fas fa-star text-warning"></i>
                     </div>
-                    <a href="#"
-                       class="btn btn-sm btn-outline-primary mt-2 view-detail"
-                       data-question="@bm.QuestionText"
-                       data-time="@bm.MarkedTime.ToString("g")"
-                       data-answer="@bm.AnswerTrue">
-                        View Detail
+                    <h4 class="mb-0 fw-semibold">Câu hỏi đã đánh dấu</h4>
+                </div>
+                @if (Model.MarkedQuestionList.Any())
+                {
+                    <span class="badge bg-warning text-dark">@Model.MarkedQuestionList.Count câu hỏi</span>
+                }
+            </div>
+
+            @if (Model.MarkedQuestionList.Any())
+            {
+                <div class="questions-list">
+                    @foreach (var bm in Model.MarkedQuestionList)
+                    {
+                        <div class="question-card">
+                            <div class="question-content">
+                                <div class="d-flex align-items-start gap-3">
+                                    <div class="bookmark-toggle">
+                                        <input type="checkbox" class="save-question-checkbox" id="save-@bm.QuestionId" data-question-id="@bm.QuestionId" checked />
+                                        <label for="save-@bm.QuestionId" class="bookmark-image-label"></label>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <h6 class="question-text mb-2">@bm.QuestionText</h6>
+                                        <div class="question-meta">
+                                            <span class="meta-item">
+                                                <i class="far fa-clock"></i>
+                                                @bm.MarkedTime.ToString("dd/MM/yyyy HH:mm")
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="question-actions">
+                                <button class="btn btn-sm btn-outline-primary view-detail"
+                                        data-question="@bm.QuestionText"
+                                        data-time="@bm.MarkedTime.ToString("g")"
+                                        data-answer="@bm.AnswerTrue">
+                                    <i class="fas fa-eye me-1"></i> Xem chi tiết
+                                </button>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="empty-state">
+                    <div class="empty-icon">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <h6 class="text-muted mb-1">Chưa có câu hỏi nào</h6>
+                    <p class="text-muted small mb-0">Đánh dấu các câu hỏi quan trọng khi làm quiz</p>
+                </div>
+            }
+        </div>
+
+        <!-- In Progress Question Sets Section -->
+        <div class="section-wrapper mb-5">
+            <div class="section-header">
+                <div class="d-flex align-items-center gap-2">
+                    <div class="section-icon bg-info-soft">
+                        <i class="fas fa-clock text-info"></i>
+                    </div>
+                    <h4 class="mb-0 fw-semibold">Bộ câu hỏi đang làm</h4>
+                </div>
+                @if (Model.ProgressQuestionSetList.Any())
+                {
+                    <span class="badge bg-info">@Model.ProgressQuestionSetList.Count bộ</span>
+                }
+            </div>
+
+            @if (Model.ProgressQuestionSetList.Any())
+            {
+                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                    @foreach (var pqs in Model.ProgressQuestionSetList)
+                    {
+                        <div class="col">
+                            <div class="quiz-set-card">
+                                <div class="card-badge bg-info">
+                                    <i class="fas fa-play-circle me-1"></i> Đang làm
+                                </div>
+                                <h5 class="card-title">@pqs.QSetName</h5>
+                                <p class="card-author">
+                                    <i class="fas fa-user-circle me-1"></i> @pqs.AuthorName
+                                </p>
+                                <div class="progress-info mb-3">
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span class="text-muted small">Tiến độ</span>
+                                        <span class="fw-semibold">@pqs.QuestionCount/@pqs.TotalQuestions</span>
+                                    </div>
+                                    <div class="progress" style="height: 8px;">
+                                        <div class="progress-bar bg-info" role="progressbar" 
+                                             style="width: @((double)pqs.QuestionCount / pqs.TotalQuestions * 100)%;">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-footer-custom">
+                                    <small class="text-muted">
+                                        <i class="far fa-clock me-1"></i>
+                                        @pqs.LastUpdated.ToString("dd/MM/yyyy")
+                                    </small>
+                                    <a href="#" class="btn btn-sm btn-primary">
+                                        <i class="fas fa-play me-1"></i> Tiếp tục
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="empty-state">
+                    <div class="empty-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h6 class="text-muted mb-1">Chưa có bộ câu hỏi nào</h6>
+                    <p class="text-muted small mb-0">Bắt đầu làm quiz để xem tiến độ tại đây</p>
+                </div>
+            }
+        </div>
+
+        <!-- Created Question Sets Section -->
+        <div class="section-wrapper">
+            <div class="section-header">
+                <div class="d-flex align-items-center gap-2">
+                    <div class="section-icon bg-success-soft">
+                        <i class="fas fa-plus-circle text-success"></i>
+                    </div>
+                    <h4 class="mb-0 fw-semibold">Bộ câu hỏi đã tạo</h4>
+                </div>
+                @if (Model.CreatedQuestionList.Any())
+                {
+                    <span class="badge bg-success">@Model.CreatedQuestionList.Count bộ</span>
+                }
+            </div>
+
+            @if (Model.CreatedQuestionList.Any())
+            {
+                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                    @foreach (var cqs in Model.CreatedQuestionList)
+                    {
+                        <div class="col">
+                            <div class="quiz-set-card">
+                                <div class="card-badge bg-success">
+                                    <i class="fas fa-check-circle me-1"></i> Đã tạo
+                                </div>
+                                <h5 class="card-title">@cqs.QSetName</h5>
+                                <p class="card-description">@cqs.Description</p>
+                                <div class="card-tags mb-3">
+                                    <span class="tag tag-category">
+                                        <i class="fas fa-folder me-1"></i> @cqs.CategoryId
+                                    </span>
+                                    <span class="tag tag-level">
+                                        <i class="fas fa-signal me-1"></i> @cqs.LevelId
+                                    </span>
+                                </div>
+                                <div class="card-footer-custom">
+                                    <small class="text-muted">
+                                        <i class="far fa-calendar me-1"></i>
+                                        @cqs.CreatedTime.ToString("dd/MM/yyyy")
+                                    </small>
+                                    <div class="btn-group btn-group-sm">
+                                        <a href="#" class="btn btn-outline-primary">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a href="#" class="btn btn-outline-danger">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="empty-state">
+                    <div class="empty-icon">
+                        <i class="fas fa-plus-circle"></i>
+                    </div>
+                    <h6 class="text-muted mb-1">Chưa tạo bộ câu hỏi nào</h6>
+                    <p class="text-muted small mb-3">Tạo bộ câu hỏi của riêng bạn và chia sẻ với mọi người</p>
+                    <a asp-controller="Quiz" asp-action="Create" class="btn btn-primary">
+                        <i class="fas fa-plus me-2"></i> Tạo bộ câu hỏi mới
                     </a>
                 </div>
             }
         </div>
+<<<<<<< Updated upstream
     }
     else
     {
@@ -112,23 +298,44 @@
     {
         <p>You have not created any question sets.</p>
     }
+=======
+    </div>
+>>>>>>> Stashed changes
 </div>
 
 
+<!-- Question Detail Modal -->
 <div class="modal fade" id="questionModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog" style="margin-top: 200px;">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Question Detail</h5>
+                <h5 class="modal-title fw-semibold">
+                    <i class="fas fa-info-circle text-primary me-2"></i>Chi tiết câu hỏi
+                </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <p><strong>Question:</strong> <span id="modalQuestionText"></span></p>
-                <p><strong>Marked Time:</strong> <span id="modalMarkedTime"></span></p>
-                <p><strong>Correct Answer:</strong> <span id="modalAnswerTrue"></span></p>
+                <div class="mb-3">
+                    <label class="fw-semibold text-dark mb-2">
+                        <i class="fas fa-question-circle text-primary me-1"></i> Câu hỏi:
+                    </label>
+                    <p class="ms-4" id="modalQuestionText"></p>
+                </div>
+                <div class="mb-3">
+                    <label class="fw-semibold text-dark mb-2">
+                        <i class="far fa-clock text-info me-1"></i> Thời gian đánh dấu:
+                    </label>
+                    <p class="ms-4" id="modalMarkedTime"></p>
+                </div>
+                <div>
+                    <label class="fw-semibold text-dark mb-2">
+                        <i class="fas fa-check-circle text-success me-1"></i> Đáp án đúng:
+                    </label>
+                    <p class="ms-4 text-success fw-semibold" id="modalAnswerTrue"></p>
+                </div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
             </div>
         </div>
     </div>

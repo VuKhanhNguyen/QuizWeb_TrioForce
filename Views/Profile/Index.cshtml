@@ -10,52 +10,81 @@
 
 
 
-<div class="profile-horizontal-container">
-    <div class="profile-horizontal-card">
-        <div class="profile-horizontal-left">
-            <div class="profile-horizontal-avatar"><span class="avatar-icon">👤</span></div>
-            <div class="profile-horizontal-namebadge">
-                <span class="profile-horizontal-username">@Model.Username</span>
-                <span class="profile-horizontal-badge">⭐ Thành viên</span>
+<div class="profilecard-container">
+    <div class="profilecard-main">
+        <!-- Left Column: Personal Info -->
+        <div class="profilecard-left">
+            <div class="profilecard-avatar">
+                <span class="avatar-icon">👤</span>
+                <div class="profilecard-level">LVL @(Model.Rank > 0 ? Model.Rank / 10 + 1 : 1)</div>
             </div>
-            <form id="profileEditForm" autocomplete="off" class="profile-horizontal-form">
-                <div class="profile-horizontal-fields">
-                    <div class="form-group">
-                        <label for="fullname">Họ và tên</label>
-                        <input type="text" id="fullname" value="@Model.Fullname" class="form-control" />
-                    </div>
-                    <div class="form-group">
-                        <label for="email">Email</label>
-                        <input type="email" id="email" value="@Model.Email" class="form-control" />
-                    </div>
-                    <div class="form-group">
-                        <label for="birthday">Ngày sinh</label>
-                        <input type="text" id="birthday" value="@Model.Birthday" class="form-control" placeholder="dd/MM/yyyy" />
-                    </div>
-                    <div class="form-group">
-                        <label for="sex">Giới tính</label>
-                        @Html.DropDownListFor(m => m.Sex, new List<SelectListItem>
-                        {
-                            new SelectListItem { Text = "Nam", Value = "True", Selected = Model.Sex },
-                            new SelectListItem { Text = "Nữ", Value = "False", Selected = !Model.Sex }
-                        }, new { @class = "form-control", id = "sex" })
-                    </div>
+            
+            <h2 class="profilecard-username">@Model.Username</h2>
+            <div class="profilecard-badge">⭐ Thành viên</div>
+
+            <form id="profileEditForm" autocomplete="off" class="profilecard-personal">
+                <div>
+                    <i class="fa-solid fa-user-pen" style="width: 20px;"></i>
+                    <input type="text" id="fullname" value="@Model.Fullname" class="form-control form-control-sm" placeholder="Họ tên" style="background: rgba(255,255,255,0.2); border: none; color: white;" />
                 </div>
-                <div class="profile-horizontal-actions">
-                    <button type="button" class="btn btn-primary" onclick="saveProfile()"><span class="btn-icon">💾</span> Lưu thay đổi</button>
+                <div>
+                    <i class="fa-solid fa-envelope" style="width: 20px;"></i>
+                    <input type="email" id="email" value="@Model.Email" class="form-control form-control-sm" placeholder="Email" style="background: rgba(255,255,255,0.2); border: none; color: white;" />
+                </div>
+                <div>
+                    <i class="fa-solid fa-cake-candles" style="width: 20px;"></i>
+                    <input type="text" id="birthday" value="@Model.Birthday" class="form-control form-control-sm" placeholder="dd/MM/yyyy" style="background: rgba(255,255,255,0.2); border: none; color: white;" />
+                </div>
+                <div>
+                    <i class="fa-solid fa-venus-mars" style="width: 20px;"></i>
+                    <select id="sex" class="form-control form-control-sm" style="background: rgba(255,255,255,0.2); border: none; color: white;">
+                        <option value="True" style="color: black;" selected="@Model.Sex">Nam</option>
+                        <option value="False" style="color: black;" selected="@(!Model.Sex)">Nữ</option>
+                    </select>
                 </div>
             </form>
+
+            <div class="profilecard-actions">
+                <button type="button" class="btn btn-light rounded-pill px-4 fw-bold" onclick="saveProfile()">
+                    <i class="fa-solid fa-floppy-disk"></i> Lưu
+                </button>
+            </div>
         </div>
-        <div class="profile-horizontal-right">
-            <div class="profile-horizontal-stats-title">📊 Thống kê cá nhân</div>
-            <div class="profile-horizontal-stats-grid">
-                <div class="profile-horizontal-stat"><div class="stat-icon">🏆</div><div class="stat-label">Hạng</div><div class="stat-value">#@Model.Rank</div></div>
-                <div class="profile-horizontal-stat"><div class="stat-icon">⭐</div><div class="stat-label">Tổng điểm</div><div class="stat-value">@Model.TotalScore.ToString("N0")</div></div>
-                <div class="profile-horizontal-stat"><div class="stat-icon">🎮</div><div class="stat-label">Lượt chơi</div><div class="stat-value">@Model.TotalGamesPlayed.ToString("N0")</div></div>
-                <div class="profile-horizontal-stat"><div class="stat-icon">📝</div><div class="stat-label">Câu hỏi đã trả lời</div><div class="stat-value">@Model.TotalQuestionsAnswered.ToString("N0")</div></div>
-                <div class="profile-horizontal-stat"><div class="stat-icon">✅</div><div class="stat-label">Trả lời đúng</div><div class="stat-value">@Model.CorrectAnswers.ToString("N0")</div></div>
-                <div class="profile-horizontal-stat"><div class="stat-icon">🎯</div><div class="stat-label">Tỉ lệ đúng</div><div class="stat-value">@Model.AccuracyRate.ToString("N2")%</div></div>
-                <div class="profile-horizontal-stat"><div class="stat-icon">📚</div><div class="stat-label">Bộ câu hỏi đã tạo</div><div class="stat-value">@Model.QuestionSetsCreated.ToString("N0")</div></div>
+
+        <!-- Right Column: Stats -->
+        <div class="profilecard-right">
+            <div class="profilecard-stats-title">📊 Thống kê năng lực</div>
+            <div class="profilecard-stats-grid">
+                <div class="profilecard-stat">
+                    <div class="stat-icon text-warning">🏆</div>
+                    <div class="stat-label">Hạng</div>
+                    <div class="stat-value">#@Model.Rank</div>
+                </div>
+                <div class="profilecard-stat">
+                    <div class="stat-icon text-primary">⭐</div>
+                    <div class="stat-label">Tổng điểm</div>
+                    <div class="stat-value">@Model.TotalScore.ToString("N0")</div>
+                </div>
+                <div class="profilecard-stat">
+                    <div class="stat-icon text-success">🎮</div>
+                    <div class="stat-label">Lượt chơi</div>
+                    <div class="stat-value">@Model.TotalGamesPlayed.ToString("N0")</div>
+                </div>
+                <div class="profilecard-stat">
+                    <div class="stat-icon text-info">📝</div>
+                    <div class="stat-label">Đã trả lời</div>
+                    <div class="stat-value">@Model.TotalQuestionsAnswered.ToString("N0")</div>
+                </div>
+                <div class="profilecard-stat">
+                    <div class="stat-icon text-danger">✅</div>
+                    <div class="stat-label">Chính xác</div>
+                    <div class="stat-value">@Model.CorrectAnswers.ToString("N0")</div>
+                </div>
+                <div class="profilecard-stat">
+                    <div class="stat-icon text-secondary">🎯</div>
+                    <div class="stat-label">Tỉ lệ đúng</div>
+                    <div class="stat-value">@Model.AccuracyRate.ToString("N2")%</div>
+                </div>
             </div>
         </div>
     </div>

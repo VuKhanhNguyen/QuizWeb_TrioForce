@@ -1,40 +1,107 @@
-﻿@model QuizWeb_TrioForce.ViewModels.QuestionSet.QuizResultViewModel;
+﻿@model QuizWeb_TrioForce.ViewModels.QuestionSet.QuizResultViewModel
 @{
-    ViewBag.Title = "Quiz Result";
+    ViewBag.Title = "Kết quả";
+    var correctCount = Model.QuestionResults.Count(qr => qr.IsCorrect);
+    var wrongCount = Model.TotalQuestions - correctCount;
+    var scorePercentage = Model.TotalQuestions > 0 ? (correctCount * 100.0 / Model.TotalQuestions) : 0;
+    var resultLevel = scorePercentage >= 80 ? "Xuất sắc!" : 
+                      scorePercentage >= 60 ? "Khá!" : 
+                      scorePercentage >= 40 ? "Trung bình" : "Cần cố gắng";
 }
 
-<div>
-    <h1>Quiz Result</h1>
-    <div>
-        <p>Quiz Name: @Model.QSetName</p>
-        <p>Score: @Model.Score</p>
-        <p>Correct Answers / Total Questions: @Model.QuestionResults.Where(qr => qr.IsCorrect == true).Count() / @Model.TotalQuestions</p>
-    </div>
-    <div>
-        <h2>Question Details</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Question ID</th>
-                    <th>Your Answer ID</th>
-                    <th>Is Correct?</th>
-                    <th>Correct Answer ID</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var result in Model.QuestionResults)
-                {
-                    <tr>
-                        <td>@result.QuestionId</td>
-                        <td>@result.UserSelecteAnswerId</td>
-                        <td>@(result.IsCorrect ? "Yes" : "No")</td>
-                        <td>@result.CorrectAnswerId</td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+<link rel="stylesheet" href="~/css/result.css" asp-append-version="true" />
+
+<div class="result-container">
+    <!-- Result Card -->
+    <div class="result-card">
+        <h1 class="result-title">@resultLevel</h1>
+        <p class="result-subtitle">@Model.QSetName</p>
+
+        <!-- Score Circle -->
+        <div class="score-circle-container">
+            <svg class="score-circle-svg" width="200" height="200">
+                <circle class="circle-bg" cx="100" cy="100" r="85" />
+                <circle class="circle-progress" cx="100" cy="100" r="85" 
+                        data-score="@correctCount" data-total="@Model.TotalQuestions" />
+            </svg>
+            <div class="score-text">
+                <div class="score-number">@correctCount</div>
+                <div class="score-total">/ @Model.TotalQuestions</div>
+            </div>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card stat-correct">
+                <div class="stat-icon">✓</div>
+                <div class="stat-number">@correctCount</div>
+                <div class="stat-label">Đúng</div>
+            </div>
+            <div class="stat-card stat-wrong">
+                <div class="stat-icon">✗</div>
+                <div class="stat-number">@wrongCount</div>
+                <div class="stat-label">Sai</div>
+            </div>
+            <div class="stat-card stat-percent">
+                <div class="stat-icon">%</div>
+                <div class="stat-number">@scorePercentage.ToString("F0")</div>
+                <div class="stat-label">Tỉ lệ đúng</div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <a href="@Url.Action("Play", "Quiz", new { id = Model.QSetId })" class="btn-retry">
+                <span class="btn-icon">🔄</span>
+                Chơi lại
+            </a>
+            <a href="@Url.Action("Index", "Home")" class="btn-home">
+                <span class="btn-icon">🏠</span>
+                Trang chủ
+            </a>
+        </div>
     </div>
 
-    <div><a asp-action="Play" asp-controller="Quiz">Play Again</a></div>
+    <!-- Details Toggle Button -->
+    <button class="details-toggle" id="detailsToggle">
+        <span>Xem chi tiết</span>
+        <span class="toggle-icon">▼</span>
+    </button>
 
+    <!-- Details Section -->
+    <div class="details-section hidden" id="detailsSection">
+        @foreach (var result in Model.QuestionResults)
+        {
+            <div class="detail-card @(result.IsCorrect ? "detail-correct" : "detail-wrong")">
+                <div class="detail-question">@result.QuestionText</div>
+                
+                <div class="detail-options">
+                    @foreach (var answer in result.AllAnswers)
+                    {
+                        var isUserSelected = answer.AnswerId == result.UserSelectedAnswerId;
+                        var isCorrectAnswer = answer.AnswerId == result.CorrectAnswerId;
+                        var optionClass = isCorrectAnswer ? "option-correct" : 
+                                        isUserSelected ? "option-wrong" : "option-default";
+                        
+                        <div class="detail-option @optionClass">
+                            <div class="option-content">
+                                <span class="option-radio">@(isCorrectAnswer ? "✓" : "")</span>
+                                <span class="option-text">@answer.AnswerText</span>
+                            </div>
+                            @if (isUserSelected)
+                            {
+                                <span class="user-badge">Bạn chọn</span>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    </div>
 </div>
+
+<canvas id="confettiCanvas"></canvas>
+
+@section Scripts {
+    <script src="~/js/result.js" asp-append-version="true"></script>
+}

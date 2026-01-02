@@ -128,7 +128,6 @@ namespace QuizWeb_TrioForce.Controllers
                     {
                         return NotFound();
                     }
-                    //return RedirectToAction("Result", quizResultViewModel); => Redirection with complex objects: http302, objects serialized to query string, lost nested objects
                     TempData["QuizResult"] = JsonSerializer.Serialize(quizResultViewModel);
                     return RedirectToAction("Result");
                 }
@@ -136,7 +135,6 @@ namespace QuizWeb_TrioForce.Controllers
                 {
                     _logger.LogError(ex, "Error submitting quiz");
                     ModelState.AddModelError("", "An error occurred while submitting the quiz.");
-                    return RedirectToAction("Play", new { qSetId = submitQuiz.QSetId });
                 }
             }
             return RedirectToAction("Play", new { qSetId = submitQuiz.QSetId });

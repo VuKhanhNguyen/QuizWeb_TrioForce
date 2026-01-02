@@ -248,6 +248,13 @@ namespace QuizWeb_TrioForce.Services.Implementations
                 throw new Exception($"Quiz with ID {submitModel.QSetId} not found");
             }
 
+            // Get full question set with all answers for detailed result
+            var questionSet = await _unitOfWork.QuestionSetRepository.GetQuestionSetByIdAsync(submitModel.QSetId);
+            if (questionSet == null)
+            {
+                throw new Exception($"Question set with ID {submitModel.QSetId} not found");
+            }
+
             var correctAnswersDict = listQAnswer.ToDictionary(key => key.QuestionId, values => values.CorrectAnswerIds);
             int score = 0;
             var questionsResult = new List<QuestionResultViewModel>(submitModel.UserAnswers.Count);
@@ -259,30 +266,72 @@ namespace QuizWeb_TrioForce.Services.Implementations
                 QuestionLastId = submitModel.QuestionLastId
             };
 
-            foreach (var question in submitModel.UserAnswers)
+            // Create dictionary of user answers for quick lookup
+            var userAnswersDict = submitModel.UserAnswers.ToDictionary(ua => ua.QuestionId, ua => ua.SelectedAnswerId);
+
+            foreach (var question in questionSet.Questions)
             {
                 bool isCorrect = false;
                 int correctAnswerId = 0;
+                string correctAnswerText = string.Empty;
+                int userSelectedAnswerId = 0;
+                string userSelectedAnswerText = string.Empty;
 
+                // Get correct answer info
                 if (correctAnswersDict.TryGetValue(question.QuestionId, out var correctAnswerIdSet))
                 {
-
-                    correctAnswerId = correctAnswerIdSet.FirstOrDefault(); //get first correct answer id for useranswer incorrect case
-                    isCorrect = correctAnswerIdSet.Contains(question.SelectedAnswerId);
-
-                    if (isCorrect)
-                    {
-                        score++;
-                    }
+                    correctAnswerId = correctAnswerIdSet.FirstOrDefault();
+                    var correctAnswer = question.Answers.FirstOrDefault(a => a.AnswerId == correctAnswerId);
+                    correctAnswerText = correctAnswer?.AnswerText ?? "N/A";
                 }
 
+                // Check if user answered this question
+                if (userAnswersDict.TryGetValue(question.QuestionId, out var selectedAnswerId))
+                {
+                    userSelectedAnswerId = selectedAnswerId;
+                    var userAnswer = question.Answers.FirstOrDefault(a => a.AnswerId == selectedAnswerId);
+                    userSelectedAnswerText = userAnswer?.AnswerText ?? "Không có đáp án";
+                    
+                    if (correctAnswerIdSet != null && correctAnswerIdSet.Contains(selectedAnswerId))
+                    {
+                        isCorrect = true;
+                        score += 10;
+                    }
 
+                    answeredQuestions.Add(new AnsweredQuestion
+                    {
+                        UserName = username,
+                        QSetId = submitModel.QSetId,
+                        QuestionId = question.QuestionId,
+                        SelectedAnswerId = selectedAnswerId
+                    });
+                }
+                else
+                {
+                    userSelectedAnswerText = "Không trả lời";
+                }
+
+                // Build all answers list
+                var allAnswers = question.Answers.Select(a => new AnswerOptionViewModel
+                {
+                    AnswerId = a.AnswerId,
+                    AnswerText = a.AnswerText,
+                    IsCorrect = correctAnswerIdSet != null && correctAnswerIdSet.Contains(a.AnswerId),
+                    IsUserSelected = a.AnswerId == userSelectedAnswerId
+                }).ToList();
+
+                // Build result with full details
                 questionsResult.Add(new QuestionResultViewModel
                 {
                     QuestionId = question.QuestionId,
-                    UserSelecteAnswerId = question.SelectedAnswerId,
+                    QuestionText = question.QuestionText,
+                    UserSelectedAnswerId = userSelectedAnswerId,
+                    UserSelectedAnswerText = userSelectedAnswerText,
                     CorrectAnswerId = correctAnswerId,
-                    IsCorrect = isCorrect
+
+                    CorrectAnswerText = correctAnswerText,
+                    IsCorrect = isCorrect,
+                    AllAnswers = allAnswers
                 });
             }
 
@@ -303,8 +352,8 @@ namespace QuizWeb_TrioForce.Services.Implementations
             return new QuizResultViewModel
             {
                 QSetId = submitModel.QSetId,
-                QSetName = submitModel.QSetName,
-                TotalQuestions = listQAnswer.Count(),
+                QSetName = questionSet.QSetName,
+                TotalQuestions = questionSet.Questions.Count,
                 Score = score,
                 QuestionResults = questionsResult
             };
@@ -315,7 +364,6 @@ namespace QuizWeb_TrioForce.Services.Implementations
         {
             throw new NotImplementedException();
         }
-
         public async Task<ResumeQuestionSetViewModel> LoadProgressAsync(string username, int qSetId)
         {
             var progress = await _progressQuestionSetService.GetProgressQuestionSetByUsernameAndQSetId(username, qSetId) ?? throw new Exception($"Progress for user {username} and quiz {qSetId} not found");
@@ -355,5 +403,6 @@ namespace QuizWeb_TrioForce.Services.Implementations
 
             return viewModel;
         }
+
     }
 }

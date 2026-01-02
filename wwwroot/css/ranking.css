@@ -312,9 +312,9 @@
 
 .modal-content {
     background: white;
-    border-radius: 14px;
+    border-radius: 16px;
     width: 96%;
-    max-width: 440px;
+    max-width: 580px;
     max-height: 90vh;
     overflow-y: auto;
     box-shadow: 0 12px 36px rgba(0, 0, 0, 0.18);
@@ -324,8 +324,8 @@
 .modal-header {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
-    padding: 16px 18px;
-    border-radius: 14px 14px 0 0;
+    padding: 22px 24px;
+    border-radius: 16px 16px 0 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -333,7 +333,7 @@
 
 .modal-header h2 {
     margin: 0;
-    font-size: 18px;
+    font-size: 22px;
     font-weight: 700;
 }
 
@@ -341,14 +341,14 @@
     background: none;
     border: none;
     color: white;
-    font-size: 20px;
+    font-size: 24px;
     cursor: pointer;
-    width: 32px;
-    height: 32px;
+    width: 36px;
+    height: 36px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 6px;
+    border-radius: 8px;
     transition: all 0.3s ease;
     line-height: 0;
     padding: 0;
@@ -360,7 +360,7 @@
 }
 
 .modal-body {
-    padding: 18px 12px 22px 12px;
+    padding: 28px 24px 32px 24px;
 }
 
 .player-info-section {
@@ -371,10 +371,10 @@
 }
 
 .player-avatar {
-    font-size: 38px;
-    width: 62px;
-    height: 62px;
-    margin: 0 auto 10px;
+    font-size: 50px;
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 14px;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     border-radius: 50%;
     display: flex;
@@ -383,14 +383,14 @@
 }
 
 .player-info-section h3 {
-    margin: 8px 0 3px;
-    font-size: 18px;
+    margin: 10px 0 6px;
+    font-size: 24px;
     color: #2d3748;
 }
 
 .player-username {
     color: #718096;
-    font-size: 13px;
+    font-size: 16px;
     margin: 0;
 }
 
@@ -402,11 +402,11 @@
 
 .stat-card {
     background: #f8f9fa;
-    border-radius: 8px;
-    padding: 10px 8px;
+    border-radius: 10px;
+    padding: 16px 14px;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 12px;
     transition: all 0.3s ease;
 }
 
@@ -417,14 +417,14 @@
 }
 
 .stat-icon {
-    font-size: 20px;
-    width: 32px;
-    height: 32px;
+    font-size: 26px;
+    width: 42px;
+    height: 42px;
     display: flex;
     align-items: center;
     justify-content: center;
     background: white;
-    border-radius: 7px;
+    border-radius: 8px;
 }
 
 .stat-info {
@@ -432,20 +432,20 @@
 }
 
 .stat-label {
-    font-size: 11px;
+    font-size: 13px;
     color: #718096;
-    margin-bottom: 3px;
+    margin-bottom: 4px;
     font-weight: 500;
 }
 
 .stat-value {
-    font-size: 15px;
+    font-size: 18px;
     font-weight: 700;
     color: #2d3748;
 }
 
 .stat-value.small-text {
-    font-size: 11px;
+    font-size: 14px;
     word-break: break-word;
 }
 

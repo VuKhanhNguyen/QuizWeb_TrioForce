@@ -16,13 +16,15 @@ namespace QuizWeb_TrioForce.Controllers
         private readonly IQuizService _quizService;
         private readonly ILevelService _levelService;
         private readonly ICategoryService _categoryService;
+        private readonly IMarkedQuestionService _markedQuestionService;
 
-        public QuizController(ILogger<QuizController> logger, IQuizService quizService, ILevelService levelService, ICategoryService categoryService)
+        public QuizController(ILogger<QuizController> logger, IQuizService quizService, ILevelService levelService, ICategoryService categoryService, IMarkedQuestionService markedQuestionService)
         {
             _logger = logger;
             _quizService = quizService;
             _levelService = levelService;
             _categoryService = categoryService;
+            _markedQuestionService = markedQuestionService;
         }
 
         public IActionResult Index()
@@ -87,6 +89,12 @@ namespace QuizWeb_TrioForce.Controllers
         [HttpGet]
         public async Task<IActionResult> Play(int? QSetId)
         {
+            var username = User.Identity?.Name;
+            if (username == null)
+            {
+                return NotFound();
+            }
+
             PlayQuestionSetViewModel viewModel;
             if (QSetId.HasValue)
             {
@@ -96,6 +104,9 @@ namespace QuizWeb_TrioForce.Controllers
             {
                 viewModel = await _quizService.GetRandomQuizAsync();
             }
+            var markedQuestions = await _markedQuestionService.GetAllMarkedQuestionsByQSetIdAsync(username, viewModel.QSetId);
+
+            viewModel.Questions.ForEach(q => q.IsMarked = markedQuestions.Any(mq => mq.QuestionId == q.QuestionId));
             return View(viewModel);
         }
 
@@ -117,7 +128,6 @@ namespace QuizWeb_TrioForce.Controllers
                     {
                         return NotFound();
                     }
-                    //return RedirectToAction("Result", quizResultViewModel); => Redirection with complex objects: http302, objects serialized to query string, lost nested objects
                     TempData["QuizResult"] = JsonSerializer.Serialize(quizResultViewModel);
                     return RedirectToAction("Result");
                 }
@@ -125,7 +135,6 @@ namespace QuizWeb_TrioForce.Controllers
                 {
                     _logger.LogError(ex, "Error submitting quiz");
                     ModelState.AddModelError("", "An error occurred while submitting the quiz.");
-                    return RedirectToAction("Play", new { qSetId = submitQuiz.QSetId });
                 }
             }
             return RedirectToAction("Play", new { qSetId = submitQuiz.QSetId });
@@ -159,5 +168,45 @@ namespace QuizWeb_TrioForce.Controllers
 
             return NoContent();
         }
+
+        [HttpGet]
+        public async Task<IActionResult> ResumeProgress(int QSetId)
+        {
+            var username = User.Identity?.Name;
+            if (username == null)
+            {
+                return Unauthorized();
+            }
+            var progress = await _quizService.LoadProgressAsync(username, QSetId);
+            if (progress == null)
+            {
+                return NotFound();
+            }
+
+            var markedQuestions = await _markedQuestionService.GetAllMarkedQuestionsByQSetIdAsync(username, QSetId);
+
+            progress.Questions.ForEach(q => q.IsMarked = markedQuestions.Any(mq => mq.QuestionId == q.QuestionId));
+
+
+            return View("Play", progress);
+        }
+
+        // [HttpGet]
+        // public async Task<IActionResult> Play(int categoryId, int levelId)
+        // {
+        //     try
+        //     {
+        //         var viewModel = await _quizService.GetQuizByCategoryAndLevelAsync(categoryId, levelId);
+        //         return View(viewModel);
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         // Log the exception
+        //         _logger.LogError(ex, "Could not get quiz for category {categoryId} and level {levelId}", categoryId, levelId);
+        //         // Maybe show a friendly error page or redirect with an error message
+        //         TempData["ErrorMessage"] = "Không tìm thấy bộ câu hỏi phù hợp. Vui lòng thử lại sau.";
+        //         return RedirectToAction("Index", "Home");
+        //     }
+        // }
     }
 }

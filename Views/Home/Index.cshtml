@@ -1,6 +1,5 @@
-﻿﻿@using QuizWeb_TrioForce.ViewModels
-@using QuizWeb_TrioForce.ViewModels.Category
-@model List<CategoryListViewModel>
+@using QuizWeb_TrioForce.ViewModels
+@model QuizWeb_TrioForce.ViewModels.HomeViewModel
 @{
     ViewData["Title"] = "Home Page";
 }
@@ -33,15 +32,16 @@
                     <a href="#categories" class="btn btn-outline-secondary px-4 py-2 rounded-pill">
                         Xem các chủ đề
                     </a>
+                    
                 </div>
             </div>
 
             <div class="col-lg-5 fade-in-up fade-in-delay-1">
-                <div class="row row-cols-1 row-cols-sm-2 g-3">
+                <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-3">
                     <div class="col">
                         <div class="card feature-card text-center shadow-sm rounded-4 border-0 h-100">
                             <div class="card-body py-4 px-3">
-                                <img src="/assets/question.png"
+                                <img src="/assets/others/question.png"
                                      class="img-fluid mb-3 feature-icon"
                                      alt="Play Now" />
                                 <h6 class="fw-bold mb-1">Chế độ ngẫu nhiên</h6>
@@ -58,7 +58,7 @@
                     <div class="col">
                         <div class="card feature-card text-center shadow-sm rounded-4 border-0 h-100">
                             <div class="card-body py-4 px-3">
-                                <img src="/assets/competition.png"
+                                <img src="/assets/others/competition.png"
                                      class="img-fluid mb-3 feature-icon"
                                      alt="1v1" />
                                 <h6 class="fw-bold mb-1">Đấu 1v1</h6>
@@ -66,6 +66,23 @@
                                     So tài trực tiếp với bạn bè, xem ai là người nhanh và chính xác hơn.
                                 </p>
                                 <a href="#"
+                                   class="stretched-link"></a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col">
+                        <div class="card feature-card text-center shadow-sm rounded-4 border-0 h-100">
+                            <div class="card-body py-4 px-3">
+                                <img src="/assets/others/create_question1.png"
+                                    class="img-fluid mb-3 feature-icon"
+                                    alt="Tạo bộ câu hỏi" />
+                                <h6 class="fw-bold mb-1">Tạo bộ câu hỏi</h6>
+                                <p class="text-muted small mb-0">
+                                    Tạo và chia sẻ bộ câu hỏi của riêng bạn.
+                                </p>
+                                <a asp-action="Create"
+                                   asp-controller="Quiz"
                                    class="stretched-link"></a>
                             </div>
                         </div>
@@ -86,14 +103,14 @@
             <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 mt-2">
                 @{
                     var index = 0;
-                    foreach (var cate in Model)
+                    foreach (var cate in Model.Categories)
                     {
                         var delayClass = index % 3 == 0 ? "fade-in-up"
                             : index % 3 == 1 ? "fade-in-up fade-in-delay-1"
                             : "fade-in-up fade-in-delay-2";
                         index++;
                         <div class="col">
-                            <div class="card category-card text-center shadow-sm rounded-4 border-0 h-100 @delayClass">
+                            <div class="card category-card text-center shadow-sm rounded-4 border-0 h-100 @delayClass" data-bs-toggle="modal" data-bs-target="#levelModal" data-category-id="@cate.CategoryId" data-category-name="@cate.Name" style="cursor:pointer">
                                 <div class="card-body pt-4 pb-4 px-3 d-flex flex-column justify-content-between">
                                     <div class="mb-3">
                                         <div class="category-image-wrapper mx-auto mb-3">
@@ -149,7 +166,7 @@
                                         }
                                         else if (cate.Name == "Phim ảnh")
                                         {
-                                            description = "Nhấn play cho trí nhớ, tua lại mọi plot twist từng làm bạn há hốc.";
+                                            description = "Nhấn play cho trí nhớ tua lại mọi plot twist từng làm bạn há hốc.";
                                         }
                                         else if (cate.Name == "Đố vui")
                                         {
@@ -172,3 +189,31 @@
         </div>
     </div>
 </div>
+
+<!-- Level Selection Modal -->
+<div class="modal fade level-modal" id="levelModal" tabindex="-1" aria-labelledby="levelModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="levelModalLabel">Chọn độ khó cho chủ đề: <span id="categoryName"></span></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    @foreach (var level in Model.Levels)
+                    {
+                        <div class="col-md-4">
+                            <a asp-controller="Quiz" asp-action="Play" asp-route-levelId="@level.LevelId" class="card border-0 level-card text-center text-decoration-none" data-level-id="@level.LevelId">
+                                <img src="@level.ImageUrl" class="card-img-top" alt="@level.LevelName">
+                                <div class="card-body">
+                                    <h5 class="card-title">@level.LevelName</h5>
+                                </div>
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

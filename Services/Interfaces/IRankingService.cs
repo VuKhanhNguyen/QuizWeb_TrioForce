@@ -1,6 +1,4 @@
-using QuizWeb_TrioForce;
 using QuizWeb_TrioForce.Models;
-﻿using QuizWeb_TrioForce.Models;
 
 
 namespace QuizWeb_TrioForce.Services.Interfaces

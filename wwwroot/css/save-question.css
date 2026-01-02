@@ -1,0 +1,32 @@
+﻿.save-question-checkbox {
+    display: none;
+}
+
+.bookmark-image-label {
+    width: 30px;
+    height: 30px;
+    display: inline-block;
+    cursor: pointer;
+    position: relative;
+    transition: transform 0.2s ease;
+}
+
+.bookmark-image-label::before {
+    content: '☆';
+    font-size: 30px;
+    color: #ccc;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    transition: color 0.2s ease;
+}
+
+.bookmark-image-label:hover::before {
+    color: #999;
+}
+
+.save-question-checkbox:checked + .bookmark-image-label::before {
+    content: '★';
+    color: #ffc107;
+}

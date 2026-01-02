@@ -1,79 +1,128 @@
 ﻿@model QuizWeb_TrioForce.ViewModels.QuestionSet.CreateQuestionSetViewModel
 @{
-    ViewData["Title"] = "Create Quiz";
+    ViewData["Title"] = "Tạo bộ câu hỏi mới";
 }
 
-<div class="container mt-4 mb-5">
-    <div class="row justify-content-center">
-        <div class="col-lg-10">
-            <h1 class="mb-4">Create a New Quiz</h1>
+<link rel="stylesheet" href="~/css/create-quiz.css" asp-append-version="true" />
 
-            <form id="createForm" asp-action="Create" method="post" novalidate>
-                <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
-
-                <!-- Quiz Information Card -->
-                <div class="card shadow-sm mb-4">
-                    <div class="card-header bg-light">
-                        <h5 class="mb-0">Quiz Information</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label asp-for="QSetName" class="form-label fw-bold"></label>
-                                <input asp-for="QSetName" class="form-control form-control-lg" placeholder="Enter the quiz title" />
-                                <span asp-validation-for="QSetName" class="text-danger small"></span>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label asp-for="Description" class="form-label fw-bold"></label>
-                                <input asp-for="Description" class="form-control" placeholder="Describe your quiz" />
-                                <span asp-validation-for="Description" class="text-danger small"></span>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label asp-for="LevelId" class="form-label fw-bold"></label>
-                                <select asp-for="LevelId" class="form-select">
-                                    <option value="">-- Select Level --</option>
-                                    @foreach (var level in Model.Levels)
-                                    {
-                                        <option value="@level.Value">@level.Text</option>
-                                    }
-                                </select>
-                                <span asp-validation-for="LevelId" class="text-danger small"></span>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label asp-for="CategoryId" class="form-label fw-bold"></label>
-                                <select asp-for="CategoryId" class="form-select">
-                                    <option value="">-- Select Category --</option>
-                                    @foreach (var cate in Model.Categories)
-                                    {
-                                        <option value="@cate.Value">@cate.Text</option>
-                                    }
-                                </select>
-                                <span asp-validation-for="CategoryId" class="text-danger small"></span>
-                            </div>
+<div class="create-quiz-hero py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+<div class="create-quiz-hero py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <!-- Hero Header -->
+                <div class="hero-header mb-4">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <div class="hero-icon">
+                            <i class="fas fa-pencil-alt"></i>
+                        </div>
+                        <div>
+                            <h2 class="fw-bold mb-1" style="color: #1e293b;">Tạo bộ câu hỏi mới</h2>
+                            <p class="text-muted mb-0">Thiết kế và chia sẻ kiến thức của bạn</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- Questions Card -->
-                <div class="card shadow-sm">
-                    <div class="card-header bg-light d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">Questions</h5>
-                        <button type="button" class="btn btn-sm btn-success" onclick="addQuestion()">
-                            <i class="fas fa-plus me-1"></i> Add Question
+                <form id="createForm" asp-action="Create" method="post" novalidate>
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger rounded-4 fade-in-up"></div>
+
+                    <!-- Quiz Information Card -->
+                    <div class="card info-card shadow-sm border-0 rounded-4 mb-4">
+                        <div class="card-header bg-white border-bottom py-3">
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="section-icon bg-primary-soft">
+                                    <i class="fas fa-info-circle text-primary"></i>
+                                </div>
+                                <h5 class="mb-0 fw-semibold">Thông tin cơ bản</h5>
+                            </div>
+                        </div>
+                        <div class="card-body p-4">
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <label asp-for="QSetName" class="form-label fw-semibold text-dark mb-2">
+                                         Tên bộ câu hỏi
+                                    </label>
+                                    <input asp-for="QSetName" class="form-control form-control-lg" placeholder="VD: Lịch sử Việt Nam" />
+                                    <span asp-validation-for="QSetName" class="text-danger small"></span>
+                                </div>
+                                <div class="col-md-6">
+                                    <label asp-for="Description" class="form-label fw-semibold text-dark mb-2">
+                                        <i class="fas fa-align-left text-primary me-1"></i> Mô tả
+                                    </label>
+                                    <input asp-for="Description" class="form-control form-control-lg" placeholder="Mô tả ngắn về bộ câu hỏi" />
+                                    <span asp-validation-for="Description" class="text-danger small"></span>
+                                </div>
+                                <div class="col-md-6">
+                                    <label asp-for="LevelId" class="form-label fw-semibold text-dark mb-2">
+                                        <i class="fas fa-signal text-warning me-1"></i> Mức độ
+                                    </label>
+                                    <select asp-for="LevelId" class="form-select form-select-lg">
+                                        <option value="">Chọn mức độ</option>
+                                        @foreach (var level in Model.Levels)
+                                        {
+                                            <option value="@level.Value">@level.Text</option>
+                                        }
+                                    </select>
+                                    <span asp-validation-for="LevelId" class="text-danger small"></span>
+                                </div>
+                                <div class="col-md-6">
+                                    <label asp-for="CategoryId" class="form-label fw-semibold text-dark mb-2">
+                                        <i class="fas fa-folder text-success me-1"></i> Chủ đề
+                                    </label>
+                                    <select asp-for="CategoryId" class="form-select form-select-lg">
+                                        <option value="">Chọn chủ đề</option>
+                                        @foreach (var cate in Model.Categories)
+                                        {
+                                            <option value="@cate.Value">@cate.Text</option>
+                                        }
+                                    </select>
+                                    <span asp-validation-for="CategoryId" class="text-danger small"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Questions Card -->
+                    <div class="card questions-card shadow-sm border-0 rounded-4 mb-4">
+                        <div class="card-header bg-white border-bottom py-3">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="section-icon bg-success-soft">
+                                        <i class="fas fa-question-circle text-success"></i>
+                                    </div>
+                                    <h5 class="mb-0 fw-semibold">Danh sách câu hỏi</h5>
+                                </div>
+                                <button type="button" class="btn btn-primary px-4" onclick="addQuestion()">
+                                    <i class="fas fa-plus me-2"></i>Thêm câu hỏi
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body p-4" id="questionsContainer">
+                            <!-- Questions will be dynamically added here -->
+                            <div class="empty-state text-center py-5" id="no-questions-placeholder">
+                                <div class="empty-icon mb-3">
+                                    <i class="fas fa-clipboard-list"></i>
+                                </div>
+                                <h6 class="text-muted mb-1">Chưa có câu hỏi</h6>
+                                <p class="text-muted small mb-0">Nhấn "Thêm câu hỏi" để bắt đầu tạo bộ câu hỏi</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Form Actions -->
+                    <div class="d-flex justify-content-end gap-3 mt-4">
+                        <a asp-action="Index" class="btn btn-light btn-lg px-4">
+                            <i class="fas fa-times me-2"></i>Hủy
+                        </a>
+                        <button type="submit" class="btn btn-primary btn-lg px-5">
+                            <i class="fas fa-check me-2"></i>Tạo bộ câu hỏi
                         </button>
                     </div>
-                    <div class="card-body" id="questionsContainer">
-                        <!-- Questions will be dynamically added here -->
-                        <p class="text-muted text-center" id="no-questions-placeholder">No questions added yet. Click 'Add Question' to start.</p>
-                    </div>
-                </div>
-
-                <!-- Form Actions -->
-                <div class="mt-4 text-end">
-                    <a asp-action="Index" class="btn btn-secondary me-2">Cancel</a>
-                    <input type="submit" value="Create Quiz" class="btn btn-primary btn-lg" />
-                </div>
-            </form>
+                </form>
+            </div>
         </div>
     </div>
 </div>
@@ -81,26 +130,35 @@
 
 <!-- TEMPLATES (Hidden from view) -->
 <template id="questionTemplate">
-    <div class="question-item card mb-3 border-primary" data-question-index="">
-        <div class="card-header bg-primary bg-opacity-10 d-flex justify-content-between align-items-center">
-            <span class="fw-bold text-primary">Question <span class="question-number"></span></span>
+    <div class="question-item card shadow-sm border-0 rounded-3 mb-3" data-question-index="">
+        <div class="card-header bg-light border-bottom d-flex justify-content-between align-items-center py-3">
+            <div class="d-flex align-items-center gap-2">
+                <div class="question-badge">
+                    <span class="question-number"></span>
+                </div>
+                <strong class="text-dark">Câu hỏi <span class="question-number"></span></strong>
+            </div>
             <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeQuestion(this)">
-                <i class="fas fa-trash-alt"></i> Remove
+                <i class="fas fa-trash-alt"></i>
             </button>
         </div>
-        <div class="card-body">
-            <div class="mb-3">
-                <label class="form-label">Question Text</label>
-                <input type="text" name="Questions[QINDEX].QuestionText" class="form-control" required placeholder="What is the question?" />
+        <div class="card-body p-4">
+            <div class="mb-4">
+                <label class="form-label fw-semibold text-dark mb-2">
+                    <i class="fas fa-pen text-primary me-1"></i> Nội dung câu hỏi
+                </label>
+                <textarea name="Questions[QINDEX].QuestionText" class="form-control" rows="2" required placeholder="Nhập nội dung câu hỏi..."></textarea>
             </div>
-
             <div>
-                <label class="form-label">Answers</label>
-                <div class="answer-items">
+                <label class="form-label fw-semibold text-dark mb-2">
+                    <i class="fas fa-list-ul text-success me-1"></i> Các đáp án 
+                    <small class="text-muted">(đánh dấu đáp án đúng)</small>
+                </label>
+                <div class="answer-items mb-3">
                     <!-- Answers will be dynamically added here -->
                 </div>
-                <button type="button" class="btn btn-sm btn-secondary mt-2" onclick="addAnswer(this)">
-                    <i class="fas fa-plus me-1"></i> Add Answer
+                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="addAnswer(this)">
+                    <i class="fas fa-plus me-1"></i> Thêm đáp án
                 </button>
             </div>
         </div>
@@ -108,19 +166,22 @@
 </template>
 
 <template id="answerTemplate">
-    <div class="input-group mb-2 answer-item">
-        <div class="input-group-text">
-            <input type="checkbox" name="Questions[QINDEX].Answers[AINDEX].IsCorrect" value="true" class="form-check-input mt-0 is-correct-checkbox" title="Mark as correct answer" />
+    <div class="answer-item mb-2">
+        <div class="input-group input-group-lg">
+            <span class="input-group-text bg-white">
+                <input type="checkbox" name="Questions[QINDEX].Answers[AINDEX].IsCorrect" value="true" class="form-check-input is-correct-checkbox" />
+            </span>
+            <input type="text" name="Questions[QINDEX].Answers[AINDEX].AnswerText" class="form-control" placeholder="Nhập đáp án..." required />
+            <button type="button" class="btn btn-outline-danger" onclick="removeAnswer(this)">
+                <i class="fas fa-times"></i>
+            </button>
         </div>
-        <input type="text" name="Questions[QINDEX].Answers[AINDEX].AnswerText" class="form-control" placeholder="Enter answer text" required />
-        <button type="button" class="btn btn-outline-danger" onclick="removeAnswer(this)" title="Remove answer">&times;</button>
     </div>
 </template>
 
 @section Scripts {
-    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script> <!-- Optional: For icons -->
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
     <script>
-
         let questionIndex = 0;
 
         function addQuestion(){
@@ -144,8 +205,8 @@
 
             document.getElementById('questionsContainer').appendChild(clone);
             questionIndex++;
+            updateQuestionNumbers();
         }
-
 
         function createAnswer(qIndex, aIndex){
             const template = document.getElementById('answerTemplate');
@@ -159,7 +220,6 @@
 
             return html;
         }
-
 
         function addAnswer(button){
             const questionDiv = button.closest('.question-item');
@@ -178,17 +238,25 @@
 
         function removeAnswer(button){
             const answerItem = button.closest('.answer-items');
-            if (answerItem.querySelectorAll('.answer-item').length >2){
+            if (answerItem.querySelectorAll('.answer-item').length > 2){
                 button.closest('.answer-item').remove();
-            }else{
-                alert('A question must have at least 2 answers!');
+            } else {
+                alert('Một câu hỏi phải có ít nhất 2 đáp án!');
             }
         }
 
-
         function updateQuestionNumbers(){
-            document.querySelectorAll('.question-item').forEach((item, index) => {
-                item.querySelector('question-number').textContent = index + 1;
+            const questionItems = document.querySelectorAll('#questionsContainer .question-item');
+            const placeholder = document.getElementById('no-questions-placeholder');
+            
+            if (questionItems.length === 0) {
+                if(placeholder) placeholder.style.display = 'block';
+            } else {
+                if(placeholder) placeholder.style.display = 'none';
+            }
+            
+            questionItems.forEach((item, index) => {
+                item.querySelector('.question-number').textContent = index + 1;
             });
         }
 
@@ -197,9 +265,8 @@
         });
 
         document.getElementById('createForm').addEventListener('submit', function(e) {
-            const checkbox = document.querySelectorAll('.is-correct-checkbox').forEach(checkbox =>{
+            document.querySelectorAll('.is-correct-checkbox').forEach(checkbox => {
                 const container = checkbox.closest('.input-group');
-
                 const answerText = container.querySelector('input[name*="AnswerText"]');
                 const name = answerText.name;
 
@@ -215,23 +282,7 @@
 
                     container.appendChild(hiddenInput);
                 }
-
             });
         });
-
-        // UX
-        function updateQuestionNumbers() {
-            const questionItems = document.querySelectorAll('#questionsContainer .question-item');
-            const placeholder = document.getElementById('no-questions-placeholder');
-            if (questionItems.length === 0) {
-                if(placeholder) placeholder.style.display = 'block';
-            } else {
-                 if(placeholder) placeholder.style.display = 'none';
-            }
-            questionItems.forEach((item, index) => {
-                item.querySelector('.question-number').textContent = index + 1;
-            });
-        }
-
     </script>
 }

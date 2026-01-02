@@ -5,6 +5,7 @@ namespace QuizWeb_TrioForce.Services.Interfaces
     public interface IMarkedQuestionService
     {
         public Task<List<MarkedQuestionListViewModel>> GetAllMarkedQuestionsAsync(string username);
+        public Task<List<MarkedQuestionListViewModel>> GetAllMarkedQuestionsByQSetIdAsync(string username, int QSetId);
         public Task AddMarkedQuestion(string username, int questionId);
         public Task RemoveMarkedQuestion(string username, int questionId);
 

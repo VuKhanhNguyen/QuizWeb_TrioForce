@@ -36,6 +36,9 @@ namespace QuizWeb_TrioForce.Repositories.Implementations
         {
             return await _context.QuestionSets
                 .AsNoTracking()
+                //.AsSplitQuery()
+                .Include(qs => qs.Category)
+                .Include(qs => qs.Level)
                 .Include(qs => qs.Questions)
                     .ThenInclude(q => q.Answers)
                 .Where(qs => qs.QSetId == id)
@@ -46,11 +49,12 @@ namespace QuizWeb_TrioForce.Repositories.Implementations
         {
             return await _context.QuestionSets
                 .AsNoTracking()
+                //.AsSplitQuery()
                 .Include(qs => qs.Category)
                 .Include(qs => qs.Level)
                 .Include(qs => qs.Questions)
                     .ThenInclude(q => q.Answers)
-                .OrderBy(q => Guid.NewGuid()).FirstOrDefaultAsync();
+                .OrderBy(q => EF.Functions.Random()).FirstOrDefaultAsync();
         }
 
         public async Task<QuestionSet?> GetQuestionSetRandomByIdCateAndIdLevel(int idCate, int idLevel)
@@ -66,6 +70,11 @@ namespace QuizWeb_TrioForce.Repositories.Implementations
 
             return await _context.QuestionSets
                 .AsNoTracking()
+                .AsSplitQuery()
+                .Include(qs => qs.Category)
+                .Include(qs => qs.Level)
+                .Include(qs => qs.Questions)
+                .ThenInclude(q => q.Answers)
                 .Where(qs => qs.CategoryId == idCate && qs.LevelId == idLevel)
                 .Skip(randIndex)
                 .FirstOrDefaultAsync();

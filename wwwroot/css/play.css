@@ -1,4 +1,4 @@
-/* ========== GENERAL ========== */
+﻿/* ========== GENERAL ========== */
 .hidden {
     display: none !important;
 }
@@ -106,6 +106,35 @@ body {
 .progress-segment.current {
     background-color: #00acc1;
 }
+
+/* default segment */
+.progress-segment {
+    transition: 0.2s ease;
+}
+
+/* đã trả lời */
+.progress-segment.answered {
+    opacity: 1;
+}
+
+/* chưa trả lời (luôn khác) */
+.progress-segment.unanswered {
+    opacity: 0.35; /* hoặc bạn đổi màu nền tùy UI */
+}
+
+/* đã đi qua nhưng chưa trả lời (nhấn mạnh hơn) */
+.progress-segment.skipped {
+    opacity: 0.75;
+/*    outline: 2px solid currentColor;*/
+    background-color: #444444;
+    outline-offset: 2px;
+}
+
+/* đang đứng ở câu hiện tại */
+.progress-segment.current {
+    transform: scale(1.05);
+}
+
 
 /* ========== QUESTION CONTAINER ========== */
 .question-container {

@@ -25,33 +25,30 @@
                         data-score="@correctCount" data-total="@Model.TotalQuestions" />
             </svg>
             <div class="score-text">
-                <div class="score-number">@correctCount</div>
-                <div class="score-total">/ @Model.TotalQuestions</div>
+                <div class="score-number">@(correctCount*10)</div>
+                <div class="score-total">/ @(Model.TotalQuestions*10)</div>
             </div>
         </div>
 
         <!-- Stats Grid -->
         <div class="stats-grid">
             <div class="stat-card stat-correct">
-                <div class="stat-icon">✓</div>
                 <div class="stat-number">@correctCount</div>
                 <div class="stat-label">Đúng</div>
             </div>
             <div class="stat-card stat-wrong">
-                <div class="stat-icon">✗</div>
                 <div class="stat-number">@wrongCount</div>
                 <div class="stat-label">Sai</div>
             </div>
             <div class="stat-card stat-percent">
-                <div class="stat-icon">%</div>
-                <div class="stat-number">@scorePercentage.ToString("F0")</div>
+                <div class="stat-number">@scorePercentage.ToString("F0")%</div>
                 <div class="stat-label">Tỉ lệ đúng</div>
             </div>
         </div>
 
         <!-- Action Buttons -->
         <div class="action-buttons">
-            <a href="@Url.Action("Play", "Quiz", new { id = Model.QSetId })" class="btn-retry">
+            <a asp-controller="Quiz"  asp-action="Play" asp-route-QSetId="@Model.QSetId" class="btn-retry">
                 <span class="btn-icon">🔄</span>
                 Chơi lại
             </a>

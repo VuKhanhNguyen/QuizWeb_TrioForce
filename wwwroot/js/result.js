@@ -1,4 +1,4 @@
-// ========== INITIALIZATION ==========
+﻿// ========== INITIALIZATION ==========
 document.addEventListener('DOMContentLoaded', () => {
     animateScoreCircle();
     checkForConfetti();
@@ -10,27 +10,27 @@ function animateScoreCircle() {
     const progressCircle = document.querySelector('.circle-progress');
     const scoreNumber = document.querySelector('.score-number');
     const scoreTotal = document.querySelector('.score-total');
-    
+
     if (!progressCircle || !scoreNumber || !scoreTotal) return;
-    
-    const score = parseInt(progressCircle.dataset.score);
-    const total = parseInt(progressCircle.dataset.total);
-    
-    if (total === 0) return;
-    
-    // Calculate circle progress
-    const percentage = (score / total) * 100;
+
+    const rawScore = parseInt(progressCircle.dataset.score, 10);   // correctCount
+    const rawTotal = parseInt(progressCircle.dataset.total, 10);   // TotalQuestions
+    if (!rawTotal) return;
+
+    // progress của vòng tròn vẫn tính theo số câu đúng / tổng câu
+    const percentage = (rawScore / rawTotal) * 100;
     const circumference = 2 * Math.PI * 85;
     const offset = circumference - (percentage / 100) * circumference;
-    
-    // Animate circle
+
     setTimeout(() => {
         progressCircle.style.strokeDashoffset = offset;
     }, 100);
-    
-    // Animate counter
-    animateCounter(scoreNumber, 0, score, 2000);
+
+    // HIỂN THỊ: nhân 10
+    const displayScore = rawScore * 10;
+    animateCounter(scoreNumber, 0, displayScore, 2000);
 }
+
 
 // ========== COUNTER ANIMATION ==========
 function animateCounter(element, start, end, duration) {

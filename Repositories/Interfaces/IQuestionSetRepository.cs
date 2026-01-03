@@ -11,7 +11,7 @@ namespace QuizWeb_TrioForce.Repositories.Interfaces
         Task<List<CorrectAnswerDTO>> GetCorrectAnswerSetByIdAsync(int id);
         Task<List<QuestionSet>> GetAllCreatedQuestionSetsByUsernameAsync(string username);
         Task AddQuestionSetAsync(QuestionSet questionSet);
-        void UpdateQuestionSetAsync(QuestionSet questionSet);
-        void DeleteQuestionSetAsync(QuestionSet questionSet);
+        void UpdateQuestionSet(QuestionSet questionSet);
+        void DeleteQuestionSet(QuestionSet questionSet);
     }
 }

@@ -31,8 +31,8 @@ namespace QuizWeb_TrioForce.Services.Implementations
                 QSetName = cqs.QSetName,
                 CreatedTime = cqs.CreatedTime.ToLocalTime(),
                 Description = cqs.Description,
-                CategoryId = cqs.CategoryId,
-                LevelId = cqs.LevelId
+                CategoryName = cqs.Category.CategoryName,
+                LevelName = cqs.Level.LevelName
             }).ToList();
         }
 

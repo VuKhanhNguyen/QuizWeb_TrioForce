@@ -9,6 +9,9 @@
         public int QuestionLastId { get; set; }
         public DateTime LastUpdated { get; set; } = DateTime.Now;
 
+        public bool IsCompleted { get; set; }
+        public DateTime? CompletedAt { get; set; }
+
         // Navigation properties
         public ApplicationUser User { get; set; } = null!;
         public QuestionSet QuestionSet { get; set; } = null!;

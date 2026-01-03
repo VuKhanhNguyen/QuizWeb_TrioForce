@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using QuizWeb_TrioForce.Data;
 
@@ -11,9 +12,11 @@ using QuizWeb_TrioForce.Data;
 namespace QuizWeb_TrioForce.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260103134933_Baseline")]
+    partial class Baseline
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -351,12 +354,6 @@ namespace QuizWeb_TrioForce.Migrations
 
                     b.Property<int>("QSetId")
                         .HasColumnType("int");
-
-                    b.Property<DateTime?>("CompletedAt")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<bool>("IsCompleted")
-                        .HasColumnType("tinyint(1)");
 
                     b.Property<DateTime>("LastUpdated")
                         .HasColumnType("datetime(6)");

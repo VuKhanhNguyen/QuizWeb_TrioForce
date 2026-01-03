@@ -23,6 +23,32 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
+    document.querySelectorAll('.remove-created-question-set').forEach(button => {
+        button.addEventListener('click', function (ev) {
+            const questionSetId = parseInt(ev.target.dataset.questionSetId);
+
+            if (confirm('Xác nhận xóa bộ câu hỏi này?')) {
+                fetch('/Quiz/Delete', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'RequestVerificationToken': tokenInput ? tokenInput.value : ''
+                    },
+                    body: questionSetId,
+                    credentials: 'same-origin'
+                }).then(response => {
+                    if (!response.ok) throw new Error('RemoveQuestionSet failed: ' + response.status);
+                    // Remove the question set from the UI
+                    button.closest('.quiz-set-card').remove();
+                }).catch(err => {
+                    alert('Không thể xóa bộ câu hỏi: ' + err.message);
+                });
+            }
+        });
+    });
+
+
     document.querySelectorAll('.save-question-checkbox').forEach(checkbox => {
         checkbox.addEventListener('change', function (ev) {
             const questionId = parseInt(ev.target.dataset.questionId);
@@ -62,7 +88,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         if (!response.ok) throw new Error('UnsaveQuestion failed: ' + response.status);
                     })
                     .catch(err => {
-                        alert('Could not unsave question: ' + err.message);
+                        alert('Không thể xóa đánh dấu: ' + err.message);
                     });
             }
         });

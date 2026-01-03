@@ -67,6 +67,27 @@ namespace QuizWeb_TrioForce.Controllers
             return View(viewModel);
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete([FromBody] int QSetId)
+        {
+            try
+            {
+                var username = User.Identity?.Name;
+                if (username == null)
+                {
+                    return NotFound();
+                }
+                await _quizService.DeleteQuizAsync(QSetId, username);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting quiz set with ID {QSetId}", QSetId);
+                return StatusCode(500, "Lỗi khi xóa bộ câu hỏi.");
+            }
+        }
+
 
         private async Task GetAddSelectItemList(CreateQuestionSetViewModel viewModel)
         {

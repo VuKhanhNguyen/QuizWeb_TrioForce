@@ -49,7 +49,9 @@ namespace QuizWeb_TrioForce.Services.Implementations
                 TotalQuestions = p.QuestionSet.Questions.Count(),
                 QuestionLastId = p.QuestionLastId,
                 LastUpdated = p.LastUpdated.ToLocalTime(),
-                AuthorName = p.UserName
+                AuthorName = p.UserName,
+                IsCompleted = p.IsCompleted,
+                CompletedAt = p.CompletedAt?.ToLocalTime()
             }).ToList();
         }
 
@@ -71,7 +73,9 @@ namespace QuizWeb_TrioForce.Services.Implementations
                 QSetId = viewModel.QSetId,
                 QuestionCount = viewModel.QuestionCount,
                 QuestionLastId = viewModel.QuestionLastId,
-                LastUpdated = DateTime.UtcNow //tùy là new thì nó tự init những có problem nên phải explicit set.
+                LastUpdated = DateTime.UtcNow, //tùy là new thì nó tự init những có problem nên phải explicit set.
+                IsCompleted = viewModel.IsCompleted,
+                CompletedAt = viewModel.CompletedAt
             };
         }
 

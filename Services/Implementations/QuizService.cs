@@ -112,23 +112,28 @@ namespace QuizWeb_TrioForce.Services.Implementations
 
         }
 
-        public async Task DeleteQuizAsync(int idQset)
+        public async Task DeleteQuizAsync(int id, string username)
         {
+
+            var qs = await _unitOfWork.QuestionSetRepository.GetQuestionSetByIdAsync(id);
+            if (qs == null)
+            {
+                return;
+            }
+            if (!string.Equals(qs.AuthorName, username, StringComparison.Ordinal))
+                return;
+
             await _unitOfWork.BeginTransactionAsync();
             try
             {
-                var answers = await _unitOfWork.AnswerRepository.GetAllAnswersByQSetIdAsync(idQset);
+                var answers = await _unitOfWork.AnswerRepository.GetAllAnswersByQSetIdAsync(id);
                 _unitOfWork.AnswerRepository.DeleteAnswersAsync(answers);
 
-                var questions = await _unitOfWork.QuestionRepository.GetAllQuestionsByIdQSetAsync(idQset);
+                var questions = await _unitOfWork.QuestionRepository.GetAllQuestionsByIdQSetAsync(id);
                 _unitOfWork.QuestionRepository.DeleteQuestionsAsync(questions);
-
-                var questionSet = await _unitOfWork.QuestionSetRepository.GetQuestionSetByIdAsync(idQset);
-                if (questionSet != null)
-                {
-                    _unitOfWork.QuestionSetRepository.DeleteQuestionSetAsync(questionSet);
-                }
-
+                
+                _unitOfWork.QuestionSetRepository.DeleteQuestionSet(qs);
+                
                 await _unitOfWork.SaveChangesAsync();
                 await _unitOfWork.CommitAsync();
 
@@ -258,12 +263,13 @@ namespace QuizWeb_TrioForce.Services.Implementations
             var correctAnswersDict = listQAnswer.ToDictionary(key => key.QuestionId, values => values.CorrectAnswerIds);
             int score = 0;
             var questionsResult = new List<QuestionResultViewModel>(submitModel.UserAnswers.Count);
-            var answeredQuestions = new List<AnsweredQuestion>(submitModel.UserAnswers.Count);
             var progQuesSet = new ProgressQuestionSetViewModel
             {
                 QSetId = submitModel.QSetId,
                 QuestionCount = submitModel.QuestionCount,
-                QuestionLastId = submitModel.QuestionLastId
+                QuestionLastId = submitModel.QuestionLastId,
+                IsCompleted = true,
+                CompletedAt = DateTime.UtcNow
             };
 
             // Create dictionary of user answers for quick lookup
@@ -275,7 +281,7 @@ namespace QuizWeb_TrioForce.Services.Implementations
                 int correctAnswerId = 0;
                 string correctAnswerText = string.Empty;
                 int userSelectedAnswerId = 0;
-                string userSelectedAnswerText = string.Empty;
+                string userSelectedAnswerText;
 
                 // Get correct answer info
                 if (correctAnswersDict.TryGetValue(question.QuestionId, out var correctAnswerIdSet))
@@ -298,13 +304,6 @@ namespace QuizWeb_TrioForce.Services.Implementations
                         score += 10;
                     }
 
-                    answeredQuestions.Add(new AnsweredQuestion
-                    {
-                        UserName = username,
-                        QSetId = submitModel.QSetId,
-                        QuestionId = question.QuestionId,
-                        SelectedAnswerId = selectedAnswerId
-                    });
                 }
                 else
                 {

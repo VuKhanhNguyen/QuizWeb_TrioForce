@@ -21,7 +21,7 @@ namespace QuizWeb_TrioForce.Repositories.Implementations
             //await _context.SaveChangesAsync(); disable because using UoW
         }
 
-        public void DeleteQuestionSetAsync(QuestionSet questionSet)
+        public void DeleteQuestionSet(QuestionSet questionSet)
         {
                 _context.QuestionSets.Remove(questionSet);
                 //await _context.SaveChangesAsync(); disable because using UoW
@@ -29,7 +29,7 @@ namespace QuizWeb_TrioForce.Repositories.Implementations
 
         public async Task<List<QuestionSet>> GetAllCreatedQuestionSetsByUsernameAsync(string username)
         {
-            return await _context.QuestionSets.AsNoTracking().Where(qs => qs.AuthorName == username).ToListAsync();
+            return await _context.QuestionSets.AsNoTracking().Include(qs => qs.Category).Include(qs => qs.Level).Where(qs => qs.AuthorName == username).ToListAsync();
         }
 
         public async Task<QuestionSet?> GetQuestionSetByIdAsync(int id)
@@ -80,7 +80,7 @@ namespace QuizWeb_TrioForce.Repositories.Implementations
                 .FirstOrDefaultAsync();
         }
 
-        public void UpdateQuestionSetAsync(QuestionSet questionSet)
+        public void UpdateQuestionSet(QuestionSet questionSet)
         {
             _context.QuestionSets.Update(questionSet);
             //await _context.SaveChangesAsync(); disable because using UoW

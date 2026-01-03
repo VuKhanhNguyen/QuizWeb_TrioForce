@@ -7,8 +7,8 @@
         public string QSetName { get; set; } = null!;
 
         public string Description { get; set; } = null!;
-        public int LevelId { get; set; }
-        public int CategoryId { get; set; }
+        public string LevelName { get; set; } = string.Empty;
+        public string CategoryName { get; set; } = string.Empty;
         public DateTime CreatedTime { get; set; }
 
     }

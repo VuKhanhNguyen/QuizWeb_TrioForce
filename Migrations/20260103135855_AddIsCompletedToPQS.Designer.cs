@@ -12,8 +12,8 @@ using QuizWeb_TrioForce.Data;
 namespace QuizWeb_TrioForce.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251116155006_InitialCreateDB")]
-    partial class InitialCreateDB
+    [Migration("20260103135855_AddIsCompletedToPQS")]
+    partial class AddIsCompletedToPQS
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -104,10 +104,12 @@ namespace QuizWeb_TrioForce.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("varchar(255)");
+                        .HasMaxLength(128)
+                        .HasColumnType("varchar(128)");
 
                     b.Property<string>("ProviderKey")
-                        .HasColumnType("varchar(255)");
+                        .HasMaxLength(128)
+                        .HasColumnType("varchar(128)");
 
                     b.Property<string>("ProviderDisplayName")
                         .HasColumnType("longtext");
@@ -144,10 +146,12 @@ namespace QuizWeb_TrioForce.Migrations
                         .HasColumnType("varchar(255)");
 
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("varchar(255)");
+                        .HasMaxLength(128)
+                        .HasColumnType("varchar(128)");
 
                     b.Property<string>("Name")
-                        .HasColumnType("varchar(255)");
+                        .HasMaxLength(128)
+                        .HasColumnType("varchar(128)");
 
                     b.Property<string>("Value")
                         .HasColumnType("longtext");
@@ -350,6 +354,12 @@ namespace QuizWeb_TrioForce.Migrations
 
                     b.Property<int>("QSetId")
                         .HasColumnType("int");
+
+                    b.Property<DateTime?>("CompletedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<bool>("IsCompleted")
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<DateTime>("LastUpdated")
                         .HasColumnType("datetime(6)");

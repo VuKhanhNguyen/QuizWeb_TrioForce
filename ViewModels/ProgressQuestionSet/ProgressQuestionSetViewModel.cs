@@ -12,5 +12,9 @@ namespace QuizWeb_TrioForce.ViewModels.ProgressQuestionSet
 
         [Required]
         public int QuestionLastId { get; set; }
+
+        public bool IsCompleted { get; set; } = false;
+
+        public DateTime? CompletedAt { get; set; } = null;
     }
 }

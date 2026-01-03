@@ -102,41 +102,64 @@
                 <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
                     @foreach (var pqs in Model.ProgressQuestionSetList)
                     {
+                        var badgeClass = pqs.IsCompleted ? "bg-success" : "bg-warning";
+                        var progressClass = pqs.IsCompleted ? "bg-success" : "bg-info";
+                        var buttonClass = pqs.IsCompleted ? "btn-outline-success" : "btn-primary";
+                        var statusIcon = pqs.IsCompleted ? "fa-check-circle" : "fa-play-circle";
+                        var actionIcon = pqs.IsCompleted ? "fa-redo" : "fa-play";
+
                         <div class="col">
                             <div class="quiz-set-card">
-                                <div class="card-badge bg-info">
-                                    <i class="fas fa-play-circle me-1"></i> Đang làm
+
+                                <!-- Badge trạng thái -->
+                                <div class="card-badge @badgeClass">
+                                    <i class="fas @statusIcon me-1"></i>
+                                    @(pqs.IsCompleted ? "Đã hoàn thành" : "Đang làm")
                                 </div>
+
                                 <h5 class="card-title">@pqs.QSetName</h5>
+
                                 <p class="card-author">
                                     <i class="fas fa-user-circle me-1"></i> @pqs.AuthorName
                                 </p>
+
+                                <!-- Progress -->
                                 <div class="progress-info mb-3">
                                     <div class="d-flex justify-content-between mb-2">
                                         <span class="text-muted small">Tiến độ</span>
                                         <span class="fw-semibold">@pqs.QuestionCount/@pqs.TotalQuestions</span>
                                     </div>
+
                                     <div class="progress" style="height: 8px;">
-                                        <div class="progress-bar bg-info" role="progressbar"
+                                        <div class="progress-bar @progressClass"
+                                             role="progressbar"
                                              style="width: @((double)pqs.QuestionCount / pqs.TotalQuestions * 100)%;">
                                         </div>
                                     </div>
                                 </div>
+
+                                <!-- Footer -->
                                 <div class="card-footer-custom">
                                     <small class="text-muted">
                                         <i class="far fa-clock me-1"></i>
-                                        @pqs.LastUpdated.ToString("dd/MM/yyyy")
+                                        @(pqs.CompletedAt?.ToString("dd/MM/yyyy") ?? pqs.LastUpdated.ToString("dd/MM/yyyy"))
                                     </small>
-                                    <a asp-controller="Quiz" asp-action="ResumeProgress" asp-route-QSetId="@pqs.QSetId" class="btn btn-sm btn-primary text-decoration-none">
-                                        <i class="fas fa-play me-1"></i> Tiếp tục
-                                    </a>
 
+                                    <a asp-controller="Quiz"
+                                       asp-action="ResumeProgress"
+                                       asp-route-QSetId="@pqs.QSetId"
+                                       class="btn btn-sm @buttonClass text-decoration-none">
+                                        <i class="fas @actionIcon me-1"></i>
+                                        @(pqs.IsCompleted ? "Chơi lại" : "Tiếp tục")
+                                    </a>
                                 </div>
+
                             </div>
                         </div>
                     }
                 </div>
             }
+
             else
             {
                 <div class="empty-state">
@@ -171,32 +194,32 @@
                     {
                         <div class="col">
                             <div class="quiz-set-card">
-                                <div class="card-badge bg-success">
-                                    <i class="fas fa-check-circle me-1"></i> Đã tạo
+                                <div class="card-badge bg-success text-white">
+                                    <small class="">
+                                        <i class="far fa-calendar me-1"></i>
+                                        @cqs.CreatedTime.ToString("dd/MM/yyyy")
+                                    </small>
                                 </div>
                                 <h5 class="card-title">@cqs.QSetName</h5>
                                 <p class="card-description">@cqs.Description</p>
                                 <div class="card-tags mb-3">
                                     <span class="tag tag-category">
-                                        <i class="fas fa-folder me-1"></i> @cqs.CategoryId
+                                        <i class="fas fa-folder me-1"></i> @cqs.CategoryName
                                     </span>
                                     <span class="tag tag-level">
-                                        <i class="fas fa-signal me-1"></i> @cqs.LevelId
+                                        <i class="fas fa-signal me-1"></i> @cqs.LevelName
                                     </span>
                                 </div>
-                                <div class="card-footer-custom">
-                                    <small class="text-muted">
-                                        <i class="far fa-calendar me-1"></i>
-                                        @cqs.CreatedTime.ToString("dd/MM/yyyy")
-                                    </small>
-                                    <div class="btn-group btn-group-sm">
-                                        <a href="#" class="btn btn-outline-primary">
+                                <div class="card-footer-custom justify-content-around btn-actions-group">
+                                    
+                                    @* <div class="btn-group"> *@
+                                        <a asp-controller="Quiz" asp-action="" class="btn-primary p-1 px-5 rounded-3" title="Chỉnh sửa">
                                             <i class="fas fa-edit"></i>
                                         </a>
-                                        <a href="#" class="btn btn-outline-danger">
+                                    <a class="remove-created-question-set btn-danger p-1 px-5 rounded-3" id="remove-@cqs.QSetId" data-question-set-id="@cqs.QSetId" title="Xóa">
                                             <i class="fas fa-trash"></i>
                                         </a>
-                                    </div>
+                                    @* </div> *@
                                 </div>
                             </div>
                         </div>

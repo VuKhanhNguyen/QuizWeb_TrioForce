@@ -9,6 +9,11 @@
 <link rel="stylesheet" href="~/css/play1v1.css" asp-append-version="true" />
 
 <div class="play-container">
+    <!-- Exit Button -->
+    <button class="btn btn-danger position-absolute top-0 end-0 m-3" id="exitButton" style="z-index: 10;">
+        <i class="fa-solid fa-right-from-bracket me-1"></i>Thoát
+    </button>
+    
     <!-- Score Bar -->
     <div class="score-bar">
         <div class="player-score me">
@@ -51,6 +56,51 @@
     <div class="content">
         <div class="spinner-border text-light mb-3" role="status"></div>
         <h4 id="overlayMessage">Đang chuyển câu hỏi...</h4>
+    </div>
+</div>
+
+<!-- Disconnect Overlay (when opponent disconnects) -->
+<div class="waiting-overlay" id="disconnectOverlay" style="display: none;">
+    <div class="content">
+        <i class="fa-solid fa-plug-circle-xmark text-warning mb-3" style="font-size: 4rem;"></i>
+        <h3 class="text-warning mb-3">Đối thủ đã ngắt kết nối!</h3>
+        <p class="text-light mb-4">Chờ đối thủ kết nối lại hoặc bạn sẽ thắng sau:</p>
+        <h1 class="text-light mb-3"><span id="disconnectCountdown">30</span>s</h1>
+        <div class="progress" style="width: 300px; height: 10px;">
+            <div class="progress-bar progress-bar-striped progress-bar-animated bg-warning" 
+                 id="disconnectProgress" 
+                 role="progressbar" 
+                 style="width: 100%"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Exit Confirmation Modal -->
+<div class="modal fade" id="exitConfirmModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title">
+                    <i class="fa-solid fa-triangle-exclamation me-2"></i>Xác nhận thoát
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Bạn có chắc muốn thoát khỏi trận đấu?</p>
+                <p class="text-danger fw-bold mb-0">
+                    <i class="fa-solid fa-warning me-1"></i>
+                    Bạn sẽ thua trận đấu này!
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fa-solid fa-times me-1"></i>Hủy
+                </button>
+                <button type="button" class="btn btn-danger" id="confirmExitBtn">
+                    <i class="fa-solid fa-right-from-bracket me-1"></i>Xác nhận thoát
+                </button>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -111,6 +161,7 @@
             document.getElementById('overlayMessage').textContent =
                 data.isDraw ? 'Hòa!' : (data.winnerUserName === '@User.Identity?.Name' ? 'Bạn thắng!' : 'Bạn thua!');
 
+            isExitConfirmed = true; // Bypass confirmation when redirecting
             setTimeout(() => {
                 window.location.href = `/Duel/Result?matchId=${matchId}`;
             }, 2000);
@@ -119,6 +170,36 @@
         connection.on("Error", (msg) => {
             console.error("Error:", msg);
             Toastify({ text: msg, backgroundColor: "#dc3545" }).showToast();
+        });
+
+        // Opponent disconnected
+        let disconnectTimer = null;
+        let disconnectTimeLeft = 30;
+        
+        connection.on("PlayerDisconnected", (data) => {
+            console.log("Opponent disconnected:", data);
+            clearInterval(timerInterval); // Pause game timer
+            showDisconnectOverlay();
+        });
+
+        // Opponent reconnected
+        connection.on("PlayerReconnected", (data) => {
+            console.log("Opponent reconnected:", data);
+            hideDisconnectOverlay();
+            Toastify({ text: "Đối thủ đã kết nối lại!", backgroundColor: "#28a745" }).showToast();
+        });
+
+        // Disconnect timeout - opponent didn't reconnect in time
+        connection.on("DisconnectTimeout", (data) => {
+            console.log("Disconnect timeout:", data);
+            hideDisconnectOverlay();
+            document.getElementById('waitingOverlay').style.display = 'flex';
+            document.getElementById('overlayMessage').textContent = 'Bạn thắng! Đối thủ đã rời trận.';
+            
+            isExitConfirmed = true; // Bypass confirmation when redirecting
+            setTimeout(() => {
+                window.location.href = `/Duel/Result?matchId=${matchId}`;
+            }, 2000);
         });
 
         // Start connection
@@ -228,9 +309,82 @@
             document.getElementById('opponentScore').textContent = oppScore;
         }
 
-        // Handle page unload
-        window.addEventListener('beforeunload', (e) => {
+        function showDisconnectOverlay() {
+            document.getElementById('disconnectOverlay').style.display = 'flex';
+            disconnectTimeLeft = 30;
+            updateDisconnectDisplay();
+
+            disconnectTimer = setInterval(() => {
+                disconnectTimeLeft--;
+                updateDisconnectDisplay();
+
+                if (disconnectTimeLeft <= 0) {
+                    clearInterval(disconnectTimer);
+                    
+                    // Timeout reached - opponent didn't reconnect
+                    hideDisconnectOverlay();
+                    document.getElementById('waitingOverlay').style.display = 'flex';
+                    document.getElementById('overlayMessage').textContent = 'Bạn thắng! Đối thủ đã rời trận.';
+                    
+                    // Call server to end match due to timeout (in case it hasn't already)
+                    connection.invoke("NotifyDisconnectTimeout", matchId).catch(err => {
+                        console.error("Error notifying disconnect timeout:", err);
+                    });
+                    
+                    // Set flag to bypass beforeunload confirmation
+                    isExitConfirmed = true;
+                    
+                    // Redirect to result page after 2 seconds
+                    setTimeout(() => {
+                        window.location.href = `/Duel/Result?matchId=${matchId}`;
+                    }, 2000);
+                }
+            }, 1000);
+        }
+
+        function hideDisconnectOverlay() {
+            document.getElementById('disconnectOverlay').style.display = 'none';
+            if (disconnectTimer) {
+                clearInterval(disconnectTimer);
+                disconnectTimer = null;
+            }
+        }
+
+        function updateDisconnectDisplay() {
+            document.getElementById('disconnectCountdown').textContent = disconnectTimeLeft;
+            const progress = (disconnectTimeLeft / 30) * 100;
+            document.getElementById('disconnectProgress').style.width = progress + '%';
+        }
+
+        // Exit confirmation modal
+        const exitConfirmModal = new bootstrap.Modal(document.getElementById('exitConfirmModal'));
+        let isExitConfirmed = false;
+
+        // Exit button click handler
+        document.getElementById('exitButton').addEventListener('click', () => {
+            exitConfirmModal.show();
+        });
+
+        document.getElementById('confirmExitBtn').addEventListener('click', () => {
+            isExitConfirmed = true;
+            exitConfirmModal.hide();
             connection.invoke("LeaveMatch", matchId).catch(() => { });
+            window.location.href = '/Duel/Index';
+        });
+
+        // Handle page unload with confirmation
+        window.addEventListener('beforeunload', (e) => {
+            if (!isExitConfirmed) {
+                e.preventDefault();
+                e.returnValue = '';
+                
+                // Show modal instead (though browsers may not allow this)
+                setTimeout(() => {
+                    exitConfirmModal.show();
+                }, 100);
+            } else {
+                connection.invoke("LeaveMatch", matchId).catch(() => { });
+            }
         });
 </script>
 }

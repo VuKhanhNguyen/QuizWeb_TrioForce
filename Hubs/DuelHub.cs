@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.Authorization;
 using QuizWeb_TrioForce.Models;
 using QuizWeb_TrioForce.Services.Interfaces;
+using QuizWeb_TrioForce.Data;
 
 namespace QuizWeb_TrioForce.Hubs
 {
@@ -10,15 +11,17 @@ namespace QuizWeb_TrioForce.Hubs
     {
         private readonly IDuelService _duelService;
         private readonly ILogger<DuelHub> _logger;
+        private readonly AppDbContext _context;
 
         // Store connection mappings (in production, use Redis or a distributed cache)
         private static readonly Dictionary<string, string> UserConnections = new();
         private static readonly Dictionary<int, HashSet<string>> MatchConnections = new();
 
-        public DuelHub(IDuelService duelService, ILogger<DuelHub> logger)
+        public DuelHub(IDuelService duelService, ILogger<DuelHub> logger, AppDbContext context)
         {
             _duelService = duelService;
             _logger = logger;
+            _context = context;
         }
 
         public override async Task OnConnectedAsync()
@@ -40,8 +43,19 @@ namespace QuizWeb_TrioForce.Hubs
                 UserConnections.Remove(userName);
                 _logger.LogInformation("User {UserName} disconnected", userName);
 
-                // Notify matches about disconnection
+                // Notify matches about disconnection (mark disconnect time in DB)
                 await _duelService.HandlePlayerDisconnectAsync(userName);
+
+                // Find active matches and notify opponent
+                var activeMatches = await _duelService.GetActiveMatchesForUserAsync(userName);
+                foreach (var match in activeMatches)
+                {
+                    // Notify opponent about disconnection - they will start their own 30s countdown
+                    await Clients.Group($"match_{match.MatchId}")
+                        .SendAsync("PlayerDisconnected", new { UserName = userName });
+                    
+                    _logger.LogInformation("Notified match {MatchId} about player {UserName} disconnect", match.MatchId, userName);
+                }
             }
             await base.OnDisconnectedAsync(exception);
         }
@@ -174,12 +188,37 @@ namespace QuizWeb_TrioForce.Hubs
 
                 _logger.LogInformation("User {UserName} joined match group {MatchId}", userName, matchId);
 
-                // Notify others in the group that this player is connected
-                await Clients.GroupExcept($"match_{matchId}", Context.ConnectionId).SendAsync("PlayerConnected", new
+                // Check if this is a reconnect (player was disconnected)
+                bool isPlayer1 = match.Player1UserName == userName;
+                var wasDisconnected = isPlayer1 
+                    ? match.Player1DisconnectedAt.HasValue 
+                    : match.Player2DisconnectedAt.HasValue;
+
+                // Clear disconnect time
+                if (wasDisconnected)
                 {
-                    UserName = userName,
-                    IsPlayer1 = match.Player1UserName == userName
-                });
+                    if (isPlayer1)
+                        match.Player1DisconnectedAt = null;
+                    else
+                        match.Player2DisconnectedAt = null;
+
+                    await _context.SaveChangesAsync();
+
+                    // Notify opponent about reconnection
+                    await Clients.GroupExcept($"match_{matchId}", Context.ConnectionId)
+                        .SendAsync("PlayerReconnected", new { UserName = userName });
+                    
+                    _logger.LogInformation("User {UserName} reconnected to match {MatchId}", userName, matchId);
+                }
+                else
+                {
+                    // First time connection - notify others in the group that this player is connected
+                    await Clients.GroupExcept($"match_{matchId}", Context.ConnectionId).SendAsync("PlayerConnected", new
+                    {
+                        UserName = userName,
+                        IsPlayer1 = isPlayer1
+                    });
+                }
 
                 // Send current match state back to the caller
                 await Clients.Caller.SendAsync("JoinedMatchGroup", new
@@ -385,6 +424,62 @@ namespace QuizWeb_TrioForce.Hubs
             {
                 _logger.LogError(ex, "Error reconnecting to match {MatchId} for user {UserName}", matchId, userName);
                 await Clients.Caller.SendAsync("Error", "Có lỗi xảy ra khi kết nối lại.");
+            }
+        }
+
+        /// <summary>
+        /// Frontend gọi khi countdown disconnect timeout về 0
+        /// </summary>
+        public async Task NotifyDisconnectTimeout(int matchId)
+        {
+            var userName = Context.User?.Identity?.Name;
+            if (string.IsNullOrEmpty(userName)) return;
+
+            try
+            {
+                _logger.LogInformation("Disconnect timeout notification from {UserName} for match {MatchId}", userName, matchId);
+                
+                var match = await _duelService.GetMatchByIdAsync(matchId);
+                if (match == null || match.Status != MatchStatus.InProgress)
+                {
+                    _logger.LogWarning("Match {MatchId} not found or not in progress", matchId);
+                    return;
+                }
+
+                // Determine which player disconnected (the one who is NOT calling this method)
+                string? disconnectedPlayer = null;
+                if (match.Player1UserName == userName)
+                {
+                    // Player1 is calling, so Player2 is the disconnected one
+                    if (match.Player2DisconnectedAt.HasValue)
+                    {
+                        disconnectedPlayer = match.Player2UserName;
+                    }
+                }
+                else if (match.Player2UserName == userName)
+                {
+                    // Player2 is calling, so Player1 is the disconnected one
+                    if (match.Player1DisconnectedAt.HasValue)
+                    {
+                        disconnectedPlayer = match.Player1UserName;
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(disconnectedPlayer))
+                {
+                    _logger.LogInformation("Ending match {MatchId} due to disconnect timeout. Disconnected player: {DisconnectedPlayer}", matchId, disconnectedPlayer);
+                    
+                    // End the match, awarding win to the player who is still connected
+                    await _duelService.EndMatchDueToDisconnectAsync(matchId, disconnectedPlayer);
+                }
+                else
+                {
+                    _logger.LogInformation("No disconnected player found or player reconnected for match {MatchId}", matchId);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error handling disconnect timeout notification for match {MatchId}", matchId);
             }
         }
     }

@@ -468,5 +468,52 @@ namespace QuizWeb_TrioForce.Services.Implementations
                 })
                 .ToListAsync();
         }
+
+        public async Task<List<DuelMatch>> GetActiveMatchesForUserAsync(string userName)
+        {
+            return await _context.DuelMatches
+                .Include(m => m.Player1)
+                .Include(m => m.Player2)
+                .Include(m => m.QuestionSet)
+                .Where(m => (m.Player1UserName == userName || m.Player2UserName == userName)
+                         && m.Status == MatchStatus.InProgress)
+                .ToListAsync();
+        }
+
+        public async Task EndMatchDueToDisconnectAsync(int matchId, string disconnectedPlayerUserName)
+        {
+            var match = await GetMatchByIdAsync(matchId);
+            if (match == null || match.Status != MatchStatus.InProgress)
+                return;
+
+            match.Status = MatchStatus.Completed;
+            match.EndedAt = DateTime.Now;
+
+            // The opponent wins
+            match.WinnerUserName = match.Player1UserName == disconnectedPlayerUserName
+                ? match.Player2UserName
+                : match.Player1UserName;
+
+            await _context.SaveChangesAsync();
+
+            // Update rankings
+            var winnerUserName = match.WinnerUserName;
+            var loserUserName = disconnectedPlayerUserName;
+
+            if (!string.IsNullOrEmpty(winnerUserName))
+            {
+                await UpdatePlayerRankingAsync(winnerUserName, true, false, 
+                    winnerUserName == match.Player1UserName ? match.Player1Score : match.Player2Score);
+            }
+
+            await UpdatePlayerRankingAsync(loserUserName, false, false,
+                loserUserName == match.Player1UserName ? match.Player1Score : match.Player2Score);
+
+            // Clean up
+            MatchAnswers.Remove(matchId);
+
+            _logger.LogInformation("Match {MatchId} ended due to player {PlayerUserName} disconnect timeout. Winner: {WinnerUserName}", 
+                matchId, disconnectedPlayerUserName, winnerUserName);
+        }
     }
 }

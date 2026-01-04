@@ -84,5 +84,15 @@ namespace QuizWeb_TrioForce.Services.Interfaces
         /// Lấy tất cả bộ câu hỏi cho dropdown
         /// </summary>
         Task<List<QuestionSetOptionDto>> GetAllQuestionSetsForSelectAsync();
+
+        /// <summary>
+        /// Lấy các match đang active của user
+        /// </summary>
+        Task<List<DuelMatch>> GetActiveMatchesForUserAsync(string userName);
+
+        /// <summary>
+        /// Kết thúc match do disconnect timeout
+        /// </summary>
+        Task EndMatchDueToDisconnectAsync(int matchId, string disconnectedPlayerUserName);
     }
 }

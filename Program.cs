@@ -7,6 +7,7 @@ using QuizWeb_TrioForce.Repositories.Interfaces;
 
 using QuizWeb_TrioForce.Services.Interfaces;
 using QuizWeb_TrioForce.Services.Implementations;
+using QuizWeb_TrioForce.Hubs;
 
 namespace QuizWeb_TrioForce
 {
@@ -66,6 +67,10 @@ namespace QuizWeb_TrioForce
             builder.Services.AddScoped<IFileService, FileService>();
             builder.Services.AddScoped<IQuizService, QuizService>();
             builder.Services.AddScoped<IAnsweredQuestionService, AnsweredQuestionService>();
+            builder.Services.AddScoped<IDuelService, DuelService>();
+
+            // SignalR
+            builder.Services.AddSignalR();
 
 
             var app = builder.Build();
@@ -93,6 +98,7 @@ namespace QuizWeb_TrioForce
                 pattern: "{controller=Home}/{action=Index}/{id?}");
 
             app.MapRazorPages();
+            app.MapHub<DuelHub>("/duelHub");
             app.Run();
         }
     }

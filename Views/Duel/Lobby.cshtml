@@ -1,0 +1,185 @@
+@model QuizWeb_TrioForce.Models.DuelMatch
+@{
+    ViewData["Title"] = "Phòng chờ";
+    var isPlayer1 = Model.Player1UserName == User.Identity?.Name;
+}
+@section Scripts {
+<script src="~/lib/microsoft-signalr/signalr.min.js"></script>
+<script>
+    const matchId = @Model.MatchId;
+    const isPlayer1 = @(isPlayer1 ? "true" : "false");
+            const connection = new signalR.HubConnectionBuilder()
+            .withUrl("/duelHub")
+            .withAutomaticReconnect()
+            .configureLogging(signalR.LogLevel.Information)
+            .build();
+
+        // Khi Player 2 join match (từ database, thông qua HTTP POST)
+        // và sau đó connect vào SignalR group
+        connection.on("PlayerConnected", (data) => {
+            console.log("Player connected to group:", data);
+            if (!data.isPlayer1) {
+                // Player 2 đã kết nối vào group
+                updatePlayer2UI(data.userName, data.userName);
+            }
+        });
+
+        // Khi nhận được thông tin match state sau khi join group
+        connection.on("JoinedMatchGroup", (data) => {
+            console.log("Joined match group:", data);
+            if (data.hasBothPlayers && data.player2UserName) {
+                updatePlayer2UI(data.player2UserName, data.player2FullName);
+            }
+        });
+
+        // Fallback: PlayerJoined event
+        connection.on("PlayerJoined", (data) => {
+            console.log("Player joined:", data);
+            updatePlayer2UI(data.player2UserName, data.player2FullName);
+        });
+
+        connection.on("MatchStarted", (data) => {
+            console.log("Match started:", data);
+            window.location.href = `/Duel/Play?matchId=${matchId}`;
+        });
+
+        connection.on("PlayerLeft", (data) => {
+            Toastify({ text: "Đối thủ đã rời phòng", backgroundColor: "#dc3545" }).showToast();
+            setTimeout(() => window.location.reload(), 1500);
+        });
+
+        connection.on("Error", (msg) => {
+            console.error("SignalR Error:", msg);
+            Toastify({ text: msg, backgroundColor: "#dc3545" }).showToast();
+        });
+
+        // Start connection and join match group
+        connection.start().then(() => {
+            console.log("SignalR connected, joining match group...");
+            // Use JoinMatchGroup instead of JoinRoom
+            connection.invoke("JoinMatchGroup", matchId).catch(err => {
+                console.error("JoinMatchGroup error:", err);
+            });
+        }).catch(err => console.error("SignalR connection error:", err));
+
+        function updatePlayer2UI(userName, fullName) {
+            const displayName = fullName || userName;
+            document.getElementById('player2Slot').innerHTML = `
+                    <div class="player-avatar">${displayName?.charAt(0) || 'P'}</div>
+                    <div class="player-info">
+                        <div class="player-name">${displayName}</div>
+                        <div class="player-status">${isPlayer1 ? 'Đối thủ' : 'Bạn'}</div>
+                    </div>
+                    <i class="fa-solid fa-check-circle fa-lg"></i>
+                `;
+            document.getElementById('player2Slot').className = 'player-slot ready';
+            document.getElementById('waitingAnim').style.display = 'none';
+
+            if (isPlayer1) {
+                const btnStart = document.getElementById('btnStart');
+                if (btnStart) btnStart.disabled = false;
+            }
+
+            Toastify({ text: `${displayName} đã tham gia!`, backgroundColor: "#28a745" }).showToast();
+        }
+
+        // Copy match code
+        document.getElementById('matchCode').addEventListener('click', () => {
+            navigator.clipboard.writeText('@Model.MatchCode');
+            Toastify({ text: "Đã sao chép mã phòng!", backgroundColor: "#667eea" }).showToast();
+        });
+
+        // Start match (only for Player1)
+        if (isPlayer1) {
+            document.getElementById('btnStart').addEventListener('click', () => {
+                console.log("Starting match...");
+                connection.invoke("StartMatch", matchId).catch(err => {
+                    console.error("StartMatch error:", err);
+                    Toastify({ text: "Có lỗi xảy ra khi bắt đầu", backgroundColor: "#dc3545" }).showToast();
+                });
+            });
+        }
+</script>
+@* <script src="~/js/lobby.js"></script> *@
+}
+<link rel="stylesheet" href="~/css/lobby.css" asp-append-version="true" />
+
+<div class="lobby-container">
+    <div class="lobby-card">
+        <h2 class="mb-2"><i class="fa-solid fa-users me-2"></i>Phòng chờ</h2>
+        <p class="text-muted">Chia sẻ mã phòng cho bạn bè để tham gia</p>
+        
+        <!-- Match Code -->
+        <div class="match-code-display" id="matchCode" title="Click để sao chép">
+            @Model.MatchCode
+        </div>
+        <small class="text-muted d-block mb-4">
+            <i class="fa-solid fa-copy me-1"></i>Click vào mã để sao chép
+        </small>
+        
+        <!-- Players -->
+        <div class="player-slot ready">
+            <div class="player-avatar">@(Model.Player1?.FullName?.FirstOrDefault() ?? 'P')</div>
+            <div class="player-info">
+                <div class="player-name">@(Model.Player1?.FullName ?? Model.Player1UserName)</div>
+                <div class="player-status">@(isPlayer1 ? "Bạn (Chủ phòng)" : "Chủ phòng")</div>
+            </div>
+            <i class="fa-solid fa-check-circle fa-lg"></i>
+        </div>
+        
+        <div id="player2Slot" class="player-slot @(Model.Player2 != null ? "ready" : "waiting")">
+            @if (Model.Player2 != null)
+            {
+                <div class="player-avatar">@(Model.Player2?.FullName?.FirstOrDefault() ?? 'P')</div>
+                <div class="player-info">
+                    <div class="player-name">@(Model.Player2?.FullName ?? Model.Player2UserName)</div>
+                    <div class="player-status">@(!isPlayer1 ? "Bạn" : "Đối thủ")</div>
+                </div>
+                <i class="fa-solid fa-check-circle fa-lg"></i>
+            }
+            else
+            {
+                <div class="player-avatar" style="background: #dee2e6; color: #adb5bd;">?</div>
+                <div class="player-info">
+                    <div class="player-name text-muted">Đang chờ đối thủ...</div>
+                    <div class="player-status text-muted">Chia sẻ mã phòng để mời bạn bè</div>
+                </div>
+            }
+        </div>
+        
+        <!-- Waiting Animation -->
+        <div id="waitingAnim" class="waiting-animation" style="@(Model.Player2 != null ? "display:none;" : "")">
+            <div class="waiting-dot"></div>
+            <div class="waiting-dot"></div>
+            <div class="waiting-dot"></div>
+        </div>
+        
+        <!-- Start Button (only for Player1) -->
+        @if (isPlayer1)
+        {
+            <button id="btnStart" class="btn btn-start" @(Model.Player2 == null ? "disabled" : "")>
+                <i class="fa-solid fa-play me-2"></i>Bắt đầu
+            </button>
+        }
+        else
+        {
+            <p class="text-muted mt-3">
+                <i class="fa-solid fa-hourglass-half me-2"></i>Đợi chủ phòng bắt đầu...
+            </p>
+        }
+        
+        <!-- Question Set Info -->
+        <div class="qset-info">
+            <i class="fa-solid fa-book me-2 text-primary"></i>
+            <strong>@Model.QuestionSet?.QSetName</strong>
+            <span class="text-muted">(@(Model.QuestionSet?.Questions?.Count ?? 0) câu hỏi)</span>
+        </div>
+        
+        <!-- Leave Button -->
+        <a asp-action="Index" class="btn btn-outline-secondary mt-3">
+            <i class="fa-solid fa-arrow-left me-2"></i>Rời phòng
+        </a>
+    </div>
+</div>
+
+

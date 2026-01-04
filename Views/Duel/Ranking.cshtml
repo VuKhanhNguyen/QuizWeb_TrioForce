@@ -1,0 +1,51 @@
+@model List<QuizWeb_TrioForce.ViewModels.Duel.DuelRankingViewModel>
+@{
+    ViewData["Title"] = "Bảng xếp hạng 1v1";
+    var currentUser = User.Identity?.Name;
+}
+
+<link rel="stylesheet" href="~/css/ranking1v1.css" asp-append-version="true" />
+
+
+<div class="ranking-header">
+    <h2><i class="fa-solid fa-trophy me-2"></i>Bảng Xếp Hạng 1v1</h2>
+    <p class="mb-0 opacity-75">Top người chơi xuất sắc nhất</p>
+</div>
+
+<div class="ranking-table">
+    @foreach (var player in Model)
+    {
+        var isMe = player.UserName == currentUser;
+        var rankClass = player.Rank == 1 ? "gold" : player.Rank == 2 ? "silver" : player.Rank == 3 ? "bronze" : "";
+        <div class="ranking-row @(isMe ? "me" : "") @(player.Rank <= 3 ? "top-3" : "")">
+            <div class="rank-badge @rankClass">
+                @if (player.Rank == 1) { <text>🥇</text> }
+                else if (player.Rank == 2) { <text>🥈</text> }
+                else if (player.Rank == 3) { <text>🥉</text> }
+                else { @player.Rank }
+            </div>
+            <div class="player-info">
+                <div class="player-name">
+                    @player.FullName
+                    @if (isMe) { <span class="badge bg-warning text-dark ms-1">Bạn</span> }
+                </div>
+                <div class="player-stats">
+                    @player.Wins thắng / @player.TotalMatches trận
+                </div>
+            </div>
+            <div class="win-rate">
+                <div>@player.WinRate.ToString("F1")%</div>
+                <div class="win-rate-bar">
+                    <div class="win-rate-bar-fill" style="width: @player.WinRate%"></div>
+                </div>
+            </div>
+            <div class="player-score">@player.TotalScore</div>
+        </div>
+    }
+</div>
+
+<div class="mt-4 text-center">
+    <a asp-action="Index" class="btn btn-outline-primary">
+        <i class="fa-solid fa-arrow-left me-2"></i>Quay lại
+    </a>
+</div>

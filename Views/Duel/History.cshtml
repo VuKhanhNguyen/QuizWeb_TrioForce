@@ -1,0 +1,47 @@
+@model List<QuizWeb_TrioForce.ViewModels.Duel.MatchHistoryViewModel>
+@{
+    ViewData["Title"] = "Lịch sử đấu 1v1";
+}
+<link rel="stylesheet" href="~/css/history1v1.css" asp-append-version="true" />
+
+<div class="history-header">
+    <h2><i class="fa-solid fa-history me-2"></i>Lịch sử đấu 1v1</h2>
+    <p class="mb-0 opacity-75">Xem lại các trận đấu đã tham gia</p>
+</div>
+
+@if (Model.Count == 0)
+{
+    <div class="empty-state">
+        <i class="fa-solid fa-gamepad"></i>
+        <h4>Chưa có trận đấu nào</h4>
+        <p>Hãy bắt đầu trận đấu đầu tiên!</p>
+        <a asp-action="Index" class="btn btn-primary mt-2">Chơi ngay</a>
+    </div>
+}
+else
+{
+    @foreach (var match in Model)
+    {
+        <div class="match-card">
+            <div class="match-result @match.Result.ToLower()">
+                @(match.Result == "Win" ? "THẮNG" : match.Result == "Lose" ? "THUA" : "HÒA")
+            </div>
+            <div class="match-info">
+                <div class="match-opponent">vs @match.OpponentFullName</div>
+                <div class="match-meta">
+                    <i class="fa-solid fa-book me-1"></i>@match.QuestionSetName • 
+                    <i class="fa-solid fa-clock me-1"></i>@match.PlayedAt.ToString("dd/MM/yyyy HH:mm")
+                </div>
+            </div>
+            <div class="match-score">
+                <span class="my">@match.MyScore</span> - <span class="opp">@match.OpponentScore</span>
+            </div>
+        </div>
+    }
+}
+
+<div class="mt-4">
+    <a asp-action="Index" class="btn btn-outline-primary">
+        <i class="fa-solid fa-arrow-left me-2"></i>Quay lại
+    </a>
+</div>

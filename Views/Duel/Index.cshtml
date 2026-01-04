@@ -1,0 +1,111 @@
+@model QuizWeb_TrioForce.ViewModels.Duel.DuelIndexViewModel
+@{
+    ViewData["Title"] = "Đấu 1v1";
+}
+<link rel="stylesheet" href="~/css/duel.css" asp-append-version="true" />
+@section Scripts {
+<script src="~/lib/microsoft-signalr/signalr.min.js"></script>
+<script src="~/js/duel.js"></script>
+}
+
+
+<div class="duel-hero text-center">
+    <h1><i class="fa-solid fa-bolt me-2"></i>Đấu 1v1</h1>
+    <p class="lead mb-0">So tài trực tiếp với bạn bè, xem ai nhanh và chính xác hơn!</p>
+</div>
+
+<div class="row g-4 mb-4">
+    <!-- Tạo phòng -->
+    <div class="col-lg-6">
+        <div class="duel-card">
+            <h3><i class="fa-solid fa-plus-circle text-primary me-2"></i>Tạo phòng mới</h3>
+            <p class="text-muted mb-3">Tạo một phòng đấu và chia sẻ mã cho bạn bè.</p>
+            
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Chọn bộ câu hỏi:</label>
+                <select id="questionSetSelect" class="qset-select">
+                    <option value="0">🎲 Ngẫu nhiên</option>
+                    @foreach (var qs in Model.QuestionSets)
+                    {
+                        <option value="@qs.QSetId">@qs.QSetName (@qs.QuestionCount câu - @qs.LevelName)</option>
+                    }
+                </select>
+            </div>
+            
+            <button id="btnCreateRoom" class="btn btn-duel w-100">
+                <i class="fa-solid fa-rocket me-2"></i>Tạo phòng
+            </button>
+        </div>
+    </div>
+    
+    <!-- Tham gia phòng -->
+    <div class="col-lg-6">
+        <div class="duel-card">
+            <h3><i class="fa-solid fa-door-open text-danger me-2"></i>Tham gia phòng</h3>
+            <p class="text-muted mb-3">Nhập mã phòng từ bạn bè để tham gia.</p>
+            
+            <div class="mb-3 d-flex justify-content-center">
+                <input type="text" id="matchCodeInput" class="match-code-input" 
+                       placeholder="ABC123" maxlength="6" autocomplete="off">
+            </div>
+            
+            <button id="btnJoinRoom" class="btn btn-duel btn-join w-100">
+                <i class="fa-solid fa-sign-in-alt me-2"></i>Tham gia
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Thống kê cá nhân -->
+@if (Model.UserRanking != null)
+{
+<div class="stats-card mb-4">
+    <h5 class="mb-3"><i class="fa-solid fa-chart-line me-2"></i>Thống kê của bạn</h5>
+    <div class="row">
+        <div class="col-4 col-md-2 stat-item">
+            <div class="stat-value">@Model.UserRanking.TotalMatches</div>
+            <div class="stat-label">Trận đấu</div>
+        </div>
+        <div class="col-4 col-md-2 stat-item">
+            <div class="stat-value text-warning">@Model.UserRanking.Wins</div>
+            <div class="stat-label">Thắng</div>
+        </div>
+        <div class="col-4 col-md-2 stat-item">
+            <div class="stat-value">@Model.UserRanking.Losses</div>
+            <div class="stat-label">Thua</div>
+        </div>
+        <div class="col-4 col-md-2 stat-item">
+            <div class="stat-value">@Model.UserRanking.Draws</div>
+            <div class="stat-label">Hòa</div>
+        </div>
+        <div class="col-4 col-md-2 stat-item">
+            <div class="stat-value">@Model.UserRanking.WinRate.ToString("F1")%</div>
+            <div class="stat-label">Tỷ lệ</div>
+        </div>
+        <div class="col-4 col-md-2 stat-item">
+            <div class="stat-value">@Model.UserRanking.TotalScore</div>
+            <div class="stat-label">Điểm</div>
+        </div>
+    </div>
+</div>
+}
+
+<!-- Quick Links -->
+<div class="row g-3">
+    <div class="col-6 col-md-4">
+        <a asp-action="History" class="btn btn-outline-primary w-100 py-3">
+            <i class="fa-solid fa-history me-2"></i>Lịch sử đấu
+        </a>
+    </div>
+    <div class="col-6 col-md-4">
+        <a asp-action="Ranking" class="btn btn-outline-success w-100 py-3">
+            <i class="fa-solid fa-trophy me-2"></i>Bảng xếp hạng
+        </a>
+    </div>
+    <div class="col-12 col-md-4">
+        <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary w-100 py-3">
+            <i class="fa-solid fa-home me-2"></i>Trang chủ
+        </a>
+    </div>
+</div>
+

@@ -19,7 +19,11 @@ namespace QuizWeb_TrioForce.Data
         public DbSet<Question> Questions { get; set; } = null!;
         public DbSet<QuestionSet> QuestionSets { get; set; } = null!;
         public DbSet<Ranking> Rankings { get; set; } = null!;
-       
+
+        // Duel Mode (1v1)
+        public DbSet<DuelMatch> DuelMatches { get; set; } = null!;
+        public DbSet<DuelAnswer> DuelAnswers { get; set; } = null!;
+        public DbSet<DuelRanking> DuelRankings { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -178,6 +182,72 @@ namespace QuizWeb_TrioForce.Data
                     .WithOne(u => u.Ranking)
                     .HasForeignKey<Ranking>(r => r.UserName)
                     .HasPrincipalKey<ApplicationUser>(u => u.UserName);
+            });
+
+            // ========== DUEL MODE (1v1) ==========
+
+            builder.Entity<DuelMatch>(e =>
+            {
+                e.HasKey(m => m.MatchId);
+                e.Property(m => m.MatchCode)
+                    .IsRequired()
+                    .HasMaxLength(6);
+                e.HasIndex(m => m.MatchCode)
+                    .IsUnique();
+
+                e.HasOne(m => m.Player1)
+                    .WithMany()
+                    .HasForeignKey(m => m.Player1UserName)
+                    .HasPrincipalKey(u => u.UserName)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                e.HasOne(m => m.Player2)
+                    .WithMany()
+                    .HasForeignKey(m => m.Player2UserName)
+                    .HasPrincipalKey(u => u.UserName)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                e.HasOne(m => m.QuestionSet)
+                    .WithMany()
+                    .HasForeignKey(m => m.QSetId)
+                    .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            builder.Entity<DuelAnswer>(e =>
+            {
+                e.HasKey(a => a.DuelAnswerId);
+
+                e.HasOne(a => a.Match)
+                    .WithMany(m => m.DuelAnswers)
+                    .HasForeignKey(a => a.MatchId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                e.HasOne(a => a.User)
+                    .WithMany()
+                    .HasForeignKey(a => a.UserName)
+                    .HasPrincipalKey(u => u.UserName)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                e.HasOne(a => a.Question)
+                    .WithMany()
+                    .HasForeignKey(a => a.QuestionId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                e.HasOne(a => a.Answer)
+                    .WithMany()
+                    .HasForeignKey(a => a.SelectedAnswerId)
+                    .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            builder.Entity<DuelRanking>(e =>
+            {
+                e.HasKey(r => r.UserName);
+
+                e.HasOne(r => r.User)
+                    .WithMany()
+                    .HasForeignKey(r => r.UserName)
+                    .HasPrincipalKey(u => u.UserName)
+                    .OnDelete(DeleteBehavior.Cascade);
             });
 
         }

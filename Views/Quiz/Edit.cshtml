@@ -1,6 +1,6 @@
-﻿@model QuizWeb_TrioForce.ViewModels.QuestionSet.CreateQuestionSetViewModel
+@model QuizWeb_TrioForce.ViewModels.QuestionSet.UpdateQuestionSetViewModel
 @{
-    ViewData["Title"] = "Tạo bộ câu hỏi mới";
+    ViewData["Title"] = "Chỉnh sửa bộ câu hỏi";
 }
 
 <link rel="stylesheet" href="~/css/create-quiz.css" asp-append-version="true" />
@@ -13,16 +13,17 @@
                 <div class="hero-header mb-4">
                     <div class="d-flex align-items-center gap-3 mb-3">
                         <div class="hero-icon">
-                            <i class="fas fa-pencil-alt"></i>
+                            <i class="fas fa-edit"></i>
                         </div>
                         <div>
-                            <h2 class="fw-bold mb-1" style="color: #1e293b;">Tạo bộ câu hỏi mới</h2>
-                            <p class="text-muted mb-0">Thiết kế và chia sẻ kiến thức của bạn</p>
+                            <h2 class="fw-bold mb-1" style="color: #1e293b;">Chỉnh sửa bộ câu hỏi</h2>
+                            <p class="text-muted mb-0">Cập nhật và hoàn thiện kiến thức của bạn</p>
                         </div>
                     </div>
                 </div>
 
-                <form id="createForm" asp-action="Create" method="post" novalidate>
+                <form id="editForm" asp-action="Edit" method="post" novalidate>
+                    <input type="hidden" asp-for="QSetId" />
                     <div asp-validation-summary="ModelOnly" class="alert alert-danger rounded-4 fade-in-up"></div>
 
                     <!-- Quiz Information Card -->
@@ -39,7 +40,7 @@
                             <div class="row g-4">
                                 <div class="col-md-6">
                                     <label asp-for="QSetName" class="form-label fw-semibold text-dark mb-2">
-                                         Tên bộ câu hỏi
+                                        Tên bộ câu hỏi
                                     </label>
                                     <input asp-for="QSetName" class="form-control form-control-lg" placeholder="VD: Lịch sử Việt Nam" />
                                     <span asp-validation-for="QSetName" class="text-danger small"></span>
@@ -98,7 +99,7 @@
                         </div>
                         <div class="card-body p-4" id="questionsContainer">
                             <!-- Questions will be dynamically added here -->
-                            <div class="empty-state text-center py-5" id="no-questions-placeholder">
+                            <div class="empty-state text-center py-5" id="no-questions-placeholder" style="display: none;">
                                 <div class="empty-icon mb-3">
                                     <i class="fas fa-clipboard-list"></i>
                                 </div>
@@ -114,7 +115,7 @@
                             <i class="fas fa-times me-2"></i>Hủy
                         </a>
                         <button type="submit" class="btn btn-primary btn-lg px-5">
-                            <i class="fas fa-check me-2"></i>Tạo bộ câu hỏi
+                            <i class="fas fa-check me-2"></i>Cập nhật bộ câu hỏi
                         </button>
                     </div>
                 </form>
@@ -139,6 +140,7 @@
             </button>
         </div>
         <div class="card-body p-4">
+            <input type="hidden" name="Questions[QINDEX].QuestionId" value="" class="question-id-input" />
             <div class="mb-4">
                 <label class="form-label fw-semibold text-dark mb-2">
                     <i class="fas fa-pen text-primary me-1"></i> Nội dung câu hỏi
@@ -147,7 +149,7 @@
             </div>
             <div>
                 <label class="form-label fw-semibold text-dark mb-2">
-                    <i class="fas fa-list-ul text-success me-1"></i> Các đáp án 
+                    <i class="fas fa-list-ul text-success me-1"></i> Các đáp án
                     <small class="text-muted">(đánh dấu đáp án đúng)</small>
                 </label>
                 <div class="answer-items mb-3">
@@ -164,6 +166,7 @@
 <template id="answerTemplate">
     <div class="answer-item mb-2">
         <div class="input-group input-group-lg">
+            <input type="hidden" name="Questions[QINDEX].Answers[AINDEX].AnswerId" value="" class="answer-id-input" />
             <span class="input-group-text bg-white">
                 <input type="checkbox" name="Questions[QINDEX].Answers[AINDEX].IsCorrect" value="true" class="form-check-input is-correct-checkbox" />
             </span>
@@ -180,23 +183,45 @@
     <script>
         let questionIndex = 0;
 
-        function addQuestion(){
+        // Load existing questions from Model
+        let existingQuestions = @Html.Raw(Json.Serialize(Model.Questions));
+
+        function addQuestion(questionData = null){
             const template = document.getElementById('questionTemplate');
             const clone = template.content.cloneNode(true);
 
             const questionDiv = clone.querySelector('.question-item');
             questionDiv.setAttribute('data-question-index', questionIndex);
-            questionDiv.querySelector('.question-number').textContent = questionIndex + 1;
+            questionDiv.querySelectorAll('.question-number').forEach(el => {
+                el.textContent = questionIndex + 1;
+            });
 
             const inputs = clone.querySelectorAll('[name*="QINDEX"]');
             inputs.forEach(input => {
                 input.name = input.name.replace('QINDEX', questionIndex);
             });
 
+            if (questionData?.questionId != null) {
+                clone.querySelector('.question-id-input').value = questionData.questionId;
+            }
+
+            if (questionData?.questionText != null) {
+                clone.querySelector('textarea').value = questionData.questionText;
+            }
+
             const answerContainer = clone.querySelector('.answer-items');
-            for(let i = 0; i < 2; i++){
-                const answerHtml = createAnswer(questionIndex, i);
-                answerContainer.insertAdjacentHTML('beforeend', answerHtml);
+
+            // Load existing answers or create 2 default empty answers
+            if (questionData && questionData.answers && questionData.answers.length > 0) {
+                questionData.answers.forEach((answer, index) => {
+                    const answerHtml = createAnswer(questionIndex, index, answer);
+                    answerContainer.insertAdjacentHTML('beforeend', answerHtml);
+                });
+            } else {
+                for(let i = 0; i < 2; i++){
+                    const answerHtml = createAnswer(questionIndex, i);
+                    answerContainer.insertAdjacentHTML('beforeend', answerHtml);
+                }
             }
 
             document.getElementById('questionsContainer').appendChild(clone);
@@ -204,7 +229,7 @@
             updateQuestionNumbers();
         }
 
-        function createAnswer(qIndex, aIndex){
+        function createAnswer(qIndex, aIndex, answerData = null){
             const template = document.getElementById('answerTemplate');
             const clone = template.content.cloneNode(true);
             const div = document.createElement('div');
@@ -214,7 +239,34 @@
             html = html.replace(/QINDEX/g, qIndex);
             html = html.replace(/AINDEX/g, aIndex);
 
-            return html;
+            // Create a temporary element to modify the HTML
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = html;
+
+            const idInput = tempDiv.querySelector('.answer-id-input');
+            if (idInput && answerData?.answerId != null) {
+                const v = String(answerData.answerId);
+                idInput.value = v;
+                idInput.setAttribute('value', v); // quan trọng khi return innerHTML
+            }
+
+            const textInput = tempDiv.querySelector('input[type="text"]');
+            if (textInput && answerData?.answerText != null) {
+                const v = String(answerData.answerText);
+                textInput.value = v;
+                textInput.setAttribute('value', v);
+            }
+
+            const cb = tempDiv.querySelector('.is-correct-checkbox');
+            if (cb && typeof answerData?.isCorrect === 'boolean') {
+                cb.checked = answerData.isCorrect;
+
+                // quan trọng: serialize ra HTML phải có checked attribute
+                if (answerData.isCorrect) cb.setAttribute('checked', 'checked');
+                else cb.removeAttribute('checked');
+            }
+
+            return tempDiv.innerHTML;
         }
 
         function addAnswer(button){
@@ -244,23 +296,33 @@
         function updateQuestionNumbers(){
             const questionItems = document.querySelectorAll('#questionsContainer .question-item');
             const placeholder = document.getElementById('no-questions-placeholder');
-            
+
             if (questionItems.length === 0) {
                 if(placeholder) placeholder.style.display = 'block';
             } else {
                 if(placeholder) placeholder.style.display = 'none';
             }
-            
+
             questionItems.forEach((item, index) => {
-                item.querySelector('.question-number').textContent = index + 1;
+                item.querySelectorAll('.question-number').forEach(el => {
+                    el.textContent = index + 1;
+                });
             });
         }
 
         document.addEventListener('DOMContentLoaded', function(){
-            addQuestion();
+            // Load existing questions from the model
+            if (existingQuestions && existingQuestions.length > 0) {
+                existingQuestions.forEach(question => {
+                    addQuestion(question);
+                });
+            } else {
+                // Add one empty question if no existing questions
+                addQuestion();
+            }
         });
 
-        document.getElementById('createForm').addEventListener('submit', function(e) {
+        document.getElementById('editForm').addEventListener('submit', function(e) {
             document.querySelectorAll('.is-correct-checkbox').forEach(checkbox => {
                 const container = checkbox.closest('.input-group');
                 const answerText = container.querySelector('input[name*="AnswerText"]');

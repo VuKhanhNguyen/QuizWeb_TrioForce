@@ -359,9 +359,184 @@ namespace QuizWeb_TrioForce.Services.Implementations
 
         }
 
-        public Task UpdateQuizAsync(UpdateQuestionSetViewModel viewModel, string authorName)
+        public async Task<UpdateQuestionSetViewModel> GetQuizForEditAsync(int qSetId, string username)
         {
-            throw new NotImplementedException();
+            var qs = await _unitOfWork.QuestionSetRepository.GetQuestionSetByIdAsync(qSetId);
+            if (qs == null)
+            {
+                throw new Exception($"Quiz with ID {qSetId} not found");
+            }
+
+            // Kiểm tra quyền sở hữu
+            if (!string.Equals(qs.AuthorName, username, StringComparison.Ordinal))
+            {
+                throw new UnauthorizedAccessException("You are not authorized to edit this quiz");
+            }
+
+            var viewModel = new UpdateQuestionSetViewModel
+            {
+                QSetId = qs.QSetId,
+                QSetName = qs.QSetName,
+                Description = qs.Description,
+                LevelId = qs.LevelId,
+                CategoryId = qs.CategoryId,
+                Questions = qs.Questions.Select(q => new UpdateQuestionViewModel
+                {
+                    QuestionId = q.QuestionId,
+                    QuestionText = q.QuestionText,
+                    Answers = q.Answers.Select(a => new UpdateAnswerViewModel
+                    {
+                        AnswerId = a.AnswerId,
+                        AnswerText = a.AnswerText,
+                        IsCorrect = a.IsCorrect
+                    }).ToList()
+                }).ToList()
+            };
+
+            return viewModel;
+        }
+
+        public async Task UpdateQuizAsync(UpdateQuestionSetViewModel viewModel, string authorName)
+        {
+            await _unitOfWork.BeginTransactionAsync();
+
+            try
+            {
+                // 1. Lấy QuestionSet hiện tại
+                var qs = await _unitOfWork.QuestionSetRepository.GetQuestionSetByIdAsync(viewModel.QSetId);
+                if (qs == null)
+                {
+                    throw new Exception($"Quiz with ID {viewModel.QSetId} not found");
+                }
+
+                // Kiểm tra quyền sở hữu
+                if (!string.Equals(qs.AuthorName, authorName, StringComparison.Ordinal))
+                {
+                    throw new UnauthorizedAccessException("You are not authorized to edit this quiz");
+                }
+
+                // 2. Update QuestionSet info
+                qs.QSetName = viewModel.QSetName;
+                qs.Description = viewModel.Description;
+                qs.LevelId = viewModel.LevelId;
+                qs.CategoryId = viewModel.CategoryId;
+
+                await _unitOfWork.SaveChangesAsync();
+
+                // 3. Lấy danh sách câu hỏi và đáp án hiện tại
+                var existingQuestions = await _unitOfWork.QuestionRepository.GetAllQuestionsByIdQSetAsync(viewModel.QSetId);
+                var existingQuestionIds = existingQuestions.Select(q => q.QuestionId).ToHashSet();
+
+                var incomingQuestionIds = viewModel.Questions
+                    .Where(q => q.QuestionId.HasValue)
+                    .Select(q => q.QuestionId!.Value)
+                    .ToHashSet();
+
+                // 4. Xóa các câu hỏi đã bị remove (không có trong viewModel)
+                var questionsToDelete = existingQuestions
+                    .Where(q => !incomingQuestionIds.Contains(q.QuestionId))
+                    .ToList();
+
+                if (questionsToDelete.Any())
+                {
+                    // Xóa answers của các questions bị xóa
+                    foreach (var question in questionsToDelete)
+                    {
+                        var answersToDelete = await _unitOfWork.AnswerRepository.GetAllAnswersByIdQuestionAsync(question.QuestionId);
+                        _unitOfWork.AnswerRepository.DeleteAnswersAsync(answersToDelete);
+                    }
+                    _unitOfWork.QuestionRepository.DeleteQuestionsAsync(questionsToDelete);
+                    await _unitOfWork.SaveChangesAsync();
+                }
+
+                // 5. Process questions: Update existing and Add new
+                foreach (var questionVM in viewModel.Questions)
+                {
+                    Question question;
+                    bool isNewQuestion = !questionVM.QuestionId.HasValue;
+
+                    if (isNewQuestion)
+                    {
+                        // Thêm câu hỏi mới
+                        question = new Question
+                        {
+                            QuestionText = questionVM.QuestionText,
+                            QSetId = viewModel.QSetId
+                        };
+                        await _unitOfWork.QuestionRepository.AddQuestionAsync(question);
+                        await _unitOfWork.SaveChangesAsync();
+                    }
+                    else
+                    {
+                        // Update câu hỏi hiện có
+                        question = existingQuestions.FirstOrDefault(q => q.QuestionId == questionVM.QuestionId.Value);
+                        if (question != null)
+                        {
+                            question.QuestionText = questionVM.QuestionText;
+                            await _unitOfWork.SaveChangesAsync();
+                        }
+                        else
+                        {
+                            continue; // Skip nếu không tìm thấy
+                        }
+                    }
+
+                    // 6. Process answers for this question
+                    var existingAnswers = await _unitOfWork.AnswerRepository.GetAllAnswersByIdQuestionAsync(question.QuestionId);
+                    var existingAnswerIds = existingAnswers.Select(a => a.AnswerId).ToHashSet();
+
+                    var incomingAnswerIds = questionVM.Answers
+                        .Where(a => a.AnswerId.HasValue)
+                        .Select(a => a.AnswerId!.Value)
+                        .ToHashSet();
+
+                    // Xóa các đáp án đã bị remove
+                    var answersToDelete = existingAnswers
+                        .Where(a => !incomingAnswerIds.Contains(a.AnswerId))
+                        .ToList();
+
+                    if (answersToDelete.Any())
+                    {
+                        _unitOfWork.AnswerRepository.DeleteAnswersAsync(answersToDelete);
+                        await _unitOfWork.SaveChangesAsync();
+                    }
+
+                    // Update hoặc Add answers
+                    foreach (var answerVM in questionVM.Answers)
+                    {
+                        if (!answerVM.AnswerId.HasValue)
+                        {
+                            // Thêm đáp án mới
+                            var newAnswer = new Answer
+                            {
+                                AnswerText = answerVM.AnswerText,
+                                IsCorrect = answerVM.IsCorrect,
+                                QuestionId = question.QuestionId
+                            };
+                            await _unitOfWork.AnswerRepository.AddAnswerAsync(newAnswer);
+                        }
+                        else
+                        {
+                            // Update đáp án hiện có
+                            var existingAnswer = existingAnswers.FirstOrDefault(a => a.AnswerId == answerVM.AnswerId.Value);
+                            if (existingAnswer != null)
+                            {
+                                existingAnswer.AnswerText = answerVM.AnswerText;
+                                existingAnswer.IsCorrect = answerVM.IsCorrect;
+                            }
+                        }
+                    }
+
+                    await _unitOfWork.SaveChangesAsync();
+                }
+
+                await _unitOfWork.CommitAsync();
+            }
+            catch (Exception)
+            {
+                await _unitOfWork.RollbackAsync();
+                throw;
+            }
         }
         public async Task<ResumeQuestionSetViewModel> LoadProgressAsync(string username, int qSetId)
         {

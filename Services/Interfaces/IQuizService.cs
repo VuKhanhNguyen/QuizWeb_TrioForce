@@ -7,6 +7,7 @@ namespace QuizWeb_TrioForce.Services.Interfaces
     {
         Task CreateQuizAsync(CreateQuestionSetViewModel viewModel, string authorName);
         Task UpdateQuizAsync(UpdateQuestionSetViewModel viewModel, string authorName);
+        Task<UpdateQuestionSetViewModel> GetQuizForEditAsync(int qSetId, string username);
         Task DeleteQuizAsync(int id, string username);
 
         Task<PlayQuestionSetViewModel> GetQuizAsync(int id);

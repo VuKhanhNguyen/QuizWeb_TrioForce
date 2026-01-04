@@ -88,8 +88,79 @@ namespace QuizWeb_TrioForce.Controllers
             }
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Edit(int QSetId)
+        {
+            try
+            {
+                var username = User.Identity?.Name;
+                if (username == null)
+                {
+                    return NotFound();
+                }
+
+                var viewModel = await _quizService.GetQuizForEditAsync(QSetId, username);
+                if (viewModel == null)
+                {
+                    return NotFound();
+                }
+
+                await GetEditSelectItemList(viewModel);
+                return View(viewModel);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error loading quiz for edit with ID {QSetId}", QSetId);
+                return StatusCode(500, "Lỗi khi tải bộ câu hỏi.");
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(UpdateQuestionSetViewModel viewModel)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    var username = User.Identity?.Name;
+                    if (username == null)
+                    {
+                        return NotFound();
+                    }
+                    await _quizService.UpdateQuizAsync(viewModel, username);
+                    return RedirectToAction("Index", "Quiz");
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("", "Failed to update quiz: " + ex.Message);
+                }
+            }
+
+            await GetEditSelectItemList(viewModel);
+            return View(viewModel);
+        }
+
 
         private async Task GetAddSelectItemList(CreateQuestionSetViewModel viewModel)
+        {
+            var levelList = await _levelService.GetAllLevelsAsync();
+            var cateList = await _categoryService.GetAllCategoryAsync();
+
+            viewModel.Levels = levelList.Select(l => new SelectListItem
+            {
+                Text = l.LevelName,
+                Value = l.LevelId.ToString()
+            }).ToList();
+
+            viewModel.Categories = cateList.Select(c => new SelectListItem
+            {
+                Text = c.CategoryName,
+                Value = c.CategoryId.ToString()
+            }).ToList();
+        }
+
+        private async Task GetEditSelectItemList(UpdateQuestionSetViewModel viewModel)
         {
             var levelList = await _levelService.GetAllLevelsAsync();
             var cateList = await _categoryService.GetAllCategoryAsync();

@@ -213,7 +213,7 @@
                                 <div class="card-footer-custom justify-content-around btn-actions-group">
                                     
                                     @* <div class="btn-group"> *@
-                                        <a asp-controller="Quiz" asp-action="" class="btn-primary p-1 px-5 rounded-3" title="Chỉnh sửa">
+                                        <a asp-controller="Quiz" asp-action="Edit" asp-route-QSetId="@cqs.QSetId" class="btn-primary p-1 px-5 rounded-3" title="Chỉnh sửa">
                                             <i class="fas fa-edit"></i>
                                         </a>
                                     <a class="remove-created-question-set btn-danger p-1 px-5 rounded-3" id="remove-@cqs.QSetId" data-question-set-id="@cqs.QSetId" title="Xóa">

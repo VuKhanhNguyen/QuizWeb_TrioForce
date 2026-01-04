@@ -26,7 +26,7 @@ namespace QuizWeb_TrioForce.Controllers
         {
             var userName = User.Identity?.Name;
             if (string.IsNullOrEmpty(userName))
-                return RedirectToAction("Login", "Account", new { area = "Identity" });
+                return Unauthorized();
 
             // Get available question sets
             var questionSets = await _duelService.GetAllQuestionSetsForSelectAsync();
@@ -123,7 +123,7 @@ namespace QuizWeb_TrioForce.Controllers
         {
             var userName = User.Identity?.Name;
             if (string.IsNullOrEmpty(userName))
-                return RedirectToAction("Login", "Account", new { area = "Identity" });
+                return Unauthorized();
 
             var matches = await _duelService.GetUserMatchHistoryAsync(userName, 20);
             

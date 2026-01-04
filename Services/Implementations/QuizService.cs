@@ -452,7 +452,7 @@ namespace QuizWeb_TrioForce.Services.Implementations
                 // 5. Process questions: Update existing and Add new
                 foreach (var questionVM in viewModel.Questions)
                 {
-                    Question question;
+                    Question? question;
                     bool isNewQuestion = !questionVM.QuestionId.HasValue;
 
                     if (isNewQuestion)
@@ -469,7 +469,7 @@ namespace QuizWeb_TrioForce.Services.Implementations
                     else
                     {
                         // Update câu hỏi hiện có
-                        question = existingQuestions.FirstOrDefault(q => q.QuestionId == questionVM.QuestionId.Value);
+                        question = existingQuestions.FirstOrDefault(q => questionVM.QuestionId != null && q.QuestionId == questionVM.QuestionId.Value);
                         if (question != null)
                         {
                             question.QuestionText = questionVM.QuestionText;
@@ -483,7 +483,7 @@ namespace QuizWeb_TrioForce.Services.Implementations
 
                     // 6. Process answers for this question
                     var existingAnswers = await _unitOfWork.AnswerRepository.GetAllAnswersByIdQuestionAsync(question.QuestionId);
-                    var existingAnswerIds = existingAnswers.Select(a => a.AnswerId).ToHashSet();
+                    //var existingAnswerIds = existingAnswers.Select(a => a.AnswerId).ToHashSet();
 
                     var incomingAnswerIds = questionVM.Answers
                         .Where(a => a.AnswerId.HasValue)

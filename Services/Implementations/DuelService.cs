@@ -1,90 +1,65 @@
-using Microsoft.EntityFrameworkCore;
-using QuizWeb_TrioForce.Data;
 using QuizWeb_TrioForce.Models;
+using QuizWeb_TrioForce.Repositories.Interfaces;
 using QuizWeb_TrioForce.Services.Interfaces;
 using QuizWeb_TrioForce.ViewModels.Duel;
+using System.Security.Cryptography;
+using System.Collections.Concurrent;
 
 namespace QuizWeb_TrioForce.Services.Implementations
 {
     public class DuelService : IDuelService
     {
-        private readonly AppDbContext _context;
+        private readonly IDuelRepository _repo;
         private readonly ILogger<DuelService> _logger;
-        private static readonly Random _random = new();
 
         // Track which players have answered current question (in production, use distributed cache)
-        private static readonly Dictionary<int, HashSet<string>> MatchAnswers = new();
+        //private static readonly Dictionary<int, HashSet<string>> MatchAnswers = new();
+        private static readonly ConcurrentDictionary<int, ConcurrentDictionary<string, byte>> MatchAnswers = new();
 
-        public DuelService(AppDbContext context, ILogger<DuelService> logger)
+        public DuelService(IDuelRepository repo, ILogger<DuelService> logger)
         {
-            _context = context;
+            _repo = repo;
             _logger = logger;
         }
 
         public async Task<DuelMatch> CreateMatchAsync(string userName, int qSetId)
         {
-            // Nếu qSetId = 0, chọn ngẫu nhiên
             if (qSetId <= 0)
-            {
-                qSetId = await GetRandomQuestionSetIdAsync();
-            }
+                qSetId = await _repo.GetRandomQuestionSetIdAsync();
 
-            var matchCode = GenerateMatchCode();
-            
             var match = new DuelMatch
             {
-                MatchCode = matchCode,
+                MatchCode = GenerateMatchCode(),
                 QSetId = qSetId,
                 Player1UserName = userName,
                 Status = MatchStatus.Waiting,
                 CreatedAt = DateTime.Now
             };
 
-            _context.DuelMatches.Add(match);
-            await _context.SaveChangesAsync();
+            await _repo.AddMatchAsync(match);
+            await _repo.SaveChangesAsync();
 
-            // Reload with navigation properties
-            return await GetMatchByIdAsync(match.MatchId) ?? match;
+            return await _repo.GetMatchWithQuestionsAsync(match.MatchId) ?? match;
         }
 
         public async Task<DuelMatch?> JoinMatchAsync(string matchCode, string userName)
         {
-            var match = await _context.DuelMatches
-                .Include(m => m.Player1)
-                .Include(m => m.QuestionSet)
-                .FirstOrDefaultAsync(m => m.MatchCode == matchCode && m.Status == MatchStatus.Waiting);
-
+            var match = await _repo.GetWaitingMatchForJoinAsync(matchCode);
             if (match == null) return null;
-            if (match.Player1UserName == userName) return null; // Can't join own room
+            if (match.Player1UserName == userName) return null;
 
             match.Player2UserName = userName;
-            // Don't change status yet - wait for StartMatch
 
-            await _context.SaveChangesAsync();
-
-            // Reload with Player2
-            return await GetMatchByIdAsync(match.MatchId);
+            await _repo.SaveChangesAsync();
+            return await _repo.GetMatchForLobbyByIdAsync(match.MatchId);
         }
 
-        public async Task<DuelMatch?> GetMatchByIdAsync(int matchId)
-        {
-            return await _context.DuelMatches
-                .Include(m => m.Player1)
-                .Include(m => m.Player2)
-                .Include(m => m.QuestionSet)
-                    .ThenInclude(qs => qs.Questions)
-                        .ThenInclude(q => q.Answers)
-                .FirstOrDefaultAsync(m => m.MatchId == matchId);
-        }
+        public Task<DuelMatch?> GetMatchByIdAsync(int matchId)
+            => _repo.GetMatchWithQuestionsAsync(matchId);
 
-        public async Task<DuelMatch?> GetMatchByCodeAsync(string matchCode)
-        {
-            return await _context.DuelMatches
-                .Include(m => m.Player1)
-                .Include(m => m.Player2)
-                .Include(m => m.QuestionSet)
-                .FirstOrDefaultAsync(m => m.MatchCode == matchCode);
-        }
+        public Task<DuelMatch?> GetMatchByCodeAsync(string matchCode)
+            => _repo.GetMatchForLobbyByCodeAsync(matchCode);
+
 
         public async Task<DuelMatch?> StartMatchAsync(int matchId, string userName)
         {
@@ -104,15 +79,15 @@ namespace QuizWeb_TrioForce.Services.Implementations
             match.CurrentQuestionIndex = 0;
 
             // Initialize answer tracking
-            MatchAnswers[matchId] = new HashSet<string>();
+            MatchAnswers[matchId] = new ConcurrentDictionary<string, byte>();
 
-            await _context.SaveChangesAsync();
+            await _repo.SaveChangesAsync();
             return match;
         }
 
         public async Task<QuestionDataDto?> GetCurrentQuestionAsync(int matchId)
         {
-            var match = await GetMatchByIdAsync(matchId);
+            var match = await _repo.GetMatchWithQuestionsAsync(matchId);
             if (match == null || match.QuestionSet?.Questions == null) return null;
 
             var questions = match.QuestionSet.Questions.OrderBy(q => q.QuestionId).ToList();
@@ -120,8 +95,7 @@ namespace QuizWeb_TrioForce.Services.Implementations
 
             var question = questions[match.CurrentQuestionIndex];
 
-            // Reset answer tracking for this question
-            MatchAnswers[matchId] = new HashSet<string>();
+            MatchAnswers.GetOrAdd(matchId, _ => new ConcurrentDictionary<string, byte>());
 
             return new QuestionDataDto
             {
@@ -130,33 +104,31 @@ namespace QuizWeb_TrioForce.Services.Implementations
                 QuestionId = question.QuestionId,
                 QuestionText = question.QuestionText,
                 TimeLimit = 10,
-                Answers = question.Answers.Select(a => new AnswerOptionDto
-                {
-                    AnswerId = a.AnswerId,
-                    AnswerText = a.AnswerText
-                }).OrderBy(_ => _random.Next()).ToList() // Shuffle answers
+                Answers = question.Answers
+                    .Select(a => new AnswerOptionDto
+                    {
+                        AnswerId = a.AnswerId,
+                        AnswerText = a.AnswerText
+                    })
+                    .OrderBy(_ => Random.Shared.Next())
+                    .ToList()
             };
         }
 
         public async Task<AnswerResultDto> SubmitAnswerAsync(int matchId, string userName, int questionId, int answerId, double responseTime)
         {
-            var match = await GetMatchByIdAsync(matchId);
-            if (match == null)
-                throw new InvalidOperationException("Không tìm thấy trận đấu.");
 
-            // Check if answer is correct
+            var match = await _repo.GetMatchWithQuestionsAsync(matchId)
+                ?? throw new InvalidOperationException("Không tìm thấy trận đấu.");
+
             var question = match.QuestionSet?.Questions?.FirstOrDefault(q => q.QuestionId == questionId);
             var correctAnswer = question?.Answers?.FirstOrDefault(a => a.IsCorrect);
             bool isCorrect = answerId == correctAnswer?.AnswerId;
 
-            // Calculate score: 15 base + bonus for time (max 5 bonus)
             int scoreEarned = 0;
-            if (isCorrect && answerId > 0) // answerId = -1 means timeout
-            {
+            if (isCorrect && answerId > 0)
                 scoreEarned = 15 + Math.Max(0, (int)(5 - responseTime * 0.5));
-            }
 
-            // Save answer
             var duelAnswer = new DuelAnswer
             {
                 MatchId = matchId,
@@ -168,32 +140,43 @@ namespace QuizWeb_TrioForce.Services.Implementations
                 ScoreEarned = scoreEarned,
                 AnsweredAt = DateTime.Now
             };
-            _context.DuelAnswers.Add(duelAnswer);
 
-            // Update player score
-            if (userName == match.Player1UserName)
-                match.Player1Score += scoreEarned;
-            else
-                match.Player2Score += scoreEarned;
+            await _repo.AddAnswerAsync(duelAnswer);
 
-            await _context.SaveChangesAsync();
+            if (userName == match.Player1UserName) match.Player1Score += scoreEarned;
+            else match.Player2Score += scoreEarned;
 
-            // Track who answered
-            if (!MatchAnswers.ContainsKey(matchId))
-                MatchAnswers[matchId] = new HashSet<string>();
-            MatchAnswers[matchId].Add(userName);
+            await _repo.SaveChangesAsync();
 
-            bool bothAnswered = MatchAnswers[matchId].Count >= 2;
-            
-            // Check if match is over
-            var questions = match.QuestionSet?.Questions?.OrderBy(q => q.QuestionId).ToList();
-            bool isLastQuestion = match.CurrentQuestionIndex >= (questions?.Count ?? 0) - 1;
+            var answeredUsers = MatchAnswers.GetOrAdd(matchId, _ => new ConcurrentDictionary<string, byte>());
 
-            // Move to next question if both answered
+            answeredUsers.TryAdd(userName, 0);
+
+            bool bothAnswered = false;
+            bool isLastQuestion = false;
+
+            // CHỈ LOCK ĐOẠN LOGIC CHUYỂN CÂU HỎI (Rất nhanh, không ảnh hưởng hiệu năng)
+            lock (answeredUsers)
+            {
+                // Kiểm tra lại count trong lock để đảm bảo chính xác tuyệt đối
+                bothAnswered = answeredUsers.Count >= 2;
+
+                var questions = match.QuestionSet?.Questions?.OrderBy(q => q.QuestionId).ToList();
+                isLastQuestion = match.CurrentQuestionIndex >= (questions?.Count ?? 0) - 1;
+
+                if (bothAnswered && !isLastQuestion)
+                {
+                    // Reset ngay trong lock để các thread khác đến sau thấy Count = 0
+                    answeredUsers.Clear();
+
+                    // Đánh dấu để cập nhật DB bên dưới
+                    match.CurrentQuestionIndex++;
+                }
+            }
+
             if (bothAnswered && !isLastQuestion)
             {
-                match.CurrentQuestionIndex++;
-                await _context.SaveChangesAsync();
+                await _repo.SaveChangesAsync();
             }
 
             return new AnswerResultDto
@@ -208,6 +191,7 @@ namespace QuizWeb_TrioForce.Services.Implementations
                 IsMatchOver = bothAnswered && isLastQuestion
             };
         }
+
 
         public async Task<MatchResultDto> EndMatchAsync(int matchId)
         {
@@ -229,25 +213,26 @@ namespace QuizWeb_TrioForce.Services.Implementations
             }
             match.WinnerUserName = winnerUserName;
 
-            await _context.SaveChangesAsync();
+            await _repo.SaveChangesAsync();
 
             // Update rankings
-            var player1RankingChange = await UpdatePlayerRankingAsync(match.Player1UserName, 
-                winnerUserName == match.Player1UserName, 
-                isDraw, 
-                match.Player1Score);
+            var player1RankingChange = await UpdatePlayerRankingAsync(
+                match.Player1UserName,
+                winnerUserName == match.Player1UserName,
+                isDraw);
 
             int player2RankingChange = 0;
             if (!string.IsNullOrEmpty(match.Player2UserName))
             {
-                player2RankingChange = await UpdatePlayerRankingAsync(match.Player2UserName,
+                player2RankingChange = await UpdatePlayerRankingAsync(
+                    match.Player2UserName,
                     winnerUserName == match.Player2UserName,
-                    isDraw,
-                    match.Player2Score);
+                    isDraw);
             }
 
+
             // Clean up
-            MatchAnswers.Remove(matchId);
+            MatchAnswers.TryRemove(matchId, out _);
 
             return new MatchResultDto
             {
@@ -268,10 +253,10 @@ namespace QuizWeb_TrioForce.Services.Implementations
             };
         }
 
-        private async Task<int> UpdatePlayerRankingAsync(string userName, bool isWinner, bool isDraw, int matchScore)
+        private async Task<int> UpdatePlayerRankingAsync(string userName, bool isWinner, bool isDraw)
         {
-            var ranking = await GetOrCreateDuelRankingAsync(userName);
-            
+            var ranking = await _repo.GetOrCreateRankingAsync(userName);
+
             ranking.TotalMatches++;
             int scoreChange;
 
@@ -292,29 +277,26 @@ namespace QuizWeb_TrioForce.Services.Implementations
             }
 
             ranking.TotalScore += scoreChange;
-            await _context.SaveChangesAsync();
+            await _repo.SaveChangesAsync();
 
             return scoreChange;
         }
 
+
+
         public async Task HandlePlayerDisconnectAsync(string userName)
         {
-            // Find active matches for this user
-            var activeMatches = await _context.DuelMatches
-                .Where(m => (m.Player1UserName == userName || m.Player2UserName == userName)
-                         && m.Status == MatchStatus.InProgress)
-                .ToListAsync();
+            var activeMatches = await _repo.GetInProgressMatchesForUserAsync(userName);
 
             foreach (var match in activeMatches)
             {
-                if (match.Player1UserName == userName)
-                    match.Player1DisconnectedAt = DateTime.Now;
-                else
-                    match.Player2DisconnectedAt = DateTime.Now;
+                if (match.Player1UserName == userName) match.Player1DisconnectedAt = DateTime.Now;
+                else match.Player2DisconnectedAt = DateTime.Now;
             }
 
-            await _context.SaveChangesAsync();
+            await _repo.SaveChangesAsync();
         }
+
 
         public async Task<ReconnectResultDto> HandlePlayerReconnectAsync(int matchId, string userName)
         {
@@ -342,7 +324,7 @@ namespace QuizWeb_TrioForce.Services.Implementations
             else
                 match.Player2DisconnectedAt = null;
 
-            await _context.SaveChangesAsync();
+            await _repo.SaveChangesAsync();
 
             var currentQuestion = await GetCurrentQuestionAsync(matchId);
             var questions = match.QuestionSet?.Questions?.ToList();
@@ -368,117 +350,53 @@ namespace QuizWeb_TrioForce.Services.Implementations
 
         public async Task HandlePlayerLeaveAsync(int matchId, string userName)
         {
-            var match = await _context.DuelMatches.FindAsync(matchId);
+            var match = await _repo.FindMatchAsync(matchId);
             if (match == null) return;
 
             if (match.Status == MatchStatus.Waiting)
             {
-                // If waiting, cancel the match
-                if (match.Player1UserName == userName)
-                {
-                    match.Status = MatchStatus.Cancelled;
-                }
-                else if (match.Player2UserName == userName)
-                {
-                    match.Player2UserName = null;
-                }
+                if (match.Player1UserName == userName) match.Status = MatchStatus.Cancelled;
+                else if (match.Player2UserName == userName) match.Player2UserName = null;
             }
             else if (match.Status == MatchStatus.InProgress)
             {
-                // Player forfeits - other player wins
                 match.Status = MatchStatus.Completed;
                 match.EndedAt = DateTime.Now;
-                match.WinnerUserName = match.Player1UserName == userName 
-                    ? match.Player2UserName 
-                    : match.Player1UserName;
+                match.WinnerUserName = match.Player1UserName == userName ? match.Player2UserName : match.Player1UserName;
             }
 
-            await _context.SaveChangesAsync();
+            await _repo.SaveChangesAsync();
         }
 
-        public async Task<List<DuelMatch>> GetUserMatchHistoryAsync(string userName, int take = 10)
-        {
-            return await _context.DuelMatches
-                .Include(m => m.Player1)
-                .Include(m => m.Player2)
-                .Include(m => m.QuestionSet)
-                .Where(m => (m.Player1UserName == userName || m.Player2UserName == userName)
-                         && m.Status == MatchStatus.Completed)
-                .OrderByDescending(m => m.EndedAt)
-                .Take(take)
-                .ToListAsync();
-        }
 
-        public async Task<List<DuelRanking>> GetDuelRankingAsync(int take = 50)
-        {
-            return await _context.DuelRankings
-                .Include(r => r.User)
-                .OrderByDescending(r => r.TotalScore)
-                .ThenByDescending(r => r.Wins)
-                .Take(take)
-                .ToListAsync();
-        }
+        public Task<List<DuelMatch>> GetUserMatchHistoryAsync(string userName, int take = 10)
+            => _repo.GetUserMatchHistoryAsync(userName, take);
 
-        public async Task<DuelRanking> GetOrCreateDuelRankingAsync(string userName)
-        {
-            var ranking = await _context.DuelRankings.FindAsync(userName);
-            if (ranking == null)
-            {
-                ranking = new DuelRanking { UserName = userName };
-                _context.DuelRankings.Add(ranking);
-                await _context.SaveChangesAsync();
-            }
-            return ranking;
-        }
 
-        public async Task<int> GetRandomQuestionSetIdAsync()
-        {
-            var questionSets = await _context.QuestionSets
-                .Where(qs => qs.Questions.Count > 0)
-                .Select(qs => qs.QSetId)
-                .ToListAsync();
+        public Task<List<DuelRanking>> GetDuelRankingAsync(int take = 50)
+            => _repo.GetTopRankingsAsync(take);
 
-            if (questionSets.Count == 0)
-                throw new InvalidOperationException("Không có bộ câu hỏi nào.");
-
-            return questionSets[_random.Next(questionSets.Count)];
-        }
 
         private static string GenerateMatchCode()
         {
-            const string chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // Avoid confusing characters
-            return new string(Enumerable.Repeat(chars, 6)
-                .Select(s => s[_random.Next(s.Length)]).ToArray());
+            const string chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+            Span<char> code = stackalloc char[6];
+
+            for (int i = 0; i < code.Length; i++)
+            {
+                code[i] = chars[RandomNumberGenerator.GetInt32(chars.Length)];
+            }
+
+            return new string(code);
         }
 
-        public async Task<List<QuestionSetOptionDto>> GetAllQuestionSetsForSelectAsync()
-        {
-            return await _context.QuestionSets
-                .Include(qs => qs.Category)
-                .Include(qs => qs.Level)
-                .Include(qs => qs.Questions)
-                .Where(qs => qs.Questions.Count > 0)
-                .Select(qs => new QuestionSetOptionDto
-                {
-                    QSetId = qs.QSetId,
-                    QSetName = qs.QSetName,
-                    CategoryName = qs.Category.CategoryName,
-                    LevelName = qs.Level.LevelName,
-                    QuestionCount = qs.Questions.Count
-                })
-                .ToListAsync();
-        }
 
-        public async Task<List<DuelMatch>> GetActiveMatchesForUserAsync(string userName)
-        {
-            return await _context.DuelMatches
-                .Include(m => m.Player1)
-                .Include(m => m.Player2)
-                .Include(m => m.QuestionSet)
-                .Where(m => (m.Player1UserName == userName || m.Player2UserName == userName)
-                         && m.Status == MatchStatus.InProgress)
-                .ToListAsync();
-        }
+        public Task<List<QuestionSetOptionDto>> GetAllQuestionSetsForSelectAsync()
+            => _repo.GetAllQuestionSetsForSelectAsync();
+
+
+        public Task<List<DuelMatch>> GetActiveMatchesForUserAsync(string userName)
+            => _repo.GetActiveMatchesForUserAsync(userName);
 
         public async Task EndMatchDueToDisconnectAsync(int matchId, string disconnectedPlayerUserName)
         {
@@ -494,7 +412,7 @@ namespace QuizWeb_TrioForce.Services.Implementations
                 ? match.Player2UserName
                 : match.Player1UserName;
 
-            await _context.SaveChangesAsync();
+            await _repo.SaveChangesAsync();
 
             // Update rankings
             var winnerUserName = match.WinnerUserName;
@@ -502,18 +420,18 @@ namespace QuizWeb_TrioForce.Services.Implementations
 
             if (!string.IsNullOrEmpty(winnerUserName))
             {
-                await UpdatePlayerRankingAsync(winnerUserName, true, false, 
-                    winnerUserName == match.Player1UserName ? match.Player1Score : match.Player2Score);
+                await UpdatePlayerRankingAsync(winnerUserName, true, false);
             }
 
-            await UpdatePlayerRankingAsync(loserUserName, false, false,
-                loserUserName == match.Player1UserName ? match.Player1Score : match.Player2Score);
+            await UpdatePlayerRankingAsync(loserUserName, false, false);
 
             // Clean up
-            MatchAnswers.Remove(matchId);
+            MatchAnswers.TryRemove(matchId, out _);
 
             _logger.LogInformation("Match {MatchId} ended due to player {PlayerUserName} disconnect timeout. Winner: {WinnerUserName}", 
                 matchId, disconnectedPlayerUserName, winnerUserName);
         }
+
+        public Task<DuelRanking> GetOrCreateDuelRankingAsync(string userName) => _repo.GetOrCreateRankingAsync(userName);
     }
 }

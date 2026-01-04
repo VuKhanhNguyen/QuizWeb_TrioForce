@@ -6,7 +6,7 @@ namespace QuizWeb_TrioForce.ViewModels
 {
     public class HomeViewModel
     {
-        public List<CategoryListViewModel> Categories { get; set; }
-        public List<LevelViewModel> Levels { get; set; }
+        public List<CategoryListViewModel> Categories { get; set; } = new();
+        public List<LevelViewModel> Levels { get; set; } = new();
     }
 }

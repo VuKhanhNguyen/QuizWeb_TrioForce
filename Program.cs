@@ -55,6 +55,7 @@ namespace QuizWeb_TrioForce
             builder.Services.AddScoped<IUnitOfWork, EfUnitOfWork>();
             builder.Services.AddScoped<IAnswerRepository, AnswerRepository>();
             builder.Services.AddScoped<IAnsweredQuestionRepository, AnsweredQuestionRepository>();
+            builder.Services.AddScoped<IDuelRepository, DuelRepository>();
             //DI for services
             builder.Services.AddScoped<ICategoryService, CategoryService>();
             builder.Services.AddScoped<ILevelService, LevelService>();

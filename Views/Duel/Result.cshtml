@@ -1,0 +1,78 @@
+@model QuizWeb_TrioForce.Models.DuelMatch
+@{
+    ViewData["Title"] = "Kết quả trận đấu";
+    var result = ViewBag.Result as string;
+    var myScore = (int)ViewBag.MyScore;
+    var opponentScore = (int)ViewBag.OpponentScore;
+    var isPlayer1 = (bool)ViewBag.IsPlayer1;
+    var myName = isPlayer1 ? Model.Player1?.FullName : Model.Player2?.FullName;
+    var opponentName = isPlayer1 ? Model.Player2?.FullName : Model.Player1?.FullName;
+}
+<link rel="stylesheet" href="~/css/result1v1.css" asp-append-version="true" />
+
+
+<div class="result-container">
+    <!-- Result Banner -->
+    <div class="result-banner @(result == "Thắng" ? "win" : result == "Thua" ? "lose" : "draw")">
+        @if (result == "Thắng")
+        {
+            <div class="result-icon">🏆</div>
+            <div class="result-text">Chiến thắng!</div>
+            <div class="result-subtext">Tuyệt vời, bạn đã đánh bại đối thủ!</div>
+        }
+        else if (result == "Thua")
+        {
+            <div class="result-icon">😔</div>
+            <div class="result-text">Thất bại</div>
+            <div class="result-subtext">Lần tới cố gắng hơn nhé!</div>
+        }
+        else
+        {
+            <div class="result-icon">🤝</div>
+            <div class="result-text">Hòa!</div>
+            <div class="result-subtext">Hai đối thủ ngang tài ngang sức!</div>
+        }
+    </div>
+    
+    <!-- Score Comparison -->
+    <div class="score-comparison">
+        <div class="score-item @(myScore > opponentScore ? "winner" : "")">
+            <div class="name">@myName (Bạn)</div>
+            <div class="points">@myScore</div>
+        </div>
+        <div class="vs-divider">VS</div>
+        <div class="score-item @(opponentScore > myScore ? "winner" : "")">
+            <div class="name">@opponentName</div>
+            <div class="points">@opponentScore</div>
+        </div>
+    </div>
+    
+    <!-- Stats -->
+    <div class="stats-row">
+        <div class="stat-badge">
+            <div class="value">@Model.QuestionSet?.Questions?.Count</div>
+            <div class="label">Câu hỏi</div>
+        </div>
+        <div class="stat-badge">
+            <div class="value">@Model.QuestionSet?.QSetName</div>
+            <div class="label">Bộ đề</div>
+        </div>
+        <div class="stat-badge">
+            <div class="value">@((Model.EndedAt - Model.StartedAt)?.TotalSeconds.ToString("F0"))s</div>
+            <div class="label">Thời gian</div>
+        </div>
+    </div>
+    
+    <!-- Action Buttons -->
+    <div class="action-buttons">
+        <a asp-action="Index" class="btn btn-rematch">
+            <i class="fa-solid fa-redo me-2"></i>Chơi lại
+        </a>
+        <a asp-action="History" class="btn btn-outline-primary">
+            <i class="fa-solid fa-history me-2"></i>Xem lịch sử
+        </a>
+        <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary">
+            <i class="fa-solid fa-home me-2"></i>Về trang chủ
+        </a>
+    </div>
+</div>

@@ -1,0 +1,88 @@
+﻿.history-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 16px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+}
+
+.match-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    padding: 1.2rem;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: transform 0.2s;
+}
+
+    .match-card:hover {
+        transform: translateX(5px);
+    }
+
+.match-result {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: white;
+}
+
+    .match-result.win {
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    }
+
+    .match-result.lose {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    }
+
+    .match-result.draw {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+.match-info {
+    flex: 1;
+}
+
+.match-opponent {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 0.3rem;
+}
+
+.match-meta {
+    font-size: 0.85rem;
+    color: #888;
+}
+
+.match-score {
+    text-align: right;
+    font-size: 1.3rem;
+    font-weight: 700;
+}
+
+    .match-score .my {
+        color: #11998e;
+    }
+
+    .match-score .opp {
+        color: #aaa;
+    }
+
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: #888;
+}
+
+    .empty-state i {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+        color: #ddd;
+    }

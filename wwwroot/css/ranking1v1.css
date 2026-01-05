@@ -1,0 +1,112 @@
+﻿.ranking-header {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+    border-radius: 16px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.ranking-table {
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+.ranking-row {
+    display: flex;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid #f0f0f0;
+    transition: background 0.2s;
+}
+
+    .ranking-row:hover {
+        background: #f8f9fa;
+    }
+
+    .ranking-row.me {
+        background: #fff3cd;
+    }
+
+    .ranking-row.top-3 {
+        background: linear-gradient(90deg, rgba(255,215,0,0.1) 0%, transparent 100%);
+    }
+
+.rank-badge {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    margin-right: 1rem;
+    background: #f0f0f0;
+    color: #666;
+}
+
+    .rank-badge.gold {
+        background: linear-gradient(135deg, #f5af19, #f12711);
+        color: white;
+    }
+
+    .rank-badge.silver {
+        background: linear-gradient(135deg, #bdc3c7, #8e9eab);
+        color: white;
+    }
+
+    .rank-badge.bronze {
+        background: linear-gradient(135deg, #b08d57, #cd7f32);
+        color: white;
+    }
+
+.player-info {
+    flex: 1;
+}
+
+.player-name {
+    font-weight: 600;
+    color: #333;
+}
+
+.player-stats {
+    font-size: 0.85rem;
+    color: #888;
+}
+
+.player-score {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #667eea;
+}
+
+.win-rate {
+    width: 80px;
+    text-align: center;
+}
+
+.win-rate-bar {
+    height: 6px;
+    background: #e0e0e0;
+    border-radius: 3px;
+    overflow: hidden;
+    margin-top: 4px;
+}
+
+.win-rate-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #11998e, #38ef7d);
+    border-radius: 3px;
+}
+
+@@media (max-width: 576px) {
+    .win-rate {
+        display: none;
+    }
+
+    .ranking-row {
+        padding: 0.8rem 1rem;
+    }
+}
